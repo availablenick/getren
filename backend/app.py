@@ -1,22 +1,23 @@
 #hattps://flask-login.readthedocs.io/en/latest/#installation
 #https://github.com/schoolofcode-me/web_blog/blob/master/src/app.py
 
-from flask import Flask, request, session
+from flask import Flask, request, session, render_template
 
-@getren.route('/login', methods = ['GET', 'POST'])
+
+app = Flask(__name__)
+
+@app.route('/login', methods = ['GET', 'POST'])
 def login():
-    login():
     email = request.form['email']
     password = request.form['password']
 
-    if User.login_valid(email, password):
-        User.login(email)
-    else:
-        session['email'] = None
+    get_db 
 
     return render_template("profile.html", email=session['email'])
 
-@getren.route('/register')
+@app.route('/register')
 def register():
     pass
 
+
+app.run(port = 5000)

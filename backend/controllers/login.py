@@ -3,7 +3,7 @@
 
 from flask import Flask, request, session, render_template
 
-@getren.route('/login', methods = ['GET', 'POST'])
+@app.route('/login', methods = ['GET', 'POST'])
 def login():
     email = request.form['email']
     password = request.form['password']
@@ -15,6 +15,6 @@ def login():
 
     return render_template('login.html')
 
-@getren.route('/register', methods = ['GET'])
+@app.route('/register', methods = ['GET'])
 def register():
     pass
