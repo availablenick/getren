@@ -1,6 +1,6 @@
 FROM python:3.8-buster
-RUN pip install Flask
-RUN pip install -U python-dotenv
+RUN pip install -U Flask python-dotenv flask-sqlalchemy flask-migrate
 RUN mkdir /app
 WORKDIR /app
 CMD ["bash"]
+ 
