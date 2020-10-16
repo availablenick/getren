@@ -10,7 +10,7 @@ class User(db.Model):
   password_hash = db.Column(db.String(128))
 
   def __repr__(self):
-    return '<User email: ' + email + '>'
+    return '<User email: ' + self.email + '>'
 
   def set_password(self, password):
     self.password_hash = generate_password_hash(password)
@@ -18,3 +18,9 @@ class User(db.Model):
   
   def check_password(self, password):
     return check_password_hash(self.password_hash, password)
+
+  @classmethod
+  def register(cls, email, password):
+    new_user = cls(email=email, password_hash=generate_password_hash(password))
+    db.session.add(new_user)
+    db.session.commit()

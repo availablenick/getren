@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head></head>
+  <body>
+    <h1>Register</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <ul class=flashes>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+      </ul>
+      {% endif %}
+    {% endwith %}
+    <form method="post">
+      <label>Email: <input type="text" name="email"/></label>
+      <label>Password: <input type="password" name="password"/></label>
+      <label>Confirm Password: <input type="password" name="password_confirm"/></label>
+      <input type="submit" /></form>
+    </form>
+  </body>
+</html>

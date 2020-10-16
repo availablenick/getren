@@ -1,1 +1,2 @@
 FLASK_APP=getren.py
+FLASK_DEBUG=1
