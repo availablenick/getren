@@ -1,0 +1,39 @@
+version: "3"
+services:
+  database:
+    image: postgres:12
+    restart: always
+    environment:
+      - POSTGRES_DB=getren
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  server:
+    build: ./backend
+    command: flask run
+    restart: always
+    stdin_open: true
+    environment:
+      - FLASK_RUN_HOST=0.0.0.0
+    depends_on:
+      - database
+    volumes:
+      - ./backend:/app
+
+  client:
+    build: ./client-getren
+    command: yarn start
+    restart: always
+    stdin_open: true
+    depends_on:
+      - database
+      - server
+    ports:
+      - 3000:3000
+    volumes:
+      - ./client-getren:/app
+
+volumes:
+  dbdata:
