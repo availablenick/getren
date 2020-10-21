@@ -4,6 +4,7 @@
 from flask import flash, request, render_template, redirect, url_for
 from app.models import User
 from app import app
+import re
 
 @app.route('/register', methods = ['GET', 'POST'])
 def register():
@@ -19,6 +20,12 @@ def register():
         if not password:
             flash('É necessário incluir senha')
             error = True
+        if len(password) < 8:
+            flash('A senha necessita de pelo menos 8 caracteres')
+            error = True
+        if not re.search(r'[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+(\.\w+)?$', email):
+            flash('Esse email é inválido')
+            error = True
         user = User.query.filter_by(email=email).first()
         if user is not None:
             flash('Esse email já está cadastrado.')
@@ -26,7 +33,6 @@ def register():
         if password_confirm != password:
             flash('As senhas não coincidem.')
             error = True
-
         if not error:
             User.register(email,password)
             return redirect(url_for('profile'))
