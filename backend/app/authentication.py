@@ -9,34 +9,36 @@ import re
 @app.route('/register', methods = ['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        password_confirm = request.form['password_confirm']
-        error = False       
+        result = request.get_json()
+        email = result['email']
+        password = result['password']
+        password_confirm = result['password_confirm']
+        error = []
 
         if not email:
             flash('É necessário incluir email')
-            error = True
+            error.append("Sem email")
         if not password:
             flash('É necessário incluir senha')
-            error = True
+            error.append("Sem senha")
         if len(password) < 8:
             flash('A senha necessita de pelo menos 8 caracteres')
-            error = True
+            error.append("Senha curta")
         if not re.search(r'[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+(\.\w+)?$', email):
             flash('Esse email é inválido')
-            error = True
+            error.append("Email inválido")
         user = User.query.filter_by(email=email).first()
         if user is not None:
             flash('Esse email já está cadastrado.')
-            error = True
+            error.append("Email cadastrado")
         if password_confirm != password:
             flash('As senhas não coincidem.')
-            error = True
-        if not error:
+            error.append("Confirmacao errada")
+        if error == []:
             User.register(email,password)
-            return redirect(url_for('profile'))
-    return render_template('register.html')
+            #return redirect(url_for('profile'))
+            return {'confirmed': 1}
+    return {'confirmed': 0, 'errors': error}
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
