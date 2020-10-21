@@ -43,19 +43,23 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+        result = request.get_json()
+        email = result['email']
+        password = result['password']
         if not email:
             flash('Insira um email.')
-            return render_template('login.html')
+            return {'confirmed': 0, 'error': "Sem email"}
         user = User.query.filter_by(email=email).first()
         if user is None:
             flash('Esse email não está registrado.')
+            error = "Não registrado"
         elif not user.check_password(password):
             flash('O usuário/senha está incorreto/a.')
+            error = "Senha errada"
         else:
-            return redirect(url_for('profile'))
-    return render_template('login.html')
+            #return redirect(url_for('profile'))
+            return {'confirmed': 1}
+    return {'confirmed': 0, 'error': error}
 
 #@app.route('/logout')
 #def logout():
