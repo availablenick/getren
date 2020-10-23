@@ -10,6 +10,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 CORS(app)
 
-from app import authentication, models
+from app import models
+from app.controllers import authentication, profile
 
 #app.run(port = 5000)
