@@ -1,19 +1,34 @@
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+
 import Home from '../../components/views/Home.js';
 import Cadastro from '../../components/views/Cadastro.js';
 import Login from '../../components/views/Login.js';
 
+import { selectUserData } from '../../storage/user/userSlice';
+
 const routes = [
   {
     path: '/',
-    component: Home
+    // component: Home,
+    render: props => { 
+      return (<Home />);
+    },
   },
   {
-    path: '/users/new',
-    component: Cadastro
+    path: '/cadastro',
+    // component: Cadastro,
+    render: props => { 
+      return (<Cadastro />);
+    },
   },
   {
     path: '/login',
-    component: Login
+    // component: Login,
+    render: props => { 
+      return (<Login />);
+    },
   }
 ];
 

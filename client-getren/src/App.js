@@ -6,12 +6,11 @@ import routes from './config/router/routes.js';
 function App() {
   const routeComponents = routes.map((route, i) => {
     return (
-    <Route key={i} exact={ route.path === '/' }
-        path={route.path}
-        render={props => (
-          <route.component {...props} />
-        )}
-      />
+    <Route key={i} 
+      exact={ route.path === '/' }
+      path={route.path}
+      render={route.render}
+    />
     );
   });
 
