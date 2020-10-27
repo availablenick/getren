@@ -11,6 +11,6 @@ migrate = Migrate(app, db)
 CORS(app)
 
 from app import models
-from app.controllers import authentication, profile
+from app.controllers import authentication, profile, enroll
 
 #app.run(port = 5000)
