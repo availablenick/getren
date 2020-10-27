@@ -1,0 +1,55 @@
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, Redirect } from 'react-router-dom';
+import axios from 'axios';
+
+import { selectUserData, login } from '../../storage/user/userSlice';
+
+function Cadastro() {
+
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const user = useSelector(selectUserData);
+
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    axios.post('http://localhost:5000/register', {
+      email: event.target.email.value,
+      password: event.target.password.value,
+      password_confirm: event.target.password_confirm.value,
+    }).then(response => {
+        dispatch(
+          login({
+            email: response.data.email,
+            password: response.data.password,
+          })
+        );
+
+        history.push('/');
+    });
+
+  }
+
+  if (user) {
+    return (<Redirect path='/' />);
+  } else {
+    return (
+      <div>
+        Página de cadastro
+        <form onSubmit={handleSubmit} method='post'>
+          <input type='text' name='email' placeholder='E-mail' />
+          <br/>
+          <input type='text' name='password' placeholder='Senha' />
+          <br/>
+          <input type='text' name='password_confirm' placeholder='Confirmar senha' />
+          <br/>
+          <button>Cadastrar</button>
+        </form>
+      </div>
+    );
+  }
+}
+
+export default Cadastro;
