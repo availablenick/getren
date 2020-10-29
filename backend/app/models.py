@@ -1,6 +1,3 @@
-#pip install flask-sqlalchemy
-#pip install flask-migrate
-
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -17,7 +14,7 @@ class User(db.Model):
   cursos = db.relationship('Curso', backref='autor', lazy='dynamic')
 
   def __repr__(self):
-    return '<User email: ' + self.email + '>'
+    return '<User email: ' + self.email + self.password_hash + '>'
 
   def set_password(self, password):
     self.password_hash = generate_password_hash(password)
@@ -31,6 +28,7 @@ class User(db.Model):
     new_user = cls(email=email, password_hash=generate_password_hash(password))
     db.session.add(new_user)
     db.session.commit()
+    return new_user
 
   @classmethod
   def update_data(cls, email, nome, data_nascimento, estado, cidade, profissao):

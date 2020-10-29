@@ -1,67 +1,75 @@
-#hattps://flask-login.readthedocs.io/en/latest/#installation
-#https://github.com/schoolofcode-me/web_blog/blob/master/src/app.py
-
-from flask import flash, request, render_template, redirect, url_for
+from flask import request
 from app.models import User
 from app import app
 import re
 
 @app.route('/register', methods = ['GET', 'POST'])
 def register():
+    error = None
     if request.method == 'POST':
         result = request.get_json()
         email = result['email']
         password = result['password']
         password_confirm = result['password_confirm']
-        error = []
+        errors = {
+            'email': [],
+            'password': [],
+            'password_confirm': [],
+        }
 
         if not email:
-            flash('É necessário incluir email')
-            error.append("Sem email")
+            errors['email'].append("Sem email")
         if not password:
-            flash('É necessário incluir senha')
-            error.append("Sem senha")
-        if len(password) < 8:
-            flash('A senha necessita de pelo menos 8 caracteres')
-            error.append("Senha curta")
-        if not re.search(r'[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+(\.\w+)?$', email):
-            flash('Esse email é inválido')
-            error.append("Email inválido")
+            errors['password'].append("Sem senha")
+        if password and len(password) < 8:
+            errors['password'].append("Senha curta")
+        if email and not re.search(r'[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+(\.\w+)?$', email):
+            errors['email'].append("Email inválido")
         user = User.query.filter_by(email=email).first()
         if user is not None:
-            flash('Esse email já está cadastrado.')
-            error.append("Email cadastrado")
+            errors['email'].append("Email cadastrado")
         if password_confirm != password:
-            flash('As senhas não coincidem.')
-            error.append("Confirmacao errada")
-        if error == []:
-            User.register(email,password)
-            #return redirect(url_for('profile'))
-            return {'confirmed': 1}
+            errors['password_confirm'].append("Confirmacao errada")
+        if (not any(errors.values())):
+            user = User.register(email,password)
+            response = {
+                'status': 200,
+                'user': {
+                    'email': user.email,
+                    'password': user.password_hash
+                }
+            }
+            return response
+
+        response = {
+            'status': 400,
+            'errors': errors
+        }
+        return response
+
     return {'confirmed': 0, 'errors': error}
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    error = None
     if request.method == 'POST':
         result = request.get_json()
         email = result['email']
         password = result['password']
-        if not email:
-            flash('Insira um email.')
-            return {'confirmed': 0, 'error': "Sem email"}
         user = User.query.filter_by(email=email).first()
-        if user is None:
-            flash('Esse email não está registrado.')
-            error = "Não registrado"
-        elif not user.check_password(password):
-            flash('O usuário/senha está incorreto/a.')
-            error = "Senha errada"
+        if not user or not user.check_password(password):
+            response = {
+                'status': 400,
+                'error': 'O usuário/senha está incorreto/a'
+            }
+            return response
         else:
-            #return redirect(url_for('profile'))
-            return {'confirmed': 1}
+            response = {
+                'status': 200,
+                'user': {
+                    'email': user.email,
+                    'password': user.password_hash
+                }
+            }
+            return response
     return {'confirmed': 0, 'error': error}
-
-#@app.route('/logout')
-#def logout():
-    # Avisa o react que foi deslogado
-    # return redirect(url_for('index'))

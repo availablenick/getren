@@ -6,32 +6,32 @@ import axios from 'axios';
 import { login, selectUserData } from '../../storage/user/userSlice.js';
 
 function Login() {
-  
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector(selectUserData);
 
-
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    axios.post('http://localhost:5000/login', {
+    axios.post('http://0.0.0.0:5000/login', {
       email: event.target.email.value,
       password: event.target.password.value,
-    }).then(response => {  
-      dispatch(
-        login({
-          email: response.data.email,
-          password: response.data.password,
-        })
-      );
+    }).then(response => {
+      if (response.data.status === 200) {
+        dispatch(
+          login({
+            email: response.data.user.email,
+            password: response.data.user.password,
+          })
+        );
 
-      history.push('/');
+        history.push('/');
+      }
     });
   }
-  
+
   if (user) {
-    return (<Redirect path='/' />);
+    return (<Redirect to='/' />);
   } else {
     return (
       <div>

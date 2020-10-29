@@ -6,34 +6,34 @@ import axios from 'axios';
 import { selectUserData, login } from '../../storage/user/userSlice';
 
 function Cadastro() {
-
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector(selectUserData);
 
-
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    axios.post('http://localhost:5000/register', {
+    axios.post('http://0.0.0.0:5000/register', {
       email: event.target.email.value,
       password: event.target.password.value,
       password_confirm: event.target.password_confirm.value,
     }).then(response => {
+      if (response.data.status === 200) {
         dispatch(
           login({
-            email: response.data.email,
-            password: response.data.password,
+            email: response.data.user.email,
+            password: response.data.user.password,
           })
         );
 
         history.push('/');
+      }
     });
 
   }
 
   if (user) {
-    return (<Redirect path='/' />);
+    return (<Redirect to='/' />);
   } else {
     return (
       <div>
