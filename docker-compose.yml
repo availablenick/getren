@@ -14,18 +14,21 @@ services:
     build: ./backend
     command: flask run
     restart: always
-    stdin_open: true
     environment:
       - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_ENV=development
     depends_on:
       - database
+    ports:
+      - 5000:5000
     volumes:
       - ./backend:/app
 
   client:
-    build: ./client-getren
-    command: yarn start
+    image: node:12.19.0
+    command: npm start
     restart: always
+    working_dir: /app
     stdin_open: true
     depends_on:
       - database

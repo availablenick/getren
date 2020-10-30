@@ -10,7 +10,7 @@ Para rodar a aplicação do servidor, vá à raiz do diretório rode:
 
 ```bash
   $ docker build -t getren_server ./backend
-  $ docker run --rm -it -p 5000:5000 -e "FLASK_RUN_HOST=0.0.0.0" --mount type=bind,src="$PWD/backend",dst=/app --name getren_server getren_server
+  $ docker run --rm -it -p 5000:5000 -e "FLASK_RUN_HOST=0.0.0.0" -e "FLASK_ENV=development" -v "$PWD/backend":/app --name getren_server getren_server bash
 ```
 
 Dentro do container, rode:
@@ -24,13 +24,13 @@ Após isso, vá até http://localhost:5000.
 Para rodar a aplicação do cliente, vá à raiz do diretório e rode:
 
 ```bash
-  $ docker build -t getren_client ./client-getren
-  $ docker run --rm -it -p 3000:3000 --mount type=bind,src="$PWD/client-getren",dst=/app --name getren_client getren_client
+  $ docker run --rm -it -p 3000:3000 -w /app -v "$PWD/client-getren":/app --name getren_client node:12.19.0 bash
 ```
 
 Dentro do container, rode:
 ```bash
-  $ yarn start
+  $ npm install
+  $ npm start
 ```
 
 Após isso, vá até http://localhost:3000.
@@ -61,13 +61,13 @@ Para cada container, inicialize-o conectado à rede. Faça-o na seguinte ordem, 
 ##### Servidor Flask:
 ```bash
   $ docker build -t getren_server ./backend
-  $ docker run --rm -it -e "FLASK_RUN_HOST=0.0.0.0" --network getren_network --network-alias server --mount type=bind,src="$PWD/backend",dst=/app --name getren_server getren_server bash
+  $ docker run --rm -it -p 5000:5000 -e "FLASK_RUN_HOST=0.0.0.0" -e "FLASK_ENV=development" --network getren_network --network-alias server -v "$PWD/backend":/app --name getren_server getren_server flask run
 ```
 
 ##### Cliente React:
 ```bash
   $ docker build -t getren_client ./client-getren
-  $ docker run --rm -it -p 3000:3000 --network getren_network --network-alias client --mount type=bind,src="$PWD/client-getren",dst=/app --name getren_client getren_client yarn start
+  $ docker run --rm -it -p 3000:3000 --network getren_network --network-alias client -v "$PWD/client-getren":/app --name getren_client getren_client npm start
 ```
 
 Após isso, vá até http://localhost:3000.
