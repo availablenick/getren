@@ -1,5 +1,5 @@
 from flask import flash, request
-from app.models import Curso
+from app.models import Course
 from app import app
 
 @app.route('/enroll', methods=['GET', 'POST'])
