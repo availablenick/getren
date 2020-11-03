@@ -8,7 +8,7 @@ class Attends(db.Model):
   course_id = db.Column(db.Integer, db.ForeignKey('course.id'), primary_key=True)
   progress = db.Column(db.Integer)
   user = db.relationship("User", back_populates="courses_taken")
-  course = db.relationship("Courses", back_populates="users_attending")
+  course = db.relationship("Course", back_populates="users_attending")
 
 class Watches(db.Model):
   __tablename__ = "watches"
@@ -68,17 +68,17 @@ class Course(db.Model):
   number_of_videos = db.Column(db.Integer)
   duration = db.Column(db.Integer)
   videos = db.relationship('Video', backref='course', lazy='dynamic')
-  users_attending = db.relationship("Attends", back_populates="courses")
+  users_attending = db.relationship("Attends", back_populates="course")
   users_teaching = db.relationship("User", secondary=teaches, back_populates="courses_taught")
 
-  # @classmethod
-  # def course_enroll(cls, nome_curso, user_id):
-  #   enroll = cls(nome_curso=nome_curso, user_id=user_id)
-  #   db.session.add(enroll)
-  #   db.session.commit()
+  def __repr__(self):
+    return self.name
 
 class Video(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   youtube_code = db.Column(db.String(128))
   course_id = db.Column(db.Integer, db.ForeignKey("course.id"))
   users_viewed = db.relationship("Watches", back_populates="video")
+
+  def __repr__(self):
+    return self.youtube_code
