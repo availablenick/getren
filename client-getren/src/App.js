@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
+
 import Footer from './components/common/Footer.js';
 import routes from './config/router/routes.js';
 

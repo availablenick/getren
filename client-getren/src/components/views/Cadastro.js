@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 
 import { login } from '../../storage/user/userSlice';
@@ -17,29 +16,6 @@ class Cadastro extends React.Component {
     this.state = {
       errors: {}
     }
-  }
-
-  handleSubmit = (event) => {
-    event.preventDefault();
-
-    axios.post('http://0.0.0.0:5000/register', {
-      email: event.target.email.value,
-      password: event.target.password.value,
-      password_confirm: event.target.password_confirm.value,
-    }).then(response => {
-      if (response.data.status === 200) {
-        this.props.dispatch(
-          login({
-            email: response.data.user.email,
-            password: response.data.user.password,
-          })
-        );
-
-        history.push('/');
-      } else if (response.data.status === 400) {
-        this.setState({ errors: response.data.errors });
-      }
-    });
   }
 
   render() {
@@ -74,6 +50,29 @@ class Cadastro extends React.Component {
         </form>
       </div>
     );
+  }
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+
+    axios.post('http://0.0.0.0:5000/register', {
+      email: event.target.email.value,
+      password: event.target.password.value,
+      password_confirm: event.target.password_confirm.value,
+    }).then(response => {
+      if (response.data.status === 200) {
+        this.props.dispatch(
+          login({
+            email: response.data.user.email,
+            password: response.data.user.password,
+          })
+        );
+
+        history.push('/');
+      } else if (response.data.status === 400) {
+        this.setState({ errors: response.data.errors });
+      }
+    });
   }
 }
 
