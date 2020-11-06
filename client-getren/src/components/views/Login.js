@@ -1,16 +1,21 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 
-import { login, selectUserData } from '../../storage/user/userSlice.js';
+import { login } from '../../storage/user/userSlice.js';
+import history from '../../config/router/history.js';
 
-function Login() {
-  const dispatch = useDispatch();
-  const history = useHistory();
-  const user = useSelector(selectUserData);
+class Login extends React.Component {
+  constructor(props) {
+    super(props);
 
-  const handleSubmit = (event) => {
+    if (props.user.data) {
+      history.push('/');
+    }
+  }
+
+  handleSubmit = (event) => {
     event.preventDefault();
 
     axios.post('http://0.0.0.0:5000/login', {
@@ -18,7 +23,7 @@ function Login() {
       password: event.target.password.value,
     }).then(response => {
       if (response.data.status === 200) {
-        dispatch(
+        this.props.dispatch(
           login({
             email: response.data.user.email,
             password: response.data.user.password,
@@ -30,13 +35,11 @@ function Login() {
     });
   }
 
-  if (user) {
-    return (<Redirect to='/' />);
-  } else {
+  render() {
     return (
       <div>
         Página de login
-        <form onSubmit={handleSubmit} method='post'>
+        <form onSubmit={this.handleSubmit} method='post'>
           <input type='text' name='email' placeholder='E-mail' />
           <br/>
           <input type='text' name='password' placeholder='Senha' />
@@ -48,4 +51,8 @@ function Login() {
   }
 }
 
-export default Login;
+const mapStateToProps = (state) => {
+  return { user: state.user }
+}
+
+export default connect(mapStateToProps)(Login);
