@@ -1,6 +1,7 @@
 from flask import request
+from flask_mail import Message
 from app.models import User
-from app import app
+from app import app, mail
 import re
 
 @app.route('/register', methods = ['GET', 'POST'])
@@ -73,3 +74,50 @@ def login():
             }
             return response
     return {'confirmed': 0, 'error': error}
+
+
+@app.route('/confirmation', methods=['GET', 'POST'])
+def confirmation():
+    result = request.get_json()
+    email = result['email']
+    link = result['link']
+    confirmed = result['confirmed']
+    if confirmed == False:
+        msg = Message("Verificação de Conta", recipients=[email])
+        msg.html = f"Você se registrou em getren.com.br. Para confirmar sua conta, acesse <a href={link}>AQUI</a>. Caso não tenha sido você, apenas ignore esta mensagem. Obrigado, equipe Getren"
+        try:
+            mail.send(msg)
+            return {'status': 200}
+        except Exception as E:
+            return {'status': 500}
+    if confirmed == True:
+        try:
+            User.confirm_user(email)
+            return {'status': 200}
+        except Exception as E:
+            return {'status': 500}
+
+@app.route('/password_forgot', methods=['GET', 'POST'])
+def forgotten_password():
+    result = request.get_json()
+    email = result['email']
+    link = result['link']
+    msg = Message("Redefinição de Senha", recipients=[email])
+    msg.html = f"Você solicitou uma redefinição de senha. Para redefini-la, acesse <a href={link}>AQUI</a>. Caso não tenha solicitado a redefinição de senha, ignore essa mensagem"
+    try:
+        mail.send(msg)
+        return {'status': 200}
+    except Exception as E:
+        return {'status': 500}
+
+@app.route('/redefine_password', methods=['GET', 'POST'])
+def redefine_password():
+    result = request.get_json()
+    email = result['email']
+    new_password = result['password']
+    try:
+        User.update_password(email, new_password)
+        return {'status': 200}
+    except Exception as E:
+        return {'status': 500}
+
