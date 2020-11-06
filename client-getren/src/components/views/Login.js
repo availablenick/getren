@@ -13,6 +13,10 @@ class Login extends React.Component {
     if (props.user.data) {
       history.push('/');
     }
+
+    this.state = {
+      error: null
+    }
   }
 
   handleSubmit = (event) => {
@@ -31,16 +35,24 @@ class Login extends React.Component {
         );
 
         history.push('/');
+      } else if (response.data.status === 400) {
+        this.setState({ error: response.data.error });
       }
     });
   }
 
   render() {
+    let error_section = '';
+    if (this.state.error) {
+      error_section = <ul><li>{this.state.error}</li></ul>;
+    }
+
     return (
       <div>
         Página de login
         <form onSubmit={this.handleSubmit} method='post'>
           <input type='text' name='email' placeholder='E-mail' />
+          { error_section }
           <br/>
           <input type='text' name='password' placeholder='Senha' />
           <br/>

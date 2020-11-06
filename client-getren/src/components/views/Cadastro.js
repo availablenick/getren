@@ -13,6 +13,10 @@ class Cadastro extends React.Component {
     if (props.user.data) {
       history.push('/');
     }
+
+    this.state = {
+      errors: {}
+    }
   }
 
   handleSubmit = (event) => {
@@ -32,21 +36,40 @@ class Cadastro extends React.Component {
         );
 
         history.push('/');
+      } else if (response.data.status === 400) {
+        this.setState({ errors: response.data.errors });
       }
     });
   }
 
   render() {
+    let error_section = {};
+    for (let error of Object.keys(this.state.errors)) {
+      if (this.state.errors[error].length <= 0) {
+        error_section[error] = '';
+      } else {
+        error_section[error] = 
+          <ul>
+            {this.state.errors[error].map((message, i) => {
+              return <li key={i}>{message}</li>;
+            })}
+          </ul>
+      }
+    }
+
     return (
       <div>
         Página de cadastro
         <form onSubmit={this.handleSubmit} method='post'>
           <input type='text' name='email' placeholder='E-mail' />
           <br/>
+          { error_section['email'] }
           <input type='text' name='password' placeholder='Senha' />
           <br/>
+          { error_section['password'] }
           <input type='text' name='password_confirm' placeholder='Confirmar senha' />
           <br/>
+          { error_section['password_confirm'] }
           <button>Cadastrar</button>
         </form>
       </div>
