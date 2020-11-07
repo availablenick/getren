@@ -1,16 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 
 import { login } from '../../storage/user/userSlice';
-import history from '../../config/router/history.js';
 
 class Cadastro extends React.Component {
   constructor(props) {
     super(props);
 
     if (props.user.data) {
-      history.push('/');
+      props.history.push('/');
     }
 
     this.state = {
@@ -68,7 +68,7 @@ class Cadastro extends React.Component {
           })
         );
 
-        history.push('/');
+        this.props.history.push('/');
       } else if (response.data.status === 400) {
         this.setState({ errors: response.data.errors });
       }
@@ -80,4 +80,4 @@ const mapStateToProps = (state) => {
   return { user: state.user }
 }
 
-export default connect(mapStateToProps)(Cadastro);
+export default withRouter(connect(mapStateToProps)(Cadastro));

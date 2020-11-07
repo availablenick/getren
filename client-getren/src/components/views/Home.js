@@ -15,6 +15,9 @@ class Home extends React.Component {
         <Link to='/cadastro'>Cadastro</Link>
         <br/>
         <Link to='/login'>Login</Link>
+        <br/>
+        <Link to='/confirmacao/example@gmail.com/12345'>Confirmação</Link>
+        <br/>
         <button onClick={this.handleClick}>Sair</button>
 
         <div>{ this.props.user.data != null ? this.props.user.data.email : '' }</div>
