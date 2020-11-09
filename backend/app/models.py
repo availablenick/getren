@@ -61,7 +61,12 @@ class User(db.Model):
 
   @classmethod
   def update_password(cls, email, password):
-    db.session.query(User).filter(User.email==email).update({User.password_hash: generate_password_hash(password)})
+    user = db.session.query(User).filter(User.email==email)
+    user.update({User.password_hash: generate_password_hash(password)})
+    db.session.commit()
+    user = user.first()
+    new_token = generate_password_hash(user.password_hash)[30:54]
+    db.session.query(User).filter(User.email==email).update({User.password_token: new_token})
     db.session.commit()
 
   @classmethod

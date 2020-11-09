@@ -97,8 +97,11 @@ def confirmation():
             return {'status': 500}
     if confirmed == True:
         try:
-            User.confirm_user(email)
-            return {'status': 200}
+            if token == result['token']:
+                User.confirm_user(email)
+                return {'status': 200}
+            else:
+                return {'status': 400}
         except Exception as E:
             return {'status': 500}
 
@@ -106,7 +109,9 @@ def confirmation():
 def forgotten_password():
     result = request.get_json()
     email = result['email']
-    link = result['link']
+    user = User.query.filter_by(email=email).first()
+    token = user.password_token
+    link = f'/refresh_password?email={email}&token={token}'
     msg = Message("Redefinição de Senha", recipients=[email])
     msg.html = f"Você solicitou uma redefinição de senha. Para redefini-la, acesse <a href={link}>AQUI</a>. Caso não tenha solicitado a redefinição de senha, ignore essa mensagem"
     try:
@@ -120,9 +125,14 @@ def redefine_password():
     result = request.get_json()
     email = result['email']
     new_password = result['password']
+    user = User.query.filter_by(email=email).first()
+    token = user.password_token
     try:
-        User.update_password(email, new_password)
-        return {'status': 200}
+        if token == result['token']:
+            User.update_password(email, new_password)
+            return {'status': 200}
+        else:
+            return {'status': 400}
     except Exception as E:
         return {'status': 500}
 
