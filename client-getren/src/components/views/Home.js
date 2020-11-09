@@ -15,10 +15,12 @@ class Home extends React.Component {
         <Link to='/cadastro'>Cadastro</Link>
         <br/>
         <Link to='/login'>Login</Link>
+        <br/>
+        <Link to='/perfil'>Perfil</Link>
         <button onClick={this.handleClick}>Sair</button>
 
         <div>{ this.props.user.data != null ? this.props.user.data.email : '' }</div>
-        <div>{ this.props.user.data != null ? this.props.user.data.password : '' }</div>
+        {/* <div>{ this.props.user.data != null ? this.props.user.data.password : '' }</div> */}
       </div>
     );
   }

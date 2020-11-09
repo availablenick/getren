@@ -3,6 +3,7 @@ import React from 'react';
 import Home from '../../components/views/Home.js';
 import Cadastro from '../../components/views/Cadastro.js';
 import Login from '../../components/views/Login.js';
+import Perfil from '../../components/views/Perfil.js';
 
 const routes = [
   {
@@ -25,7 +26,14 @@ const routes = [
     render: props => { 
       return (<Login />);
     },
-  }
+  },
+  {
+    path: '/perfil',
+    // component: Login,
+    render: props => { 
+      return (<Perfil />);
+    },
+  },
 ];
 
 export default routes;

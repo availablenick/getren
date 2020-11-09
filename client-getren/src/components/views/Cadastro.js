@@ -55,7 +55,7 @@ class Cadastro extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
 
-    axios.post('http://0.0.0.0:5000/register', {
+    axios.post('http://localhost:5000/register', {
       email: event.target.email.value,
       password: event.target.password.value,
       password_confirm: event.target.password_confirm.value,
