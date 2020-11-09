@@ -2,6 +2,7 @@ from flask import request
 from flask_mail import Message
 from app.models import User
 from app import app, mail
+from multiprocessing import Process
 import re
 
 @app.route('/register', methods = ['GET', 'POST'])
@@ -33,6 +34,8 @@ def register():
             errors['password_confirm'].append("Confirmacao errada")
         if (not any(errors.values())):
             user = User.register(email,password)
+            send_email = Process(target=confirm_email, args=(email,), daemon=True)
+            send_email.start()
             response = {
                 'status': 200,
                 'user': {
@@ -80,7 +83,9 @@ def login():
 def confirmation():
     result = request.get_json()
     email = result['email']
-    link = result['link']
+    user = User.query.filter_by(email=email).first()
+    token = user.confirmation_token
+    link = f'/confirmacao?email={email}&token={token}'
     confirmed = result['confirmed']
     if confirmed == False:
         msg = Message("Verificação de Conta", recipients=[email])
@@ -120,4 +125,13 @@ def redefine_password():
         return {'status': 200}
     except Exception as E:
         return {'status': 500}
+
+def confirm_email(email):
+    user = User.query.filter_by(email=email).first()
+    token = user.confirmation_token
+    link = f'/confirmacao?email={email}&token={token}'
+    msg = Message("Verificação de Conta", recipients=[email])
+    msg.html = f"Você se registrou em getren.com.br. Para confirmar sua conta, acesse <a href={link}>AQUI</a>. Caso não tenha sido você, apenas ignore esta mensagem. Obrigado, equipe Getren"
+    mail.send(msg)
+
 

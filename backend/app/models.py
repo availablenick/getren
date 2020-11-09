@@ -34,6 +34,8 @@ class User(db.Model):
   cidade = db.Column(db.String(64), index=True)
   profissao = db.Column(db.String(64), index=True)
   confirmation = db.Column(db.Boolean)
+  confirmation_token = db.Column(db.String(128))
+  password_token = db.Column(db.String(128))
   courses_taken = db.relationship("Attends", back_populates="user")
   courses_taught = db.relationship("Course", secondary=teaches, back_populates="users_teaching")
   videos_watched = db.relationship("Watches", back_populates="user")
@@ -51,6 +53,8 @@ class User(db.Model):
   @classmethod
   def register(cls, email, password):
     new_user = cls(email=email, password_hash=generate_password_hash(password), confirmation = False)
+    new_user.confirmation_token = generate_password_hash(email)[30:54]
+    new_user.password_token = generate_password_hash(new_user.password_hash)[30:54]
     db.session.add(new_user)
     db.session.commit()
     return new_user
