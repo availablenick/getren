@@ -32,13 +32,19 @@ def register():
             errors['password_confirm'].append("Confirmacao errada")
         if (not any(errors.values())):
             user = User.register(email,password)
-            response = {
-                'status': 200,
-                'user': {
-                    'email': user.email,
-                    'password': user.password_hash
+            if user:
+                response = {
+                    'status': 200,
+                    'user': {
+                        'email': user.email,
+                        'password': user.password_hash
+                    }
                 }
-            }
+            
+            else:
+                response = {
+                    'status': 500
+                }
             return response
 
         response = {

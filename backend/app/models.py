@@ -51,8 +51,11 @@ class User(db.Model):
   def register(cls, email, password):
     new_user = cls(email=email, password_hash=generate_password_hash(password))
     db.session.add(new_user)
-    db.session.commit()
-    return new_user
+    try:
+      db.session.commit()
+      return new_user
+    except Exception as x:
+      return None
 
   @classmethod
   def update_data(cls, email, nome, data_nascimento, estado, cidade, profissao):
