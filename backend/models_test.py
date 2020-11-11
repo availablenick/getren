@@ -33,12 +33,15 @@ class User(db.Model):
   estado = db.Column(db.String(64), index=True)
   cidade = db.Column(db.String(64), index=True)
   profissao = db.Column(db.String(64), index=True)
+  confirmation = db.Column(db.Boolean)
+  confirmation_token = db.Column(db.String(128))
+  password_token = db.Column(db.String(128))
   courses_taken = db.relationship("Attends", back_populates="user")
   courses_taught = db.relationship("Course", secondary=teaches, back_populates="users_teaching")
   videos_watched = db.relationship("Watches", back_populates="user")
 
   def __repr__(self):
-    return '<User email: ' + self.email + self.password_hash + '>'
+    return '<User email: ' + self.email + '>'
 
   def set_password(self, password):
     self.password_hash = generate_password_hash(password)
@@ -49,7 +52,9 @@ class User(db.Model):
 
   @classmethod
   def register(cls, email, password):
-    new_user = cls(email=email, password_hash=generate_password_hash(password))
+    new_user = cls(email=email, password_hash=generate_password_hash(password), confirmation = False)
+    new_user.confirmation_token = generate_password_hash(email)[30:54]
+    new_user.password_token = generate_password_hash(new_user.password_hash)[30:54]
     db.session.add(new_user)
     try:
       db.session.commit()
@@ -58,9 +63,33 @@ class User(db.Model):
       return None
 
   @classmethod
+  def update_password(cls, email, password):
+    user = db.session.query(User).filter(User.email==email)
+    user.update({User.password_hash: generate_password_hash(password)})
+    db.session.commit()
+    user = user.first()
+    new_token = generate_password_hash(user.password_hash)[30:54]
+    db.session.query(User).filter(User.email==email).update({User.password_token: new_token})
+    db.session.commit()
+
+  @classmethod
   def update_data(cls, email, nome, data_nascimento, estado, cidade, profissao):
     db.session.query(User).filter(User.email==email).update({User.nome: nome, User.data_nascimento: data_nascimento, User.estado: estado, User.cidade: cidade, User.profissao: profissao})
-    db.session.commit()
+    try:
+      db.session.commit()
+      return db.session.query(User).filter(User.email==email).first()
+    except Exception as e:
+      return None
+
+  @classmethod
+  def confirm_user(cls, email):
+    db.session.query(User).filter(User.email==email).update({User.confirmation: True})
+    try:
+      db.session.commit()
+      return db.session.query(User).filter(User.email==email).first()
+    except Exception as e:
+      return None
+
 
 
 class Course(db.Model):

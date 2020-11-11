@@ -42,8 +42,9 @@ def register():
                     'email': user.email,
                     'password': user.password_hash
                 }
+            }
             return response
-
+            
         response = {
             'status': 400,
             'errors': errors

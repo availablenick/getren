@@ -66,11 +66,18 @@ class User(db.Model):
   def update_password(cls, email, password):
     user = db.session.query(User).filter(User.email==email)
     user.update({User.password_hash: generate_password_hash(password)})
-    db.session.commit()
+    try:
+      db.session.commit()
+    except Exception as e:
+      return None
     user = user.first()
     new_token = generate_password_hash(user.password_hash)[30:54]
     db.session.query(User).filter(User.email==email).update({User.password_token: new_token})
-    db.session.commit()
+    try:
+      db.session.commit()
+      return db.session.query(User).filter(User.email==email).first()
+    except Exception as e:
+      return None
 
   @classmethod
   def update_data(cls, email, nome, data_nascimento, estado, cidade, profissao):
@@ -84,7 +91,12 @@ class User(db.Model):
   @classmethod
   def confirm_user(cls, email):
     db.session.query(User).filter(User.email==email).update({User.confirmation: True})
-    db.session.commit()
+    try:
+      db.session.commit()
+      return db.session.query(User).filter(User.email==email).first()
+    except Exception as e:
+      return None
+
 
 
 class Course(db.Model):

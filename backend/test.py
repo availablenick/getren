@@ -29,22 +29,44 @@ class MyTest(flask_testing.TestCase):
 
 class UserTest(MyTest):
 
-    def test_create(self):
+    def test_1_create(self):
         user = User.register("getren@gmail.com", "12345678")
         assert user is not None
 
-    def test_repeated(self):
-        user = User.register("getren@gmail.com", "12345678")
-        new_user = User.register("getren@gmail.com", "81723981723")
-        assert user is not None and new_user is None
-
-    def test_fill_register(self):
+    def test_2_fill_register(self):
         user = User.register("getren@gmail.com", "12345678")
         user = User.update_data("getren@gmail.com", "Getren", \
             datetime.datetime.strptime("2020-11-11", '%Y-%m-%d'), "SP", "São Paulo", "Fisioterapeuta")
         assert user is not None
 
-    
+    def test_3_fill_register_miss(self):
+        user = User.update_data("getren@gmail.com", "Getren", \
+            datetime.datetime.strptime("2020-11-11", '%Y-%m-%d'), "SP", "São Paulo", "Fisioterapeuta")
+        assert user is None
+
+    def test_4_confirmation(self):
+        user = User.register("getren@gmail.com", "12345678")
+        user = User.confirm_user("getren@gmail.com")
+        assert user is not None
+
+    def test_5_confirmation_miss(self):
+        user = User.confirm_user("getren@gmail.com")
+        assert user is None
+
+    def test_6_update_password(self):
+        user = User.register("getren@gmail.com", "12345678")
+        user = User.update_password("getren@gmail.com", "87654321")
+        assert user is not None
+
+    def test_7_update_miss(self):
+        user = User.update_password("getren@gmail.com")
+        assert user is None   
+
+    def test_ZZZ_repeated(self):
+        user = User.register("getren@gmail.com", "12345678")
+        new_user = User.register("getren@gmail.com", "81723981723")
+        assert user is not None and new_user is None
+
 if __name__ == "__main__":
     unittest.main()
     
