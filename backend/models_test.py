@@ -1,4 +1,4 @@
-from app import db
+from app import test_db as db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
@@ -60,11 +60,7 @@ class User(db.Model):
   @classmethod
   def update_data(cls, email, nome, data_nascimento, estado, cidade, profissao):
     db.session.query(User).filter(User.email==email).update({User.nome: nome, User.data_nascimento: data_nascimento, User.estado: estado, User.cidade: cidade, User.profissao: profissao})
-    try:
-      db.session.commit()
-      return db.session.query(User).filter(User.email==email).first()
-    except Exception as e:
-      return None
+    db.session.commit()
 
 
 class Course(db.Model):
