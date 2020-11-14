@@ -14,7 +14,9 @@ class Cadastro extends React.Component {
     }
 
     this.state = {
-      errors: {}
+      errors: {},
+      requestSent: false,
+      userRegistered: false
     }
   }
 
@@ -33,29 +35,56 @@ class Cadastro extends React.Component {
       }
     }
 
-    return (
-      <div>
-        Página de cadastro
-        <form onSubmit={this.handleSubmit} method='post'>
-          <input type='text' name='email' placeholder='E-mail' />
-          <br/>
-          { error_section['email'] }
-          <input type='text' name='password' placeholder='Senha' />
-          <br/>
-          { error_section['password'] }
-          <input type='text' name='password_confirm' placeholder='Confirmar senha' />
-          <br/>
-          { error_section['password_confirm'] }
-          <button>Cadastrar</button>
-        </form>
-      </div>
-    );
+    let content = '';
+    if (!this.state.userRegistered) {
+      content = 
+        <div>
+          <h2>Página de Cadastro</h2>
+          <form onSubmit={this.handleSubmit} method='post'>
+            <input type='text' name='email' placeholder='E-mail' />
+            <br/>
+            { error_section['email'] }
+            <input type='text' name='password' placeholder='Senha' />
+            <br/>
+            { error_section['password'] }
+            <input type='text' name='password_confirm' placeholder='Confirmar senha' />
+            <br/>
+            { error_section['password_confirm'] }
+            <button>Cadastrar</button>
+          </form>
+          {
+            this.state.requestSent &&
+              <span>
+                Cadastrando...
+              </span>
+          }
+        </div>
+    } else {
+      content = 
+        <div>
+          <span>
+            Usuário cadastrado. 
+            Um email foi enviado para 
+            {this.props.user.data.email} para confirmar seu cadastro.
+            Clique no botão para reenviar o email.
+          </span>
+          <button onClick={this.handleClick}>Reenviar email</button>
+        </div>
+    }
+
+    return content;
   }
 
   handleSubmit = (event) => {
     event.preventDefault();
+    
+    if (this.state.userRegistered) {
+      return;
+    }
+    
+    this.setState({ requestSent: true });
 
-    axios.post('http://0.0.0.0:5000/register', {
+    axios.post('http://localhost:5000/register', {
       email: event.target.email.value,
       password: event.target.password.value,
       password_confirm: event.target.password_confirm.value,
@@ -64,16 +93,36 @@ class Cadastro extends React.Component {
         this.props.dispatch(
           login({
             email: response.data.user.email,
-            password: response.data.user.password,
+            id: response.data.user.id,
           })
         );
-
-        this.props.history.push('/');
+        this.setState({ userRegistered: true });
+        return axios.post('http://localhost:5000/confirmation', {
+          email: response.data.user.email,
+          confirmed: false
+        });
       } else if (response.data.status === 400) {
-        this.setState({ errors: response.data.errors });
+        this.setState({ 
+          errors: response.data.errors,
+          requestSent: false 
+        });
+      }
+    }).then(response => {
+      if (response && response.data.status === 200) {
+        setTimeout(() => {
+          this.props.history.push('/');
+        }, 15000);
       }
     });
   }
+
+  handleClick = (event) => {
+    axios.post('http://localhost:5000/confirmation', {
+      email: this.props.user.data.email,
+      confirmed: false
+    });
+  }
+
 }
 
 const mapStateToProps = (state) => {

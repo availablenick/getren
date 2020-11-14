@@ -7,25 +7,38 @@ class Confirmacao extends React.Component {
     super(props);
 
     this.state = {
-      isUserActivated: false
+      isLoadingRequest: true,
+      message: '',
     };
   }
 
   componentDidMount() {
-    let { email, token } = this.props.match.params;
-    let url = 'http://0.0.0.0:5000/confirmation?email=' + email + '&token=' + token;
-    axios.get(url)
-    .then(response => {
+    let queryParams = {}; 
+    new URLSearchParams(this.props.location.search).forEach((value, key) => {
+      queryParams[key] = value;
+    });
+    axios.post('http://localhost:5000/confirmation', {
+      ...queryParams,
+      'confirmed': true, 
+    }).then(response => {
       if (response.data.status === 200) {
-        this.state.isUserActivated = true;
+        this.setState({
+          isLoadingRequest: false,
+          message: 'Usuário ativado com sucesso!'
+        });
+      } else {
+        this.setState({
+          isLoadingRequest: false,
+          message: 'Erro na ativação do usuário. Tente novamente!'
+        });
       }
     });
   }
 
   render() {
-    let message = <h2>Houve algum problema</h2>;
-    if (this.state.isUserActivated) {
-      message = <h2>Usuário ativado com sucesso</h2>;
+    let message = <h2>Aguarde...</h2>;
+    if (!this.state.isLoadingRequest) {
+      message = <h2>{this.state.message}</h2>;
     }
     
     return (

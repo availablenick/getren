@@ -16,7 +16,7 @@ class Home extends React.Component {
         <br/>
         <Link to='/login'>Login</Link>
         <br/>
-        <Link to='/confirmacao/example@gmail.com/12345'>Confirmação</Link>
+        <Link to='/confirmacao?email=token4@to.com&token=acdac21094d1a899b7a44ae1'>Confirmação</Link>
         <br/>
         <button onClick={this.handleClick}>Sair</button>
 

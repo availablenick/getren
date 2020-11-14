@@ -28,7 +28,7 @@ const routes = [
     },
   },
   {
-    path: '/confirmacao/:email/:token',
+    path: '/confirmacao',
     // component: Login,
     render: props => { 
       return (<Confirmacao />);

@@ -42,7 +42,7 @@ class Login extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
 
-    axios.post('http://0.0.0.0:5000/login', {
+    axios.post('http://localhost:5000/login', {
       email: event.target.email.value,
       password: event.target.password.value,
     }).then(response => {
@@ -50,7 +50,7 @@ class Login extends React.Component {
         this.props.dispatch(
           login({
             email: response.data.user.email,
-            password: response.data.user.password,
+            id: response.data.user.id,
           })
         );
 
