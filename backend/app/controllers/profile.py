@@ -17,6 +17,8 @@ def dados():
         user = User.update_data(email, nome, data_nascimento, estado, cidade, profissao)
         if user is not None:
             return {'status': 200}
-
-    return {'status': 500}
+        else:
+            return {'status': 500,
+                    'error': 'Usuário não atualizado'}
+    return {'status': 200}
 

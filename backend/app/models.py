@@ -64,18 +64,13 @@ class User(db.Model):
 
   @classmethod
   def update_password(cls, email, password):
+    password_hash = generate_password_hash(password)
+    password_token = password_hash[30:54]
     user = db.session.query(User).filter(User.email==email)
-    user.update({User.password_hash: generate_password_hash(password)})
+    user.update({User.password_hash: password_hash, User.password_token: password_token})
     try:
       db.session.commit()
-    except Exception as e:
-      return None
-    user = user.first()
-    new_token = generate_password_hash(user.password_hash)[30:54]
-    db.session.query(User).filter(User.email==email).update({User.password_token: new_token})
-    try:
-      db.session.commit()
-      return db.session.query(User).filter(User.email==email).first()
+      return user.first()
     except Exception as e:
       return None
 

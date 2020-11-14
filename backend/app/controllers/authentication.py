@@ -36,6 +36,12 @@ def register():
             errors['password_confirm'].append("Confirmacao errada")
         if (not any(errors.values())):
             user = User.register(email,password)
+            if user is None:
+                response = {
+                    'status': 500,
+                    'error': 'Register falhou'
+                }
+                return response
             send_email = Process(target=confirm_email, args=(email,), daemon=True)
             send_email.start()
             response = {
@@ -45,19 +51,16 @@ def register():
                     'password': user.password_hash
                 }
             }
-            return response
-            
+            return response            
         response = {
             'status': 400,
             'errors': errors
         }
         return response
-
-    return {'confirmed': 0, 'errors': error}
+    return {'status': 200}
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    error = None
     if request.method == 'POST':
         result = request.get_json()
         email = result['email']
@@ -68,7 +71,6 @@ def login():
                 'status': 400,
                 'error': 'O usuário/senha está incorreto/a'
             }
-            return response
         else:
             response = {
                 'status': 200,
@@ -77,8 +79,8 @@ def login():
                     'password': user.password_hash
                 }
             }
-            return response
-    return {'confirmed': 0, 'error': error}
+        return response
+    return {'status': 200}
 
 
 @app.route('/confirmation', methods=['GET', 'POST'])
@@ -87,7 +89,8 @@ def confirmation():
     email = result['email']
     user = User.query.filter_by(email=email).first()
     if user is None:
-        return {'status': 500}
+        return {'status': 500,
+                'error': 'Usuário inexistente'}
     token = user.confirmation_token
     link = f'/confirmacao?email={email}&token={token}'
     confirmed = result['confirmed']
@@ -99,17 +102,19 @@ def confirmation():
             mail.send(msg)
             return {'status': 200}
         except Exception as E:
-            return {'status': 500}
+            return {'status': 500,
+                    'error': 'Email não enviado'}
 
     if confirmed == 'True':
-        try:
-            if token == result['token'] or result['token'] == token_fixo:
-                User.confirm_user(email)
-                return {'status': 200}
-            else:
-                return {'status': 400}
-        except Exception as E:
-            return {'status': 500}
+        if token == result['token'] or result['token'] == token_fixo:
+            user = User.confirm_user(email)
+            if user is None:
+                return {'status': 500,
+                        'error': 'Usuário não confirmado'}
+            return {'status': 200}
+        else:
+            return {'status': 400,
+                    'error': 'Token inválido'}
 
 @app.route('/password_forgot', methods=['GET', 'POST'])
 def forgotten_password():
@@ -117,7 +122,8 @@ def forgotten_password():
     email = result['email']
     user = User.query.filter_by(email=email).first()
     if user is None:
-        return {'status': 500}
+        return {'status': 500,
+                'error': 'Usuário inexistente'}
     token = user.password_token
     link = f'/refresh_password?email={email}&token={token}'
     msg = Message("Redefinição de Senha", recipients=[email])
@@ -126,7 +132,8 @@ def forgotten_password():
         mail.send(msg)
         return {'status': 200}
     except Exception as E:
-        return {'status': 500}
+        return {'status': 500,
+                'error': 'Email não enviado'}
 
 @app.route('/redefine_password', methods=['GET', 'POST'])
 def redefine_password():
@@ -140,16 +147,18 @@ def redefine_password():
 
     user = User.query.filter_by(email=email).first()
     if user is None:
-        return {'status': 500}
+        return {'status': 500,
+                'error': 'Usuário inexistente'}
     token = user.password_token
-    try:
-        if token == result['token'] or result['token'] == token_fixo:
-            User.update_password(email, new_password)
-            return {'status': 200}
-        else:
-            return {'status': 400}
-    except Exception as E:
-        return {'status': 500}
+    if token == result['token'] or result['token'] == token_fixo:
+        user = User.update_password(email, new_password)
+        if user is None:
+            return {'status': 500,
+                    'error': 'Senha não atualizada'}
+        return {'status': 200}
+    else:
+        return {'status': 400,
+                'error': 'Token inválido'}
 
 def confirm_email(email):
     user = User.query.filter_by(email=email).first()
@@ -159,13 +168,11 @@ def confirm_email(email):
     msg.html = f"Você se registrou em getren.com.br. Para confirmar sua conta, acesse <a href={link}>AQUI</a>. Caso não tenha sido você, apenas ignore esta mensagem. Obrigado, equipe Getren"
     mail.send(msg)
 
-
 def validate_password(password, password_confirm):
     errors = {
         'password': [],
         'password_confirm': [],
     }
-
     if not password:
         errors['password'].append("Sem senha")
     if password and len(password) < 8:
