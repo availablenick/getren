@@ -1,29 +1,51 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { connect } from 'react-redux';
+import axios from 'axios';
 
 import Footer from './components/common/Footer.js';
 import routes from './config/router/routes.js';
 
-function App() {
-  const routeComponents = routes.map((route, i) => {
+import { login } from './storage/user/userSlice.js';
+
+class App extends React.Component {
+  
+  componentDidMount() {
+    axios.get('http://localhost:5000/validateToken', { withCredentials: true })
+      .then(response => {
+        if (response.status === 200) {
+          this.props.dispatch(
+            login({
+              email: response.data.email,
+              id: response.data.id,
+            })
+          );
+        }
+      });
+  }
+
+  render() {
+    const routeComponents = routes.map((route, i) => {
+      return (
+      <Route key={i} 
+        exact={ route.path === '/' }
+        path={route.path}
+        render={route.render}
+      />
+      );
+    });
+  
     return (
-    <Route key={i} 
-      exact={ route.path === '/' }
-      path={route.path}
-      render={route.render}
-    />
+      <div>
+        <Switch>
+          { routeComponents }
+        </Switch>
+  
+        <Footer />
+      </div>
     );
-  });
+  }
 
-  return (
-    <div>
-      <Switch>
-        { routeComponents }
-      </Switch>
-
-      <Footer />
-    </div>
-  );
 }
 
-export default App;
+export default connect()(App);

@@ -41,11 +41,11 @@ class Login extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-
+    
     axios.post('http://localhost:5000/login', {
       email: event.target.email.value,
       password: event.target.password.value,
-    }).then(response => {
+    }, { withCredentials: true }).then(response => {
       if (response.data.status === 200) {
         this.props.dispatch(
           login({
