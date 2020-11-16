@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import axios from 'axios';
 
 import { login } from '../../storage/user/userSlice';
+import api from '../../config/axios/api.js';
 
 class Cadastro extends React.Component {
   constructor(props) {
@@ -21,12 +21,12 @@ class Cadastro extends React.Component {
   }
 
   render() {
-    let error_section = {};
+    let errorSection = {};
     for (let error of Object.keys(this.state.errors)) {
       if (this.state.errors[error].length <= 0) {
-        error_section[error] = '';
+        errorSection[error] = '';
       } else {
-        error_section[error] = 
+        errorSection[error] = 
           <ul>
             {this.state.errors[error].map((message, i) => {
               return <li key={i}>{message}</li>;
@@ -43,13 +43,13 @@ class Cadastro extends React.Component {
           <form onSubmit={this.handleSubmit} method='post'>
             <input type='text' name='email' placeholder='E-mail' />
             <br/>
-            { error_section['email'] }
+            { errorSection['email'] }
             <input type='text' name='password' placeholder='Senha' />
             <br/>
-            { error_section['password'] }
+            { errorSection['password'] }
             <input type='text' name='password_confirm' placeholder='Confirmar senha' />
             <br/>
-            { error_section['password_confirm'] }
+            { errorSection['password_confirm'] }
             <button>Cadastrar</button>
           </form>
           {
@@ -84,7 +84,7 @@ class Cadastro extends React.Component {
     
     this.setState({ requestSent: true });
 
-    axios.post('http://localhost:5000/register', {
+    api.post('register', {
       email: event.target.email.value,
       password: event.target.password.value,
       password_confirm: event.target.password_confirm.value,
@@ -97,7 +97,7 @@ class Cadastro extends React.Component {
           })
         );
         this.setState({ userRegistered: true });
-        return axios.post('http://localhost:5000/confirmation', {
+        return api.post('confirmation', {
           email: response.data.user.email,
           confirmed: false
         });
@@ -117,7 +117,7 @@ class Cadastro extends React.Component {
   }
 
   handleClick = (event) => {
-    axios.post('http://localhost:5000/confirmation', {
+    api.post('confirmation', {
       email: this.props.user.data.email,
       confirmed: false
     });

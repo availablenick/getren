@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom'
-import axios from 'axios';
 
 import { login } from '../../storage/user/userSlice.js';
+import api from '../../config/axios/api.js';
 
 class Login extends React.Component {
   constructor(props) {
@@ -19,9 +19,9 @@ class Login extends React.Component {
   }
 
   render() {
-    let error_section = '';
+    let errorSection = '';
     if (this.state.error) {
-      error_section = <ul><li>{this.state.error}</li></ul>;
+      errorSection = <ul><li>{this.state.error}</li></ul>;
     }
 
     return (
@@ -29,7 +29,7 @@ class Login extends React.Component {
         Página de login
         <form onSubmit={this.handleSubmit} method='post'>
           <input type='text' name='email' placeholder='E-mail' />
-          { error_section }
+          { errorSection }
           <br/>
           <input type='text' name='password' placeholder='Senha' />
           <br/>
@@ -42,7 +42,7 @@ class Login extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
 
-    axios.post('http://localhost:5000/login', {
+    api.post('login', {
       email: event.target.email.value,
       password: event.target.password.value,
     }).then(response => {

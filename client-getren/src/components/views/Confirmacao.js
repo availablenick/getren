@@ -1,6 +1,7 @@
 import React from 'react';
-import axios from 'axios';
 import { Link, withRouter } from 'react-router-dom';
+
+import api from '../../config/axios/api.js';
 
 class Confirmacao extends React.Component {
   constructor(props) {
@@ -17,9 +18,9 @@ class Confirmacao extends React.Component {
     new URLSearchParams(this.props.location.search).forEach((value, key) => {
       queryParams[key] = value;
     });
-    axios.post('http://localhost:5000/confirmation', {
+    api.post('confirmation', {
       ...queryParams,
-      'confirmed': true, 
+      confirmed: true,
     }).then(response => {
       if (response.data.status === 200) {
         this.setState({
