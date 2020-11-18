@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { login } from '../../storage/user/userSlice';
 import api from '../../config/axios/api.js';
@@ -16,7 +17,9 @@ class Cadastro extends React.Component {
     this.state = {
       errors: {},
       requestSent: false,
-      userRegistered: false
+      userRegistered: false,
+      isPasswordVisible: false,
+      isPasswordConfirmationVisible: false
     }
   }
 
@@ -38,19 +41,54 @@ class Cadastro extends React.Component {
     let content = '';
     if (!this.state.userRegistered) {
       content = 
-        <div>
-          <h2>Página de Cadastro</h2>
-          <form onSubmit={this.handleSubmit} method='post'>
-            <input type='text' name='email' placeholder='E-mail' />
-            <br/>
-            { errorSection['email'] }
-            <input type='text' name='password' placeholder='Senha' />
-            <br/>
-            { errorSection['password'] }
-            <input type='text' name='password_confirm' placeholder='Confirmar senha' />
-            <br/>
-            { errorSection['password_confirm'] }
-            <button>Cadastrar</button>
+        <div className='d-flex justify-content-center align-items-center
+          flex-column h-100'
+        >
+          <h2>GETREN</h2>
+          <form className='form-login' onSubmit={this.handleSubmit} method='post'>
+            <div>
+              <label>E-mail</label>
+              <input type='text' name='email' />
+              { errorSection['email'] }
+            </div>
+            <div>
+              <label>Senha</label>
+              <div className='position-relative d-flex align-items-center'>
+                <input type={ this.state.isPasswordVisible ? 'text' : 'password'} className='w-100' name='password' />                
+                { this.state.isPasswordVisible ? 
+                  <FontAwesomeIcon icon='eye-slash' className='password-visibility' 
+                    onClick={this.handlePasswordClick} data-name='fa-password'
+                  />
+                  : 
+                  <FontAwesomeIcon icon='eye' className='password-visibility' 
+                    onClick={this.handlePasswordClick} data-name='fa-password'
+                  />
+                }
+              </div>
+              { errorSection['password'] }
+            </div>
+            <div>
+              <label>Confirme a senha</label>
+              <div className='position-relative d-flex align-items-center'>
+                <input type={ this.state.isPasswordConfirmationVisible ? 'text' : 'password'} 
+                  className='w-100' name='password_confirm' 
+                />
+                { this.state.isPasswordConfirmationVisible ? 
+                  <FontAwesomeIcon icon='eye-slash' className='password-visibility' 
+                    onClick={this.handlePasswordClick} data-name='fa-password-confirmation'
+                  />
+                  : 
+                  <FontAwesomeIcon icon='eye' className='password-visibility' 
+                    onClick={this.handlePasswordClick} data-name='fa-password-confirmation'
+                  />
+                }
+              </div>
+              { errorSection['password_confirm'] }
+            </div>
+            <div>
+              <button type='button' id='forgot-password'>Esqueci minha senha</button>
+              <button className='btn btn-primary'>Cadastrar</button>
+            </div>
           </form>
           {
             this.state.requestSent &&
@@ -64,8 +102,8 @@ class Cadastro extends React.Component {
         <div>
           <span>
             Usuário cadastrado. 
-            Um email foi enviado para 
-            {this.props.user.data.email} para confirmar seu cadastro.
+            Um email foi enviado para {this.props.user.data.email} para confirmar
+            seu cadastro.
             Clique no botão para reenviar o email.
           </span>
           <button onClick={this.handleClick}>Reenviar email</button>
@@ -77,7 +115,7 @@ class Cadastro extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    
+
     if (this.state.userRegistered) {
       return;
     }
@@ -116,13 +154,29 @@ class Cadastro extends React.Component {
     });
   }
 
-  handleClick = (event) => {
+  handleClick = () => {
     api.post('confirmation', {
       email: this.props.user.data.email,
       confirmed: false
     });
   }
 
+  handlePasswordClick = (event) => {
+    event.stopPropagation();
+
+    console.log(event.target.getAttribute('data-name'))
+
+    if (event.target.getAttribute('data-name') === 'fa-password') {
+      this.setState(prevState => {
+        return { isPasswordVisible: !prevState.isPasswordVisible }
+      });
+
+    } else if (event.target.getAttribute('data-name') === 'fa-password-confirmation') {
+      this.setState(prevState => {
+        return { isPasswordConfirmationVisible: !prevState.isPasswordConfirmationVisible }
+      });
+    }
+  }
 }
 
 const mapStateToProps = (state) => {

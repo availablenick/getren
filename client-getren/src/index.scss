@@ -1,3 +1,54 @@
 html, body, #root {
   height: 100%;
 }
+
+
+.form-login {
+  width: 30em;
+
+  > * {
+    margin-bottom: 1em;
+    display: flex;
+    flex-direction: column;
+  }
+
+  div:last-child {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  ul {
+    color: red;
+    padding: 0;
+    li {
+      list-style-type: none;
+    }
+  }
+
+  .password-visibility {
+    position: absolute;
+    right: 0.5em;
+    border: 0;
+    background: none;
+    &:hover {
+      cursor: pointer;
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+
+  #forgot-password {
+    border: 0;
+    background: none;
+    color: rgb(0, 47, 90);
+    transition: color 0.25s ease-in;
+    &:hover {
+      color: rgb(0, 82, 160);
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+}

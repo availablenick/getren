@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom'
+import { withRouter, Link } from 'react-router-dom';
 
 import { login } from '../../storage/user/userSlice.js';
 import api from '../../config/axios/api.js';
@@ -35,6 +35,9 @@ class Login extends React.Component {
           <br/>
           <button>Entrar</button>
         </form>
+        <div>
+          Não possui cadastro? <Link to='/cadastro'>Cadastre-se</Link>
+        </div>
       </div>
     );
   }
