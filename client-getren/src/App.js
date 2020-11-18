@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
+import Header from './components/common/Header.js';
 import Footer from './components/common/Footer.js';
 import routes from './config/router/routes.js';
 
@@ -16,7 +17,9 @@ function App() {
   });
 
   return (
-    <div>
+    <div className='d-flex flex-column h-100'>
+      <Header />
+
       <Switch>
         { routeComponents }
       </Switch>

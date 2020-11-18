@@ -1,27 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { logout } from '../../storage/user/userSlice';
+import './Home.scss';
 
 class Home extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
-      <div>
-        <Link to='/cadastro'>Cadastro</Link>
-        <br/>
-        <Link to='/login'>Login</Link>
-        <br/>
-        <Link to='/confirmacao?email=token4@to.com&token=acdac21094d1a899b7a44ae1'>Confirmação</Link>
-        <br/>
-        <button onClick={this.handleClick}>Sair</button>
-
-        <div>{ this.props.user.data != null ? this.props.user.data.email : '' }</div>
-        <div>{ this.props.user.data != null ? this.props.user.data.password : '' }</div>
+      <div className='home flex-grow-1'>
+        aew
       </div>
     );
   }
