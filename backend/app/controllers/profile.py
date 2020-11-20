@@ -14,8 +14,11 @@ def dados():
         estado = result['estado']
         profissao = result['profissao']
         email = result['email']
-        User.update_data(email, nome, data_nascimento, estado, cidade, profissao)
-        flash("Cadastro atualizado")
-        return {'confirmed': 1}
-    return {'confirmed': 0}
+        user = User.update_data(email, nome, data_nascimento, estado, cidade, profissao)
+        if user is not None:
+            return {'status': 200}
+        else:
+            return {'status': 500,
+                    'error': 'Usuário não atualizado'}
+    return {'status': 200}
 
