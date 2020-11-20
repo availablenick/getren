@@ -50,6 +50,12 @@ class User(db.Model):
   def check_password(self, password):
     return check_password_hash(self.password_hash, password)
 
+  def get_data(self):
+    user_dict = {}
+    for key in ['profissao', 'estado', 'nome', 'cidade', 'data_nascimento', 'confirmation', 'email']:
+      user_dict[key] = self.__dict__[key]
+    return user_dict
+
   @classmethod
   def register(cls, email, password):
     new_user = cls(email=email, password_hash=generate_password_hash(password), confirmation = False)
@@ -75,11 +81,11 @@ class User(db.Model):
       return None
 
   @classmethod
-  def update_data(cls, email, nome, data_nascimento, estado, cidade, profissao):
-    db.session.query(User).filter(User.email==email).update({User.nome: nome, User.data_nascimento: data_nascimento, User.estado: estado, User.cidade: cidade, User.profissao: profissao})
+  def update_data(cls, id, nome, data_nascimento, estado, cidade, profissao):
+    db.session.query(User).filter(User.id==id).update({User.nome: nome, User.data_nascimento: data_nascimento, User.estado: estado, User.cidade: cidade, User.profissao: profissao})
     try:
       db.session.commit()
-      return db.session.query(User).filter(User.email==email).first()
+      return db.session.query(User).filter(User.id==id).first()
     except Exception as e:
       return None
 
@@ -92,7 +98,12 @@ class User(db.Model):
     except Exception as e:
       return None
 
-
+  @classmethod
+  def get_by_id(cls, id):
+    try:
+      return db.session.query(User).filter(User.id==id).first()
+    except Exception as e:
+      return None
 
 class Course(db.Model):
   id = db.Column(db.Integer, primary_key=True)

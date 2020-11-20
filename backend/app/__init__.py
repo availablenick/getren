@@ -13,7 +13,7 @@ CORS(app)
 mail = Mail(app)
 
 from app import models
-from app.controllers import authentication, profile, enroll
+from app.controllers import authentication, profile, enroll, delete_db
 
 ### Test dependencies ###
 def create_test_app():

@@ -35,7 +35,7 @@ class UserTest(MyTest):
 
     def test_2_fill_register(self):
         user = User.register("getren@gmail.com", "12345678")
-        user = User.update_data("getren@gmail.com", "Getren", \
+        user = User.update_data(1, "Getren", \
             datetime.datetime.strptime("2020-11-11", '%Y-%m-%d'), "SP", "São Paulo", "Fisioterapeuta")
         assert user is not None
 
@@ -59,8 +59,17 @@ class UserTest(MyTest):
         assert user is not None
 
     def test_7_update_miss(self):
-        user = User.update_password("getren@gmail.com")
+        user = User.update_password("getren@gmail.com", "12345678")
         assert user is None   
+
+    def test_8_get_by_id_hit(self):
+        user = User.register("getren@gmail.com", "12345678")
+        user = User.get_by_id(1)
+        assert user is not None
+
+    def test_9_get_by_id_miss(self):
+        user = User.get_by_id(1)
+        assert user is None
 
     def test_ZZZ_repeated(self):
         user = User.register("getren@gmail.com", "12345678")
