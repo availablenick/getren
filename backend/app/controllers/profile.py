@@ -34,7 +34,7 @@ def dados(id):
         user = User.get_by_id(id)
         if user is None:
             return error_response('Usuário não encontrado', 500)
-        user_dict = user.get_data()
+        user_dict = user.as_dict()
         response = jsonify(user_dict)
         response.status_code = 200
         return response

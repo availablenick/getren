@@ -33,6 +33,7 @@ class User(db.Model):
   estado = db.Column(db.String(64), index=True)
   cidade = db.Column(db.String(64), index=True)
   profissao = db.Column(db.String(64), index=True)
+  is_admin = db.Column(db.Boolean)
   confirmation = db.Column(db.Boolean)
   confirmation_token = db.Column(db.String(128))
   password_token = db.Column(db.String(128))
@@ -43,18 +44,18 @@ class User(db.Model):
   def __repr__(self):
     return '<User email: ' + self.email + '>'
 
+  def as_dict(self):
+    user_dict = {}
+    for key in ['profissao', 'estado', 'nome', 'cidade', 'data_nascimento', 'confirmation', 'email']:
+      user_dict[key] = getattr(self, key)
+    return user_dict
+  
   def set_password(self, password):
     self.password_hash = generate_password_hash(password)
     return
   
   def check_password(self, password):
     return check_password_hash(self.password_hash, password)
-
-  def get_data(self):
-    user_dict = {}
-    for key in ['profissao', 'estado', 'nome', 'cidade', 'data_nascimento', 'confirmation', 'email']:
-      user_dict[key] = self.__dict__[key]
-    return user_dict
 
   @classmethod
   def register(cls, email, password):
@@ -118,6 +119,57 @@ class Course(db.Model):
 
   def __repr__(self):
     return self.name
+
+  def as_dict(self):
+    course_dict = {}
+    for key in ['id', 'name', 'number_of_videos', 'duration']:
+      course_dict[key] = getattr(self, key)
+    return course_dict
+
+  @classmethod
+  def add(cls, request_course):
+    try:
+      new_course = cls(**request_course)
+      db.session.add(new_course)
+      db.session.commit()
+      return new_course
+    except Exception as E:
+      return None
+
+  @classmethod
+  def get_all(cls):
+    courses = cls.query.all()
+    courses_dict = []
+    for course in courses:
+      courses_dict.append(course.as_dict())
+    return courses_dict
+  
+  @classmethod
+  def get_by_id(cls, id):
+    try:
+      return db.session.query(Course).filter(Course.id==id).first()
+    except Exception as e:
+      return None
+
+  @classmethod
+  def update_data(cls, id, request_course):
+    course = db.session.query(Course).filter(Course.id==id)
+    try:
+      course.update(request_course) 
+      db.session.commit()
+      return course.first()
+    except Exception as e:
+      return None
+
+  @classmethod
+  def delete(cls, id):
+    course = db.session.query(Course).filter(Course.id==id)
+    try:
+      course.delete() 
+      db.session.commit()
+      return True
+    except Exception as e:
+      return False
 
 class Video(db.Model):
   id = db.Column(db.Integer, primary_key=True)
