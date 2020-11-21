@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { login } from '../../storage/user/userSlice';
@@ -9,6 +9,8 @@ import api from '../../config/axios/api.js';
 class Cadastro extends React.Component {
   constructor(props) {
     super(props);
+    this.passwordRef = React.createRef();
+    this.passwordConfirmationRef = React.createRef();
 
     if (props.user.data) {
       props.history.push('/');
@@ -19,7 +21,7 @@ class Cadastro extends React.Component {
       requestSent: false,
       userRegistered: false,
       isPasswordVisible: false,
-      isPasswordConfirmationVisible: false
+      isPasswordConfirmationVisible: false,
     }
   }
 
@@ -30,13 +32,15 @@ class Cadastro extends React.Component {
         errorSection[error] = '';
       } else {
         errorSection[error] = 
-          <ul>
+          <ul className='mt-1'>
             {this.state.errors[error].map((message, i) => {
               return <li key={i}>{message}</li>;
             })}
           </ul>
       }
     }
+
+    const errorInputStyle = { boxShadow: '0 0 0 2px red' };
 
     let content = '';
     if (!this.state.userRegistered) {
@@ -48,22 +52,41 @@ class Cadastro extends React.Component {
           <form className='form-login' onSubmit={this.handleSubmit} method='post'>
             <div>
               <label>E-mail</label>
-              <input type='text' name='email' />
+              <input type='text' name='email'
+                style={
+                  Object.keys(this.state.errors).length > 0 &&
+                  this.state.errors.email.length > 0 ?
+                  errorInputStyle
+                  :
+                  {}
+                }
+                onChange={ () => { this.setState({ errors: {} }) } }
+              />
               { errorSection['email'] }
             </div>
             <div>
               <label>Senha</label>
               <div className='position-relative d-flex align-items-center'>
-                <input type={ this.state.isPasswordVisible ? 'text' : 'password'} className='w-100' name='password' />                
-                { this.state.isPasswordVisible ? 
-                  <FontAwesomeIcon icon='eye-slash' className='password-visibility' 
-                    onClick={this.handlePasswordClick} data-name='fa-password'
-                  />
-                  : 
-                  <FontAwesomeIcon icon='eye' className='password-visibility' 
-                    onClick={this.handlePasswordClick} data-name='fa-password'
-                  />
-                }
+                <input type={ this.state.isPasswordVisible ? 'text' : 'password'}
+                  className='w-100' name='password'
+                  style={
+                    Object.keys(this.state.errors).length > 0 &&
+                    this.state.errors.password.length > 0 ?
+                    errorInputStyle
+                    :
+                    {}
+                  }
+                  onChange={ () => { this.setState({ errors: {} }) } }
+                />
+                <button className='password-visibility' type='button'
+                  ref={this.passwordRef} onClick={this.handlePasswordClick}
+                >
+                  { this.state.isPasswordVisible ?
+                    <FontAwesomeIcon icon='eye-slash' fixedWidth />
+                    : 
+                    <FontAwesomeIcon icon='eye' fixedWidth />
+                  }
+                </button>
               </div>
               { errorSection['password'] }
             </div>
@@ -71,17 +94,28 @@ class Cadastro extends React.Component {
               <label>Confirme a senha</label>
               <div className='position-relative d-flex align-items-center'>
                 <input type={ this.state.isPasswordConfirmationVisible ? 'text' : 'password'} 
-                  className='w-100' name='password_confirm' 
+                  className='w-100' name='password_confirm'
+                  style={
+                    Object.keys(this.state.errors).length > 0 &&
+                    this.state.errors.password_confirm.length > 0 ?
+                    errorInputStyle
+                    :
+                    {}
+                  }
+                  onChange={ () => { this.setState({ errors: {} }) } }
                 />
-                { this.state.isPasswordConfirmationVisible ? 
-                  <FontAwesomeIcon icon='eye-slash' className='password-visibility' 
-                    onClick={this.handlePasswordClick} data-name='fa-password-confirmation'
-                  />
-                  : 
-                  <FontAwesomeIcon icon='eye' className='password-visibility' 
-                    onClick={this.handlePasswordClick} data-name='fa-password-confirmation'
-                  />
-                }
+                <button className='password-visibility' type='button'
+                  ref={this.passwordConfirmationRef}
+                  onClick={this.handlePasswordClick}
+                >
+                  { this.state.isPasswordConfirmationVisible ? 
+                    <FontAwesomeIcon icon='eye-slash' fixedWidth
+                    />
+                    : 
+                    <FontAwesomeIcon icon='eye' fixedWidth
+                    />
+                  }
+                </button>
               </div>
               { errorSection['password_confirm'] }
             </div>
@@ -164,17 +198,18 @@ class Cadastro extends React.Component {
   handlePasswordClick = (event) => {
     event.stopPropagation();
 
-    console.log(event.target.getAttribute('data-name'))
+    if (event.target === this.passwordRef.current ||
+      this.passwordRef.current.contains(event.target)) {
 
-    if (event.target.getAttribute('data-name') === 'fa-password') {
       this.setState(prevState => {
         return { isPasswordVisible: !prevState.isPasswordVisible }
       });
+    } else if (event.target === this.passwordConfirmationRef.current ||
+      this.passwordConfirmationRef.current.contains(event.target)) {
 
-    } else if (event.target.getAttribute('data-name') === 'fa-password-confirmation') {
       this.setState(prevState => {
         return { isPasswordConfirmationVisible: !prevState.isPasswordConfirmationVisible }
-      });
+      });  
     }
   }
 }

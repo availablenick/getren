@@ -1,7 +1,7 @@
 html, body, #root {
   height: 100%;
+  font-family: 'Montserrat', sans-serif;
 }
-
 
 .form-login {
   width: 30em;
@@ -18,9 +18,26 @@ html, body, #root {
     justify-content: space-between;
   }
 
+  label {
+    font-size: 13px;
+  }
+
+  input {
+    border: 0;
+    box-shadow: 0 0 0 2px #d6e7ff inset;
+    border-radius: 4px;
+    padding: 0.65em calc(2em + 20px) 0.65em 1em;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #1b98e0;
+    }
+  }
+
   ul {
     color: red;
     padding: 0;
+    font-size: 13px;
     li {
       list-style-type: none;
     }
@@ -28,11 +45,14 @@ html, body, #root {
 
   .password-visibility {
     position: absolute;
-    right: 0.5em;
+    right: 1em;
+    padding: 0;
     border: 0;
+    opacity: 0.5;
     background: none;
+    transition: opacity 0.2s ease;
     &:hover {
-      cursor: pointer;
+      opacity: 1;
     }
     &:focus {
       outline: none;
@@ -49,6 +69,26 @@ html, body, #root {
     }
     &:focus {
       outline: none;
+    }
+  }
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+
+  .close:focus {
+    outline: none;
+  }
+
+  input {
+    border: 0;
+    box-shadow: 0 0 0 2px #d6e7ff inset;
+    border-radius: 4px;
+    padding: 0.65em 1em;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #1b98e0;
     }
   }
 }
