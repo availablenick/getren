@@ -50,6 +50,12 @@ class User(db.Model):
   def check_password(self, password):
     return check_password_hash(self.password_hash, password)
 
+  def get_data(self):
+    user_dict = {}
+    for key in ['profissao', 'estado', 'nome', 'cidade', 'data_nascimento', 'confirmation', 'email']:
+      user_dict[key] = self.__dict__[key]
+    return user_dict
+
   @classmethod
   def register(cls, email, password):
     new_user = cls(email=email, password_hash=generate_password_hash(password), confirmation = False)
@@ -64,20 +70,22 @@ class User(db.Model):
 
   @classmethod
   def update_password(cls, email, password):
+    password_hash = generate_password_hash(password)
+    password_token = password_hash[30:54]
     user = db.session.query(User).filter(User.email==email)
-    user.update({User.password_hash: generate_password_hash(password)})
-    db.session.commit()
-    user = user.first()
-    new_token = generate_password_hash(user.password_hash)[30:54]
-    db.session.query(User).filter(User.email==email).update({User.password_token: new_token})
-    db.session.commit()
-
-  @classmethod
-  def update_data(cls, email, nome, data_nascimento, estado, cidade, profissao):
-    db.session.query(User).filter(User.email==email).update({User.nome: nome, User.data_nascimento: data_nascimento, User.estado: estado, User.cidade: cidade, User.profissao: profissao})
+    user.update({User.password_hash: password_hash, User.password_token: password_token})
     try:
       db.session.commit()
-      return db.session.query(User).filter(User.email==email).first()
+      return user.first()
+    except Exception as e:
+      return None
+
+  @classmethod
+  def update_data(cls, id, nome, data_nascimento, estado, cidade, profissao):
+    db.session.query(User).filter(User.id==id).update({User.nome: nome, User.data_nascimento: data_nascimento, User.estado: estado, User.cidade: cidade, User.profissao: profissao})
+    try:
+      db.session.commit()
+      return db.session.query(User).filter(User.id==id).first()
     except Exception as e:
       return None
 
@@ -90,7 +98,12 @@ class User(db.Model):
     except Exception as e:
       return None
 
-
+  @classmethod
+  def get_by_id(cls, id):
+    try:
+      return db.session.query(User).filter(User.id==id).first()
+    except Exception as e:
+      return None
 
 class Course(db.Model):
   id = db.Column(db.Integer, primary_key=True)
