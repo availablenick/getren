@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { logout } from '../../storage/user/userSlice';
+import axios from 'axios';
 
 class Home extends React.Component {
   constructor(props) {
@@ -26,7 +27,12 @@ class Home extends React.Component {
   }
 
   handleClick = () => {
-    this.props.dispatch(logout());
+    axios.get('http://localhost:5000/logout', { withCredentials: true})
+      .then(response => {
+        if (response.status === 200) {
+          this.props.dispatch(logout());
+        }
+      });
   }
 }
 
