@@ -4,8 +4,6 @@ html, body, #root {
 }
 
 .form-login {
-  width: 30em;
-
   > * {
     margin-bottom: 1em;
     display: flex;
@@ -22,16 +20,20 @@ html, body, #root {
     font-size: 13px;
   }
 
-  input {
+  input { 
     border: 0;
     box-shadow: 0 0 0 2px #d6e7ff inset;
     border-radius: 4px;
-    padding: 0.65em calc(2em + 20px) 0.65em 1em;
+    padding: 0.65em 1em;
 
     &:focus {
       outline: none;
       box-shadow: 0 0 0 2px #1b98e0;
     }
+  }
+
+  input.password {
+    padding: 0.65em calc(2em + 20px) 0.65em 1em;
   }
 
   ul {
@@ -69,26 +71,6 @@ html, body, #root {
     }
     &:focus {
       outline: none;
-    }
-  }
-}
-
-.modal-backdrop {
-  background-color: rgba(0, 0, 0, 0.7);
-
-  .close:focus {
-    outline: none;
-  }
-
-  input {
-    border: 0;
-    box-shadow: 0 0 0 2px #d6e7ff inset;
-    border-radius: 4px;
-    padding: 0.65em 1em;
-
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px #1b98e0;
     }
   }
 }

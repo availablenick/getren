@@ -9,9 +9,7 @@ import api from '../../config/axios/api.js';
 class Cadastro extends React.Component {
   constructor(props) {
     super(props);
-    this.passwordRef = React.createRef();
-    this.passwordConfirmationRef = React.createRef();
-
+    
     if (props.user.data) {
       props.history.push('/');
     }
@@ -49,7 +47,7 @@ class Cadastro extends React.Component {
           flex-column h-100'
         >
           <h2>GETREN</h2>
-          <form className='form-login' onSubmit={this.handleSubmit} method='post'>
+          <form className='form-login' style={{width: '30em'}} onSubmit={this.handleSubmit} method='post'>
             <div>
               <label>E-mail</label>
               <input type='text' name='email'
@@ -79,7 +77,7 @@ class Cadastro extends React.Component {
                   onChange={ () => { this.setState({ errors: {} }) } }
                 />
                 <button className='password-visibility' type='button'
-                  ref={this.passwordRef} onClick={this.handlePasswordClick}
+                  onClick={ () => { this.setState(prevState => ({isPasswordVisible: !prevState.isPasswordVisible})) } }
                 >
                   { this.state.isPasswordVisible ?
                     <FontAwesomeIcon icon='eye-slash' fixedWidth />
@@ -105,9 +103,7 @@ class Cadastro extends React.Component {
                   onChange={ () => { this.setState({ errors: {} }) } }
                 />
                 <button className='password-visibility' type='button'
-                  ref={this.passwordConfirmationRef}
-                  onClick={this.handlePasswordClick}
-                >
+                  onClick={ () => { this.setState(prevState => ({isPasswordConfirmationVisible: !prevState.isPasswordConfirmationVisible})) } }                >
                   { this.state.isPasswordConfirmationVisible ? 
                     <FontAwesomeIcon icon='eye-slash' fixedWidth
                     />
@@ -119,8 +115,7 @@ class Cadastro extends React.Component {
               </div>
               { errorSection['password_confirm'] }
             </div>
-            <div>
-              <button type='button' id='forgot-password'>Esqueci minha senha</button>
+            <div className='d-flex justify-content-center mt-4'>
               <button className='btn btn-primary'>Cadastrar</button>
             </div>
           </form>
@@ -193,24 +188,6 @@ class Cadastro extends React.Component {
       email: this.props.user.data.email,
       confirmed: false
     });
-  }
-
-  handlePasswordClick = (event) => {
-    event.stopPropagation();
-
-    if (event.target === this.passwordRef.current ||
-      this.passwordRef.current.contains(event.target)) {
-
-      this.setState(prevState => {
-        return { isPasswordVisible: !prevState.isPasswordVisible }
-      });
-    } else if (event.target === this.passwordConfirmationRef.current ||
-      this.passwordConfirmationRef.current.contains(event.target)) {
-
-      this.setState(prevState => {
-        return { isPasswordConfirmationVisible: !prevState.isPasswordConfirmationVisible }
-      });  
-    }
   }
 }
 
