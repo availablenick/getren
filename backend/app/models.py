@@ -126,6 +126,13 @@ class Course(db.Model):
       course_dict[key] = getattr(self, key)
     return course_dict
 
+  def get_videos_as_dict(self):
+    videos = list(self.videos)
+    videos_list = []
+    for video in videos:
+      videos_list.append(video.as_dict())
+    return videos_list    
+
   @classmethod
   def add(cls, request_course):
     try:
@@ -138,11 +145,14 @@ class Course(db.Model):
 
   @classmethod
   def get_all(cls):
-    courses = cls.query.all()
-    courses_dict = []
+    try:
+      courses = cls.query.all()
+    except Exception as e:
+      return None
+    courses_list = []
     for course in courses:
-      courses_dict.append(course.as_dict())
-    return courses_dict
+      courses_list.append(course.as_dict())
+    return courses_list
   
   @classmethod
   def get_by_id(cls, id):
@@ -173,9 +183,36 @@ class Course(db.Model):
 
 class Video(db.Model):
   id = db.Column(db.Integer, primary_key=True)
-  youtube_code = db.Column(db.String(128))
-  course_id = db.Column(db.Integer, db.ForeignKey("course.id"))
+  youtube_code = db.Column(db.String(128), unique=True, index=True, nullable=False)
+  course_order = db.Column(db.Integer)
+  course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
   users_viewed = db.relationship("Watches", back_populates="video")
 
   def __repr__(self):
     return self.youtube_code
+
+  def as_dict(self):
+    video_dict = {}
+    for key in ['id', 'youtube_code', 'course_order']:
+      video_dict[key] = getattr(self, key)
+    return video_dict
+
+  @classmethod
+  def add(cls, course_id, request_video):
+    video = Video(course_id = course_id, **request_video)
+    db.session.add(video)
+    try:
+      db.session.commit()
+      return video
+    except Exception as e:
+      print(e)
+      return None
+
+  @classmethod
+  def get_by_id(cls, id):
+    try:
+      return db.session.query(Video).filter(Video.id==id).first()
+    except Exception as e:
+      return None
+
+  

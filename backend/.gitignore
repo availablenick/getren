@@ -140,3 +140,6 @@ cython_debug/
 # Database
 app/*.db
 app/*.db-journal
+
+# Bash de Testes
+tests.sh

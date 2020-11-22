@@ -34,9 +34,10 @@ def downgrade():
     op.drop_index(op.f('ix_user_profissao'), table_name='user')
     op.drop_index(op.f('ix_user_estado'), table_name='user')
     op.drop_index(op.f('ix_user_cidade'), table_name='user')
-    op.drop_column('user', 'profissao')
-    op.drop_column('user', 'nome')
-    op.drop_column('user', 'estado')
-    op.drop_column('user', 'data_nascimento')
-    op.drop_column('user', 'cidade')
+    with op.batch_alter_table('user') as batch_op:
+        batch_op.drop_column('profissao')
+        batch_op.drop_column('nome')
+        batch_op.drop_column('estado')
+        batch_op.drop_column('data_nascimento')
+        batch_op.drop_column('cidade')
     # ### end Alembic commands ###
