@@ -74,3 +74,35 @@ html, body, #root {
     }
   }
 }
+
+.top-0 {
+  top: 0 !important;
+}
+
+.bottom-0 {
+  bottom: 0 !important;
+}
+
+.left-0 {
+  left: 0 !important;
+}
+
+.right-0 {
+  right: 0 !important;
+}
+
+.text-grey-to-white {
+  color: grey;
+  transition: color 0.2s ease-in;
+
+  &:hover {
+    color: white;
+  }
+}
+
+.social-media {
+  font-size: 1.25em;
+  *:not(:last-child){
+    margin-right: 0.5em;
+  } 
+}
