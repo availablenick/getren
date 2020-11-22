@@ -16,12 +16,11 @@ class Home extends React.Component {
         <br/>
         <Link to='/login'>Login</Link>
         <br/>
-        <Link to='/confirmacao?email=token4@to.com&token=acdac21094d1a899b7a44ae1'>Confirmação</Link>
-        <br/>
+        <Link to='/perfil'>Perfil</Link>
         <button onClick={this.handleClick}>Sair</button>
 
         <div>{ this.props.user.data != null ? this.props.user.data.email : '' }</div>
-        <div>{ this.props.user.data != null ? this.props.user.data.password : '' }</div>
+        {/* <div>{ this.props.user.data != null ? this.props.user.data.password : '' }</div> */}
       </div>
     );
   }
