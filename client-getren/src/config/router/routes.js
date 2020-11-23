@@ -29,21 +29,19 @@ const routes = [
     },
   },
   {
-<<<<<<< HEAD
     path: '/confirmacao',
     // component: Login,
     render: props => { 
       return (<Confirmacao />);
     },
-  }
-=======
+  },
+  {
     path: '/perfil',
     // component: Login,
     render: props => { 
       return (<Perfil />);
     },
   },
->>>>>>> origin/react-profile
 ];
 
 export default routes;

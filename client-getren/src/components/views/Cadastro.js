@@ -89,7 +89,7 @@ class Cadastro extends React.Component {
       password: event.target.password.value,
       password_confirm: event.target.password_confirm.value,
     }).then(response => {
-      if (response.data.status === 200) {
+      if (response.status === 200) {
         this.props.dispatch(
           login({
             email: response.data.user.email,
@@ -101,18 +101,23 @@ class Cadastro extends React.Component {
           email: response.data.user.email,
           confirmed: false
         });
-      } else if (response.data.status === 400) {
+      } else if (response.status === 400) {
         this.setState({ 
           errors: response.data.errors,
           requestSent: false 
         });
       }
     }).then(response => {
-      if (response && response.data.status === 200) {
+      // response.status === 200
+      if (response) {
         setTimeout(() => {
           this.props.history.push('/');
-        }, 15000);
+        }, 5000);
       }
+    }).catch(error => {
+      setTimeout(() => {
+        this.props.history.push('/');
+      }, 5000);
     });
   }
 

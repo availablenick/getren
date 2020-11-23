@@ -1,7 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
+
+import api from '../../config/axios/api.js';
 
 class Perfil extends React.Component {
   constructor(props) {
@@ -21,12 +24,15 @@ class Perfil extends React.Component {
   }
   
   componentDidMount = () => {
-    let url = 'http://localhost:5000/user/' + this.props.user.data.id;
-    axios.get(url)
+    let url = 'user/' + this.props.user.data.id;
+    api.get(url)
       .then(response => {
-        if (response.data.status === 200) {
+        if (response.status === 200) {
           this.setState({
-            user: response.data.user,
+            user: {
+              ...response.data,
+              email: this.props.user.data.email
+            }
           });
         }
 
@@ -94,6 +100,8 @@ class Perfil extends React.Component {
         {this.state.update_succeeded &&
           <span>Perfil atualizado com sucesso</span>
         }
+
+        <Link to='/'>Página inicial</Link>
       </div>
     );
   }
@@ -111,15 +119,22 @@ class Perfil extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
     let form_data = new FormData(event.target);
-    let request_data = {};
+    let request_data = {
+      name: '',
+      email: '',
+      job: '',
+      birthdate: '',
+      city: '',
+      federal_state: ''
+    };
     for (let [key, value] of form_data.entries()) {
       request_data[key] = value;
     }
-    axios.put('http://localhost:5000/user/' + this.props.user.data.id, request_data)
+    api.put('user/' + this.props.user.data.id, request_data)
       .then(response => {
-        if (response.data.status === 200) {
+        if (response.status === 200) {
           this.setState({
-            user: response.data.user,
+            user: response.data,
             update_succeeded: true
           });
         }

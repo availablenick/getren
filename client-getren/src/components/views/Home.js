@@ -6,10 +6,6 @@ import { logout } from '../../storage/user/userSlice';
 import axios from 'axios';
 
 class Home extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <div>

@@ -45,8 +45,8 @@ class Login extends React.Component {
     api.post('login', {
       email: event.target.email.value,
       password: event.target.password.value,
-    }, { withCredentials: true }).then(response => {
-      if (response.data.status === 200) {
+    }).then(response => {
+      if (response.status === 200) {
         this.props.dispatch(
           login({
             email: response.data.user.email,
@@ -55,7 +55,7 @@ class Login extends React.Component {
         );
 
         this.props.history.push('/');
-      } else if (response.data.status === 400) {
+      } else if (response.status === 400) {
         this.setState({ error: response.data.error });
       }
     });

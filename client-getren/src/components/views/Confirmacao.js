@@ -22,7 +22,7 @@ class Confirmacao extends React.Component {
       ...queryParams,
       confirmed: true,
     }).then(response => {
-      if (response.data.status === 200) {
+      if (response.status === 200) {
         this.setState({
           isLoadingRequest: false,
           message: 'Usuário ativado com sucesso!'
