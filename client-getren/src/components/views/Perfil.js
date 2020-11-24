@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-
 import api from '../../config/axios/api.js';
 
 class Perfil extends React.Component {
@@ -16,10 +16,10 @@ class Perfil extends React.Component {
 
     this.state = {
       user: {},
-      federal_states_options_list: [],
-      cities_options_list: [],
+      federalStatesOptionsList: [],
+      citiesOptionsList: [],
       errors: {},
-      update_succeeded: false
+      didUpdateSucceed: false
     };
   }
   
@@ -28,9 +28,18 @@ class Perfil extends React.Component {
     api.get(url)
       .then(response => {
         if (response.status === 200) {
+          let theDate = new Date(response.data.data_nascimento);
+          let day = theDate.getUTCDate();
+          let month = theDate.getUTCMonth() + 1;
+          let year = theDate.getUTCFullYear();
+          let dateString =  year + '-' +
+            (month < 10 ? '0' + month : month) + '-' +
+            (day < 10 ? '0' + day : day);
+
           this.setState({
             user: {
               ...response.data,
+              data_nascimento: dateString,
               email: this.props.user.data.email
             }
           });
@@ -39,7 +48,7 @@ class Perfil extends React.Component {
         return axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados');
       })
       .then(response => {
-          let federal_states_options_list = response.data.map((state, index) => {
+          let federalStatesOptionsList = response.data.map((state, index) => {
             return (
               <option value={state.sigla} key={index}>
                 {state.sigla}
@@ -47,57 +56,78 @@ class Perfil extends React.Component {
             );
           });
           this.setState({
-            federal_states_options_list: federal_states_options_list
+            federalStatesOptionsList: federalStatesOptionsList
           });
           return this.requestCitiesList(this.state.user.estado);
       })
       .then(response => {
-        this.setState({ cities_options_list: response });
+        this.setState({ citiesOptionsList: response });
       });
   }
 
   render() {
     return (
-      <div>
-        <h2>Perfil</h2><br/>
-        <form onSubmit={this.handleSubmit}>
-          <span>Nome</span>
-          <input type="text" name="name"
-            defaultValue={this.state.user.nome !== null ? this.state.user.nome : ''}
-          />
-          <br/>
-          <span>Email</span>
-          <input type="text" name="email"
-            defaultValue={this.state.user.email !== null ? this.state.user.email : ''}
-            disabled
-          />
-          <br/>
-          <span>Profissão</span>
-          <input type="text" name="job"
-            defaultValue={this.state.user.profissao !== null ? this.state.user.profissao : ''}
-          />
-          <br/>
-          <span>Data nascimento</span>
-          <input type="date" name="birthdate"
-            defaultValue={this.state.user.data_nascimento !== null ? this.state.user.data_nascimento : ''}
-          />
-          <br/>
-          <span>Estado</span>
-          <select name="federal_state" defaultValue={this.state.user.estado}
-            onChange={this.handleChangeStates}
-          >
-            {this.state.federal_states_options_list}
-          </select>
-          <br/>
-          <span>Cidade</span>
-          <select name="city" defaultValue={this.state.user.cidade}>
-            {this.state.cities_options_list}
-          </select>
-          <br/>
-          <button>Atualizar</button>
+      <div className='d-flex justify-content-center align-items-center
+        flex-column h-100'
+      >
+        <h2>PERFIL</h2>
+        <form className='form-login' style={{width: '30em'}} onSubmit={this.handleSubmit} method='post'>
+          <div>
+            <label htmlFor='name'>Nome</label>
+            <input type='text' id='name' name='name'
+              defaultValue={this.state.user.nome !== null ? this.state.user.nome : ''}
+            />
+          </div>
+
+          <div>
+            <label htmlFor='email'>E-mail</label>
+            <input type='text' id='email' name='email' disabled
+              defaultValue={this.state.user.email !== null ? this.state.user.email : ''}
+            />
+          </div>
+
+          <div>
+            <label htmlFor='job'>Profissão</label>
+            <input className='w-100' type='text' id='job' name='job'
+              defaultValue={this.state.user.profissao !== null ? this.state.user.profissao : ''}
+            />
+          </div>
+
+          <div>
+            <label htmlFor='birthdate'>Data de nascimento</label>
+            <input type='date' id='birthdate' name='birthdate'
+              defaultValue={
+                this.state.user.data_nascimento !== null ?
+                this.state.user.data_nascimento
+                :
+                ''
+              }
+            />
+          </div>
+
+          <div>
+            <label htmlFor='federal_state'>Estado</label>
+            <select id='federal_state' name='federal_state'
+              defaultValue={this.state.user.estado}
+              onChange={this.handleChangeStates}
+            >
+              {this.state.federalStatesOptionsList}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor='city'>Cidade</label>
+            <select id='city' name='city' defaultValue={this.state.user.cidade}>
+              {this.state.citiesOptionsList}
+            </select>
+          </div>
+
+          <div className='d-flex justify-content-center'>
+            <button className='btn btn-primary'>Atualizar</button>
+          </div>
         </form>
 
-        {this.state.update_succeeded &&
+        {this.state.didUpdateSucceed &&
           <span>Perfil atualizado com sucesso</span>
         }
 
@@ -111,7 +141,7 @@ class Perfil extends React.Component {
     this.requestCitiesList(event.target.value)
       .then(response => {
         this.setState({
-          cities_options_list: response
+          citiesOptionsList: response
         });
       });
   }
@@ -133,33 +163,45 @@ class Perfil extends React.Component {
     api.put('user/' + this.props.user.data.id, request_data)
       .then(response => {
         if (response.status === 200) {
+          let theDate = new Date(response.data.data_nascimento);
+          let day = theDate.getUTCDate();
+          let month = theDate.getUTCMonth() + 1;
+          let year = theDate.getUTCFullYear();
+          let dateString =  year + '-' +
+            (month < 10 ? '0' + month : month) + '-' +
+            (day < 10 ? '0' + day : day);
+
           this.setState({
-            user: response.data,
-            update_succeeded: true
+            user: {
+              ...response.data,
+              email: this.props.user.data.email,
+              data_nascimento: dateString
+            },
+            didUpdateSucceed: true
           });
         }
       });
   }
 
-  requestCitiesList = (federal_state) => {
-    let cities_options_list = [];
-    let federal_state_param = this.state.federal_states_options_list[0].props.value;
-    if (federal_state !== null) {
-      federal_state_param = federal_state;
+  requestCitiesList = (federalState) => {
+    let citiesOptionsList = [];
+    let federalStateParam = this.state.federalStatesOptionsList[0].props.value;
+    if (federalState !== null) {
+      federalStateParam = federalState;
     }
     let url = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados/' + 
-      federal_state_param + '/municipios';
+      federalStateParam + '/municipios';
     return new Promise(resolve => {
       axios.get(url)
         .then(response => {
-          cities_options_list = response.data.map((city, index) => {
+          citiesOptionsList = response.data.map((city, index) => {
             return (
               <option value={city.nome} key={index}>
                   {city.nome}
               </option>
             );
           });
-          resolve(cities_options_list);
+          resolve(citiesOptionsList);
         });
     });
   }

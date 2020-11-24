@@ -1,0 +1,112 @@
+html, body, #root {
+  height: 100%;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.form-login {
+  > * {
+    margin-bottom: 1em;
+    display: flex;
+    flex-direction: column;
+  }
+
+  div:last-child {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  label {
+    font-size: 13px;
+  }
+
+  select {
+    background: white;
+  }
+
+  input, select {
+    border: 0;
+    box-shadow: 0 0 0 2px #d6e7ff inset;
+    border-radius: 4px;
+    padding: 0.65em 1em;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #1b98e0;
+    }
+  }
+
+  input.password {
+    padding: 0.65em calc(2em + 20px) 0.65em 1em;
+  }
+
+  ul {
+    color: red;
+    padding: 0;
+    font-size: 13px;
+    li {
+      list-style-type: none;
+    }
+  }
+
+  .password-visibility {
+    position: absolute;
+    right: 1em;
+    padding: 0;
+    border: 0;
+    opacity: 0.5;
+    background: none;
+    transition: opacity 0.2s ease;
+    &:hover {
+      opacity: 1;
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+
+  #forgot-password {
+    border: 0;
+    background: none;
+    color: rgb(0, 47, 90);
+    transition: color 0.25s ease-in;
+    &:hover {
+      color: rgb(0, 82, 160);
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+.top-0 {
+  top: 0 !important;
+}
+
+.bottom-0 {
+  bottom: 0 !important;
+}
+
+.left-0 {
+  left: 0 !important;
+}
+
+.right-0 {
+  right: 0 !important;
+}
+
+.text-grey-to-white {
+  color: grey;
+  transition: color 0.2s ease-in;
+
+  &:hover {
+    color: white;
+  }
+}
+
+.social-media {
+  font-size: 1.25em;
+  *:not(:last-child){
+    margin-right: 0.5em;
+  } 
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { login } from '../../storage/user/userSlice';
 import api from '../../config/axios/api.js';
@@ -8,7 +9,7 @@ import api from '../../config/axios/api.js';
 class Cadastro extends React.Component {
   constructor(props) {
     super(props);
-
+    
     if (props.user.data) {
       props.history.push('/');
     }
@@ -16,7 +17,9 @@ class Cadastro extends React.Component {
     this.state = {
       errors: {},
       requestSent: false,
-      userRegistered: false
+      userRegistered: false,
+      isPasswordVisible: false,
+      isPasswordConfirmationVisible: false,
     }
   }
 
@@ -27,7 +30,7 @@ class Cadastro extends React.Component {
         errorSection[error] = '';
       } else {
         errorSection[error] = 
-          <ul>
+          <ul className='mt-1'>
             {this.state.errors[error].map((message, i) => {
               return <li key={i}>{message}</li>;
             })}
@@ -35,22 +38,86 @@ class Cadastro extends React.Component {
       }
     }
 
+    const errorInputStyle = { boxShadow: '0 0 0 2px red' };
+
     let content = '';
     if (!this.state.userRegistered) {
       content = 
-        <div>
-          <h2>Página de Cadastro</h2>
-          <form onSubmit={this.handleSubmit} method='post'>
-            <input type='text' name='email' placeholder='E-mail' />
-            <br/>
-            { errorSection['email'] }
-            <input type='text' name='password' placeholder='Senha' />
-            <br/>
-            { errorSection['password'] }
-            <input type='text' name='password_confirm' placeholder='Confirmar senha' />
-            <br/>
-            { errorSection['password_confirm'] }
-            <button>Cadastrar</button>
+        <div className='d-flex justify-content-center align-items-center
+          flex-column h-100'
+        >
+          <h2>GETREN</h2>
+          <form className='form-login' style={{width: '30em'}} onSubmit={this.handleSubmit} method='post'>
+            <div>
+              <label>E-mail</label>
+              <input type='text' name='email'
+                style={
+                  Object.keys(this.state.errors).length > 0 &&
+                  this.state.errors.email.length > 0 ?
+                  errorInputStyle
+                  :
+                  {}
+                }
+                onChange={ () => { this.setState({ errors: {} }) } }
+              />
+              { errorSection['email'] }
+            </div>
+            <div>
+              <label>Senha</label>
+              <div className='position-relative d-flex align-items-center'>
+                <input type={ this.state.isPasswordVisible ? 'text' : 'password'}
+                  className='w-100' name='password'
+                  style={
+                    Object.keys(this.state.errors).length > 0 &&
+                    this.state.errors.password.length > 0 ?
+                    errorInputStyle
+                    :
+                    {}
+                  }
+                  onChange={ () => { this.setState({ errors: {} }) } }
+                />
+                <button className='password-visibility' type='button'
+                  onClick={ () => { this.setState(prevState => ({isPasswordVisible: !prevState.isPasswordVisible})) } }
+                >
+                  { this.state.isPasswordVisible ?
+                    <FontAwesomeIcon icon='eye-slash' fixedWidth />
+                    : 
+                    <FontAwesomeIcon icon='eye' fixedWidth />
+                  }
+                </button>
+              </div>
+              { errorSection['password'] }
+            </div>
+            <div>
+              <label>Confirme a senha</label>
+              <div className='position-relative d-flex align-items-center'>
+                <input type={ this.state.isPasswordConfirmationVisible ? 'text' : 'password'} 
+                  className='w-100' name='password_confirm'
+                  style={
+                    Object.keys(this.state.errors).length > 0 &&
+                    this.state.errors.password_confirm.length > 0 ?
+                    errorInputStyle
+                    :
+                    {}
+                  }
+                  onChange={ () => { this.setState({ errors: {} }) } }
+                />
+                <button className='password-visibility' type='button'
+                  onClick={ () => { this.setState(prevState => ({isPasswordConfirmationVisible: !prevState.isPasswordConfirmationVisible})) } }                >
+                  { this.state.isPasswordConfirmationVisible ? 
+                    <FontAwesomeIcon icon='eye-slash' fixedWidth
+                    />
+                    : 
+                    <FontAwesomeIcon icon='eye' fixedWidth
+                    />
+                  }
+                </button>
+              </div>
+              { errorSection['password_confirm'] }
+            </div>
+            <div className='d-flex justify-content-center mt-4'>
+              <button className='btn btn-primary'>Cadastrar</button>
+            </div>
           </form>
           {
             this.state.requestSent &&
@@ -64,8 +131,8 @@ class Cadastro extends React.Component {
         <div>
           <span>
             Usuário cadastrado. 
-            Um email foi enviado para 
-            {this.props.user.data.email} para confirmar seu cadastro.
+            Um email foi enviado para {this.props.user.data.email} para confirmar
+            seu cadastro.
             Clique no botão para reenviar o email.
           </span>
           <button onClick={this.handleClick}>Reenviar email</button>
@@ -77,7 +144,7 @@ class Cadastro extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    
+
     if (this.state.userRegistered) {
       return;
     }
@@ -101,11 +168,6 @@ class Cadastro extends React.Component {
           email: response.data.user.email,
           confirmed: false
         });
-      } else if (response.status === 400) {
-        this.setState({ 
-          errors: response.data.errors,
-          requestSent: false 
-        });
       }
     }).then(response => {
       // response.status === 200
@@ -115,19 +177,25 @@ class Cadastro extends React.Component {
         }, 5000);
       }
     }).catch(error => {
-      setTimeout(() => {
-        this.props.history.push('/');
-      }, 5000);
+      if (!error.response) {
+        setTimeout(() => {
+          this.props.history.push('/');
+        }, 5000);
+      } else if (error.response.status === 400) {
+        this.setState({ 
+          errors: error.response.data.errors,
+          requestSent: false
+        });
+      }
     });
   }
 
-  handleClick = (event) => {
+  handleClick = () => {
     api.post('confirmation', {
       email: this.props.user.data.email,
       confirmed: false
     });
   }
-
 }
 
 const mapStateToProps = (state) => {
