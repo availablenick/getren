@@ -14,9 +14,6 @@ from app.models import User, Course, Video
 
 class MyTest_User(flask_testing.TestCase):
 
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = "sqlite:////mnt/c/users/joaog/Desktop/eu/BCC/2020-2/Getren/getren/backend/test.db"
-
     def create_app(self):
         app = create_test_app()
         test_db.init_app(app)
@@ -30,9 +27,6 @@ class MyTest_User(flask_testing.TestCase):
         test_db.drop_all()
 
 class MyTest_Course(flask_testing.TestCase):
-    
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = "sqlite:////mnt/c/users/joaog/Desktop/eu/BCC/2020-2/Getren/getren/backend/test.db"
 
     def create_app(self):
         app = create_test_app()
@@ -48,9 +42,6 @@ class MyTest_Course(flask_testing.TestCase):
         test_db.drop_all()
 
 class MyTest_Video(flask_testing.TestCase):
-
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = "sqlite:////mnt/c/users/joaog/Desktop/eu/BCC/2020-2/Getren/getren/backend/test.db"
 
     def create_app(self):
         app = create_test_app()
@@ -75,13 +66,15 @@ class ZZZ_UserTest(MyTest_User):
 
     def test_2_fill_register(self):
         user = User.register("getren@gmail.com", "12345678")
-        user = User.update_data(1, "Getren", \
-            datetime.datetime.strptime("2020-11-11", '%Y-%m-%d'), "SP", "São Paulo", "Fisioterapeuta")
+        update_dict = {'name': 'Getren', 'birthdate': datetime.datetime.strptime("2020-11-11", '%Y-%m-%d'),
+                        'federal_state': 'SP', 'city': 'São Paulo', 'job': 'Fisioterapeuta'}
+        user = User.update_data(1, update_dict)
         assert user is not None
 
     def test_3_fill_register_miss(self):
-        user = User.update_data("getren@gmail.com", "Getren", \
-            datetime.datetime.strptime("2020-11-11", '%Y-%m-%d'), "SP", "São Paulo", "Fisioterapeuta")
+        update_dict = {'name': 'Getren', 'birthdate': datetime.datetime.strptime("2020-11-11", '%Y-%m-%d'),
+                        'federal_state': 'SP', 'city': 'São Paulo', 'job': 'Fisioterapeuta'}
+        user = User.update_data(1, update_dict)
         assert user is None
 
     def test_4_confirmation(self):
@@ -123,13 +116,14 @@ class CourseTest(MyTest_Course):
         assert course is not None
 
     def test_02_add_fail(self):
-        course = Course.add({"error" : "aiosduioasdiasu"})
+        course = Course.add({"error" : "fail"})
         assert course is None
 
     def test_03_get_all(self):
         course = Course.add({"name" : "Curso de teste"})
         courses = Course.get_all()
-        assert list(courses[0].keys()) == ['id', 'name', 'number_of_videos', 'duration']
+        assert list(courses[0].keys()) == ['id', 'name', 'number_of_videos',
+                                            'duration', 'price', 'expires_at', 'is_watchable']
 
     def test_04_get_by_id(self):
         course = Course.add({"name" : "Curso de teste"})
@@ -146,7 +140,7 @@ class CourseTest(MyTest_Course):
     def test_07_update_data_fail(self):
         course = Course.add({"name" : "Curso de teste"})
         updated_course = Course.update_data(2, {"name": "Curso de teste atualizado"})
-        updated_course_2 = Course.update_data(1, {"error": "Curso de teste atualizado"})
+        updated_course_2 = Course.update_data(1, {"error": "Curso de teste não atualizado"})
         assert updated_course is None and updated_course_2 is None
 
     def test_08_delete(self):

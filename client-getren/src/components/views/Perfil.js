@@ -28,7 +28,7 @@ class Perfil extends React.Component {
     api.get(url)
       .then(response => {
         if (response.status === 200) {
-          let theDate = new Date(response.data.data_nascimento);
+          let theDate = new Date(response.data.birthdate);
           let day = theDate.getUTCDate();
           let month = theDate.getUTCMonth() + 1;
           let year = theDate.getUTCFullYear();
@@ -39,7 +39,7 @@ class Perfil extends React.Component {
           this.setState({
             user: {
               ...response.data,
-              data_nascimento: dateString,
+              birthdate: dateString,
               email: this.props.user.data.email
             }
           });
@@ -58,7 +58,7 @@ class Perfil extends React.Component {
           this.setState({
             federalStatesOptionsList: federalStatesOptionsList
           });
-          return this.requestCitiesList(this.state.user.estado);
+          return this.requestCitiesList(this.state.user.federal_state);
       })
       .then(response => {
         this.setState({ citiesOptionsList: response });
@@ -75,7 +75,7 @@ class Perfil extends React.Component {
           <div>
             <label htmlFor='name'>Nome</label>
             <input type='text' id='name' name='name'
-              defaultValue={this.state.user.nome !== null ? this.state.user.nome : ''}
+              defaultValue={this.state.user.name !== null ? this.state.user.name : ''}
             />
           </div>
 
@@ -89,7 +89,7 @@ class Perfil extends React.Component {
           <div>
             <label htmlFor='job'>Profissão</label>
             <input className='w-100' type='text' id='job' name='job'
-              defaultValue={this.state.user.profissao !== null ? this.state.user.profissao : ''}
+              defaultValue={this.state.user.job !== null ? this.state.user.job : ''}
             />
           </div>
 
@@ -97,8 +97,8 @@ class Perfil extends React.Component {
             <label htmlFor='birthdate'>Data de nascimento</label>
             <input type='date' id='birthdate' name='birthdate'
               defaultValue={
-                this.state.user.data_nascimento !== null ?
-                this.state.user.data_nascimento
+                this.state.user.birthdate !== null ?
+                this.state.user.birthdate
                 :
                 ''
               }
@@ -108,7 +108,7 @@ class Perfil extends React.Component {
           <div>
             <label htmlFor='federal_state'>Estado</label>
             <select id='federal_state' name='federal_state'
-              defaultValue={this.state.user.estado}
+              defaultValue={this.state.user.federal_state}
               onChange={this.handleChangeStates}
             >
               {this.state.federalStatesOptionsList}
@@ -117,7 +117,7 @@ class Perfil extends React.Component {
 
           <div>
             <label htmlFor='city'>Cidade</label>
-            <select id='city' name='city' defaultValue={this.state.user.cidade}>
+            <select id='city' name='city' defaultValue={this.state.user.city}>
               {this.state.citiesOptionsList}
             </select>
           </div>
@@ -163,7 +163,7 @@ class Perfil extends React.Component {
     api.put('user/' + this.props.user.data.id, request_data)
       .then(response => {
         if (response.status === 200) {
-          let theDate = new Date(response.data.data_nascimento);
+          let theDate = new Date(response.data.birthdate);
           let day = theDate.getUTCDate();
           let month = theDate.getUTCMonth() + 1;
           let year = theDate.getUTCFullYear();
@@ -175,7 +175,7 @@ class Perfil extends React.Component {
             user: {
               ...response.data,
               email: this.props.user.data.email,
-              data_nascimento: dateString
+              birthdate: dateString
             },
             didUpdateSucceed: true
           });

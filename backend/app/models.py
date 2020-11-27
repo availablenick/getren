@@ -7,6 +7,7 @@ class Attends(db.Model):
   user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
   course_id = db.Column(db.Integer, db.ForeignKey('course.id'), primary_key=True)
   progress = db.Column(db.Integer)
+  is_payed = db.Column(db.Boolean)
   user = db.relationship("User", back_populates="courses_taken")
   course = db.relationship("Course", back_populates="users_attending")
 
@@ -28,13 +29,13 @@ class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   email = db.Column(db.String(64), index=True, unique=True)
   password_hash = db.Column(db.String(128))
-  nome = db.Column(db.String(128))
-  data_nascimento = db.Column(db.DateTime())
-  estado = db.Column(db.String(64), index=True)
-  cidade = db.Column(db.String(64), index=True)
-  profissao = db.Column(db.String(64), index=True)
+  name = db.Column(db.String(128))
+  birthdate = db.Column(db.DateTime())
+  federal_state = db.Column(db.String(64), index=True)
+  city = db.Column(db.String(64), index=True)
+  job = db.Column(db.String(64), index=True)
   is_admin = db.Column(db.Boolean)
-  confirmation = db.Column(db.Boolean)
+  is_confirmed = db.Column(db.Boolean)
   confirmation_token = db.Column(db.String(128))
   password_token = db.Column(db.String(128))
   courses_taken = db.relationship("Attends", back_populates="user")
@@ -46,8 +47,9 @@ class User(db.Model):
 
   def as_dict(self):
     user_dict = {}
-    for key in ['profissao', 'estado', 'nome', 'cidade', 'data_nascimento', 'confirmation', 'email']:
+    for key in ['job', 'federal_state', 'name', 'city', 'birthdate', 'is_confirmed', 'email']:
       user_dict[key] = getattr(self, key)
+    user_dict['birthdate'] = datetime.strftime(user_dict['birthdate'], '%Y-%m-%d')
     return user_dict
   
   def set_password(self, password):
@@ -59,7 +61,7 @@ class User(db.Model):
 
   @classmethod
   def register(cls, email, password):
-    new_user = cls(email=email, password_hash=generate_password_hash(password), confirmation = False)
+    new_user = cls(email=email, password_hash=generate_password_hash(password), is_confirmed = False)
     new_user.confirmation_token = generate_password_hash(email)[30:54]
     new_user.password_token = generate_password_hash(new_user.password_hash)[30:54]
     db.session.add(new_user)
@@ -73,29 +75,31 @@ class User(db.Model):
   def update_password(cls, email, password):
     password_hash = generate_password_hash(password)
     password_token = password_hash[30:54]
-    user = db.session.query(User).filter(User.email==email)
-    user.update({User.password_hash: password_hash, User.password_token: password_token})
+    user_query = db.session.query(User).filter(User.email==email)
+    user_query.update({User.password_hash: password_hash, User.password_token: password_token})
     try:
       db.session.commit()
-      return user.first()
+      return user_query.first()
     except Exception as e:
       return None
 
   @classmethod
-  def update_data(cls, id, nome, data_nascimento, estado, cidade, profissao):
-    db.session.query(User).filter(User.id==id).update({User.nome: nome, User.data_nascimento: data_nascimento, User.estado: estado, User.cidade: cidade, User.profissao: profissao})
+  def update_data(cls, id, request_data):
+    user_query = db.session.query(User).filter(User.id==id)
+    user_query.update(request_data)
     try:
       db.session.commit()
-      return db.session.query(User).filter(User.id==id).first()
+      return user_query.first()
     except Exception as e:
       return None
 
   @classmethod
   def confirm_user(cls, email):
-    db.session.query(User).filter(User.email==email).update({User.confirmation: True})
+    user_query = db.session.query(User).filter(User.email==email)
+    user_query.update({User.is_confirmed: True})
     try:
       db.session.commit()
-      return db.session.query(User).filter(User.email==email).first()
+      return user_query.first()
     except Exception as e:
       return None
 
@@ -113,6 +117,9 @@ class Course(db.Model):
   updated_at = db.Column(db.DateTime, default=datetime.utcnow)
   number_of_videos = db.Column(db.Integer)
   duration = db.Column(db.Integer)
+  expires_at = db.Column(db.DateTime)
+  price = db.Column(db.Float)
+  is_watchable = db.Column(db.Boolean)
   videos = db.relationship('Video', backref='course', lazy='dynamic')
   users_attending = db.relationship("Attends", back_populates="course")
   users_teaching = db.relationship("User", secondary=teaches, back_populates="courses_taught")
@@ -122,7 +129,7 @@ class Course(db.Model):
 
   def as_dict(self):
     course_dict = {}
-    for key in ['id', 'name', 'number_of_videos', 'duration']:
+    for key in ['id', 'name', 'number_of_videos', 'duration', 'price', 'expires_at', 'is_watchable']:
       course_dict[key] = getattr(self, key)
     return course_dict
 
@@ -163,11 +170,11 @@ class Course(db.Model):
 
   @classmethod
   def update_data(cls, id, request_course):
-    course = db.session.query(Course).filter(Course.id==id)
+    course_query = db.session.query(Course).filter(Course.id==id)
     try:
-      course.update(request_course) 
+      course_query.update(request_course) 
       db.session.commit()
-      return course.first()
+      return course_query.first()
     except Exception as e:
       return None
 
@@ -183,9 +190,9 @@ class Course(db.Model):
 
 class Video(db.Model):
   id = db.Column(db.Integer, primary_key=True)
-  youtube_code = db.Column(db.String(128), unique=True, index=True, nullable=False)
+  youtube_code = db.Column(db.String(128), unique=True, index=True)
   course_order = db.Column(db.Integer)
-  course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
+  course_id = db.Column(db.Integer, db.ForeignKey("course.id"))
   users_viewed = db.relationship("Watches", back_populates="video")
 
   def __repr__(self):

@@ -1,36 +1,30 @@
-from flask import flash, request, render_template, redirect, url_for, jsonify
-from flask_cors import cross_origin
-from app.models import User
-from app import app
-import datetime
+from datetime import datetime
 import jwt
 
-SECRET_KEY = app.config['SECRET_KEY']
+from flask import flash, request, render_template, redirect, url_for, jsonify
+from flask_cors import cross_origin
+
+from .utils import error_response, SECRET_KEY
+from app import app
+from app.models import User
+
 @app.route('/user/<id>', methods=['GET', 'PUT'])
 @cross_origin(supports_credentials=True)
-def dados(id):
+def data(id):
     id = int(id)
     cookie = request.cookies.get('user_token')
     if cookie:
         user = jwt.decode(cookie, SECRET_KEY, algorithms=['HS256'])
-        print('id requisitado', id)
-        print('user decodificado', user)
         if user['id'] != id:
             return {}, 401
     else:
         return {}, 401
     if request.method == 'PUT':
-        print('if do put')
         result = request.get_json()
-        nome = result['name']
-        data_nascimento = result['birthdate']
-        data_nascimento = datetime.datetime.strptime(data_nascimento, '%Y-%m-%d')
-        cidade = result['city']
-        estado = result['federal_state']
-        profissao = result['job']
-        user = User.update_data(id, nome, data_nascimento, estado, cidade, profissao)
+        result['birthdate'] = datetime.strptime(result['birthdate'], '%Y-%m-%d')
+        user = User.update_data(id, result)
         if user is not None:
-            user_dict = user.get_data()
+            user_dict = user.as_dict()
             response = jsonify(user_dict)
             response.status_code = 200
             return response
@@ -45,9 +39,3 @@ def dados(id):
         response = jsonify(user_dict)
         response.status_code = 200
         return response
-
-def error_response(error, code):
-    response = jsonify({'error': error})
-    response.status_code = code
-    return response
-

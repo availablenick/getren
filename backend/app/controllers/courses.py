@@ -1,10 +1,9 @@
 from flask import request, make_response, jsonify
 from flask_cors import cross_origin
-from app.models import User, Course
-from app import app
-import jwt
 
-SECRET_KEY = app.config['SECRET_KEY']
+from .utils import error_response, is_valid_admin, SECRET_KEY
+from app import app
+from app.models import User, Course
 
 @app.route('/courses', methods=['GET', 'POST'])
 def courses():
@@ -59,17 +58,3 @@ def course(id):
                 return error_response('Curso não deletado', 500)
     else:
         return error_response('Permissão negada', 401)
-
-def is_valid_admin(request):
-    cookie = request.cookies.get('user_token')
-    if cookie:
-        user_token = jwt.decode(cookie, SECRET_KEY, algorithms=['HS256'])
-        user = User.get_by_id(user_token['id'])
-        if user.is_admin:
-            return True
-    return False
-
-def error_response(error, code):
-    response = jsonify({'error': error})
-    response.status_code = code
-    return response

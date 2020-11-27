@@ -1,10 +1,9 @@
 from flask import request, make_response, jsonify
 from flask_cors import cross_origin
-from app.models import User, Course, Video
-from app import app
-import jwt
 
-SECRET_KEY = app.config['SECRET_KEY']
+from .utils import is_valid_admin, error_response, SECRET_KEY
+from app import app
+from app.models import User, Course, Video
 
 @app.route('/course/<int:id>/videos', methods=['GET', 'POST'])
 def videos(id):
@@ -37,17 +36,3 @@ def video(id):
         response = jsonify(video_dict)
         response.status_code = 200
         return response
-
-def is_valid_admin(request):
-    cookie = request.cookies.get('user_token')
-    if cookie:
-        user_token = jwt.decode(cookie, SECRET_KEY, algorithms=['HS256'])
-        user = User.get_by_id(user_token['id'])
-        if user.is_admin:
-            return True
-    return False
-
-def error_response(error, code):
-    response = jsonify({'error': error})
-    response.status_code = code
-    return response

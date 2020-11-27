@@ -1,6 +1,7 @@
 from flask import request, make_response
-from app.models import User, Course
+
 from app import app, db
+from app.models import User, Course
 
 @app.route('/erase_db', methods=['GET'])
 def erase():

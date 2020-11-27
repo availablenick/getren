@@ -1,14 +1,17 @@
-from flask import request, make_response, jsonify
-from flask_mail import Message
-from flask_cors import cross_origin
-from app.models import User
-from app import app, mail
-from multiprocessing import Process
 import re
 import jwt
 
-token_fixo = '604d7208992bfddf9d08108f4a17c0ae78de70a8b5be973fd3e613c34460a2e55b32e6b6383d7630920267ce0d008e58'
+from flask import request, make_response, jsonify
+from flask_mail import Message
+from flask_cors import cross_origin
+
+from .utils import validate_password, generate_token, jsonify_user, error_response, SECRET_KEY
+from app import app, mail
+from app.models import User
+
+fixed_token = '604d7208992bfddf9d08108f4a17c0ae78de70a8b5be973fd3e613c34460a2e55b32e6b6383d7630920267ce0d008e58'
 SECRET_KEY = app.config['SECRET_KEY']
+domain = 'localhost:3000'
 
 @app.route('/register', methods = ['GET', 'POST'])
 @cross_origin(supports_credentials=True)
@@ -41,10 +44,7 @@ def register():
         if (not any(errors.values())):
             user = User.register(email,password)
             if user is None:
-                response = jsonify({
-                    'error': 'Failed to Register'
-                })
-                response.status_code = 500
+                response = error_response('Failed to Register', 500)
                 return response
             response = jsonify_user(user)
             token = generate_token(user)
@@ -105,7 +105,7 @@ def confirmation():
         return error_response('Usuário inexistente', 500)
 
     token = user.confirmation_token
-    link = f'/confirmacao?email={email}&token={token}'
+    link = f'{domain}/confirmacao?email={email}&token={token}'
     confirmed = result['confirmed']
 
     if confirmed == 'False':
@@ -118,7 +118,7 @@ def confirmation():
             return error_response('Email não enviado',500)            
 
     if confirmed == 'True':
-        if token == result['token'] or result['token'] == token_fixo:
+        if token == result['token'] or result['token'] == fixed_token:
             user = User.confirm_user(email)
             if user is None:
                 return error_response('Usuário não confirmado',500)
@@ -134,7 +134,7 @@ def forgotten_password():
     if user is None:
         return error_response('Usuário inexistente', 500)
     token = user.password_token
-    link = f'/refresh_password?email={email}&token={token}'
+    link = f'{domain}/refresh_password?email={email}&token={token}'
     msg = Message("Redefinição de Senha", recipients=[email])
     msg.html = f"Você solicitou uma redefinição de senha. Para redefini-la, acesse <a href={link}>AQUI</a>. Caso não tenha solicitado a redefinição de senha, ignore essa mensagem"
     try:
@@ -159,43 +159,10 @@ def redefine_password():
     if user is None:
         return error_response('Usuário inexistente', 500)
     token = user.password_token
-    if token == result['token'] or result['token'] == token_fixo:
+    if token == result['token'] or result['token'] == fixed_token:
         user = User.update_password(email, new_password)
         if user is None:
             return error_response('Senha não atualizada', 500)
         return {}
     else:
         return error_response('Token inválido', 400)
-
-def validate_password(password, password_confirm):
-    errors = {
-        'password': [],
-        'password_confirm': [],
-    }
-    if not password:
-        errors['password'].append("Sem senha")
-    if password and len(password) < 8:
-        errors['password'].append("Senha curta")
-    if password_confirm != password:
-        errors['password_confirm'].append("Confirmacao errada")
-
-    return errors
-
-def generate_token(user):
-    return jwt.encode({
-                'email': user.email,
-                'id': user.id
-            }, SECRET_KEY, algorithm='HS256')
-
-def jsonify_user(user):
-    return jsonify({
-            'user': {
-                'email': user.email,
-                'id': user.id
-            }
-        })
-
-def error_response(error, code):
-    response = jsonify({'error': error})
-    response.status_code = code
-    return response
