@@ -5,8 +5,9 @@ from app.models import User, Course
 
 @app.route('/erase_db', methods=['GET'])
 def erase():
-    User.query.delete()
-    Course.query.delete()
-    db.session.commit()
+    tables = ['public.user', 'course', 'video']
+    for table in tables:
+        query = 'TRUNCATE TABLE ' + table + ' RESTART IDENTITY CASCADE'
+        db.engine.execute(query)
     return {}, 200
     
