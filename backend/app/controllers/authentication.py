@@ -40,7 +40,7 @@ def register():
         if user is not None:
             errors['email'].append("Email cadastrado")
         if password_confirm != password:
-            errors['password_confirm'].append("Confirmacao errada")
+            errors['password_confirm'].append("Confirmação errada")
         if (not any(errors.values())):
             user = User.register(email,password)
             if user is None:
@@ -67,7 +67,7 @@ def login():
         password = result['password']
         user = User.query.filter_by(email=email).first()
         if not user or not user.check_password(password):
-            response = error_response('O usuário/senha está incorreto/a', 400)
+            response = error_response('O email/senha está incorreto(a)', 400)
         else:
             response = jsonify_user(user)
             token = generate_token(user)
