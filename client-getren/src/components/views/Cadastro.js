@@ -162,14 +162,10 @@ class Cadastro extends React.Component {
     }).then(response => {
       this.responseRegister = response;
       if (response.status === 200) {
-        console.log('response first');
-        console.log(response.data);
         this.setState({
-          id: response.data.id,
-          email: response.data.email,
           isUserRegistered: true
         });
-
+        
         return Promise.all([api.post('confirmation', {
           email: response.data.user.email,
           confirmed: false
@@ -177,20 +173,17 @@ class Cadastro extends React.Component {
       }
     }).then(([response, prevResponse]) => {
       if (response.status === 200) {
-        this.props.dispatch(
-          login({
-            email: prevResponse.data.email,
-            id: prevResponse.data.id,
-          })
-        );
-
         setTimeout(() => {
+          this.props.dispatch(
+            login({
+              email: prevResponse.data.email,
+              id: prevResponse.data.id,
+            })
+          );
           this.props.history.push('/');
         }, 5000);
       }
     }).catch(error => {
-      console.log('error catch');
-      console.log(error);
       if (!error.response) {
         setTimeout(() => {
           this.props.history.push('/');
