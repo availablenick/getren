@@ -4,7 +4,7 @@ services:
     image: postgres:12
     restart: always
     environment:
-      - POSTGRES_DB=getren
+      - POSTGRES_DB=getren_api
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     volumes:
