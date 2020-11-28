@@ -42,7 +42,9 @@ class Cadastro extends React.Component {
           flex-column h-100'
         >
           <h2>GETREN</h2>
-          <form className='form-login' style={{width: '30em'}} onSubmit={this.handleSubmit} method='post'>
+          <form className='form-login' style={{width: '30em'}}
+            onSubmit={this.handleSubmit} method='post'
+          >
             <div>
               <label>E-mail</label>
               <input type='text' name='email'
@@ -71,8 +73,12 @@ class Cadastro extends React.Component {
                   }
                   onChange={ () => { this.setState({ errors: {} }) } }
                 />
-                <button className='password-visibility' type='button'
-                  onClick={ () => { this.setState(prevState => ({isPasswordVisible: !prevState.isPasswordVisible})) } }
+                <button className='password-visibility' type='button' tabIndex='-1'
+                  onClick={ () => { 
+                    this.setState(prevState => ({
+                      isPasswordVisible: !prevState.isPasswordVisible
+                    }))
+                  } }
                 >
                   { this.state.isPasswordVisible ?
                     <FontAwesomeIcon icon='eye-slash' fixedWidth />
@@ -97,14 +103,15 @@ class Cadastro extends React.Component {
                   }
                   onChange={ () => { this.setState({ errors: {} }) } }
                 />
-                <button className='password-visibility' type='button'
-                  onClick={ () => { this.setState(prevState => ({isPasswordConfirmationVisible: !prevState.isPasswordConfirmationVisible})) } }                >
+                <button className='password-visibility' type='button' tabIndex='-1'
+                  onClick={ () => {
+                    this.setState(prevState => ({isPasswordConfirmationVisible: !prevState.isPasswordConfirmationVisible}))
+                  } }
+                >
                   { this.state.isPasswordConfirmationVisible ? 
-                    <FontAwesomeIcon icon='eye-slash' fixedWidth
-                    />
+                    <FontAwesomeIcon icon='eye-slash' fixedWidth />
                     : 
-                    <FontAwesomeIcon icon='eye' fixedWidth
-                    />
+                    <FontAwesomeIcon icon='eye' fixedWidth />
                   }
                 </button>
               </div>

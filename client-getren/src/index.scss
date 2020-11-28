@@ -75,6 +75,7 @@ html, body, #root {
     }
     &:focus {
       outline: none;
+      box-shadow: 0 0 0 2px #1b98e0;
     }
   }
 }

@@ -53,8 +53,12 @@ class Login extends React.Component {
                 name='password' 
                 onChange={() => { this.setState({ error: null }) }}
               />
-              <button className='password-visibility' type='button'
-                onClick={() => { this.setState(prevState => ({ isPasswordVisible: !prevState.isPasswordVisible })) }}
+              <button className='password-visibility' type='button' tabIndex='-1'
+                onClick={() => {
+                  this.setState(prevState => ({
+                    isPasswordVisible: !prevState.isPasswordVisible
+                  }))
+                }}
               >
                 {this.state.isPasswordVisible ?
                   <FontAwesomeIcon icon='eye-slash' fixedWidth />
@@ -65,7 +69,7 @@ class Login extends React.Component {
             </div>
           </div>
           <div>
-            <button type='button' id='forgot-password'
+            <button className='p-0' type='button' id='forgot-password'
               onClick={() => { this.setState({ isModalVisible: true }) }}
             >
               Esqueci minha senha
