@@ -32,7 +32,7 @@ class App extends React.Component {
         }
       }).finally(() => {
         this.setState({ isFetchingUser: false });
-      });
+      }).catch(error => {});
   }
 
   render() {

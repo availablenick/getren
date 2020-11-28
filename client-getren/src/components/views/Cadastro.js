@@ -10,9 +10,11 @@ class Cadastro extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      id: null,
+      email: null,
       errors: {},
       requestSent: false,
-      userRegistered: false,
+      isUserRegistered: false,
       isPasswordVisible: false,
       isPasswordConfirmationVisible: false,
     }
@@ -36,7 +38,7 @@ class Cadastro extends React.Component {
     const errorInputStyle = { boxShadow: '0 0 0 2px red' };
 
     let content = '';
-    if (!this.state.userRegistered) {
+    if (!this.state.isUserRegistered) {
       content = 
         <div className='d-flex justify-content-center align-items-center
           flex-column h-100'
@@ -133,7 +135,7 @@ class Cadastro extends React.Component {
         <div>
           <span>
             Usuário cadastrado. 
-            Um email foi enviado para {this.props.user.data.email} para confirmar
+            Um email foi enviado para tu {/* this.props.user.data.email */} para confirmar
             seu cadastro.
             Clique no botão para reenviar o email.
           </span>
@@ -147,7 +149,7 @@ class Cadastro extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
 
-    if (this.state.userRegistered) {
+    if (this.state.isUserRegistered) {
       return;
     }
     
@@ -158,27 +160,37 @@ class Cadastro extends React.Component {
       password: event.target.password.value,
       password_confirm: event.target.password_confirm.value,
     }).then(response => {
+      this.responseRegister = response;
+      if (response.status === 200) {
+        console.log('response first');
+        console.log(response.data);
+        this.setState({
+          id: response.data.id,
+          email: response.data.email,
+          isUserRegistered: true
+        });
+
+        return Promise.all([api.post('confirmation', {
+          email: response.data.user.email,
+          confirmed: false
+        }), response]);
+      }
+    }).then(([response, prevResponse]) => {
       if (response.status === 200) {
         this.props.dispatch(
           login({
-            email: response.data.user.email,
-            id: response.data.user.id,
+            email: prevResponse.data.email,
+            id: prevResponse.data.id,
           })
         );
-        this.setState({ userRegistered: true });
-        return api.post('confirmation', {
-          email: response.data.user.email,
-          confirmed: false
-        });
-      }
-    }).then(response => {
-      // response.status === 200
-      if (response) {
+
         setTimeout(() => {
           this.props.history.push('/');
         }, 5000);
       }
     }).catch(error => {
+      console.log('error catch');
+      console.log(error);
       if (!error.response) {
         setTimeout(() => {
           this.props.history.push('/');

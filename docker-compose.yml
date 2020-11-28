@@ -12,7 +12,7 @@ services:
 
   server:
     build: ./backend
-    command: flask run
+    command: bash -c "flask db upgrade && flask run"
     restart: always
     environment:
       - FLASK_RUN_HOST=0.0.0.0

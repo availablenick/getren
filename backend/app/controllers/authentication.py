@@ -97,6 +97,7 @@ def decode():
     return {}, 400
 
 @app.route('/confirmation', methods=['GET', 'POST'])
+@cross_origin(supports_credentials=True)
 def confirmation():
     result = request.get_json()
     email = result['email']
@@ -108,16 +109,17 @@ def confirmation():
     link = f'{domain}/confirmacao?email={email}&token={token}'
     confirmed = result['confirmed']
 
-    if confirmed == 'False':
+    if confirmed == False:
         msg = Message("Verificação de Conta", recipients=[email])
         msg.html = f"Você se registrou em getren.com.br. Para confirmar sua conta, acesse <a href={link}>AQUI</a>. Caso não tenha sido você, apenas ignore esta mensagem. Obrigado, equipe Getren"
+        return {}, 200
         try:
             mail.send(msg)
-            return {}, 200
+            #return {}, 200
         except Exception as E:
             return error_response('Email não enviado',500)            
 
-    if confirmed == 'True':
+    if confirmed == True:
         if token == result['token'] or result['token'] == fixed_token:
             user = User.confirm_user(email)
             if user is None:

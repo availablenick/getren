@@ -11,8 +11,8 @@ const routes = [
   },
   {
     path: '/cadastro',
-    needsUserSignedOut: true,
-    redirectTo: '/',
+    //needsUserSignedOut: true,
+    //redirectTo: '/',
     component: Cadastro,
   },
   {
