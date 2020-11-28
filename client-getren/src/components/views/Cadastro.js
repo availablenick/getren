@@ -9,11 +9,6 @@ import api from '../../config/axios/api.js';
 class Cadastro extends React.Component {
   constructor(props) {
     super(props);
-    
-    if (props.user.data) {
-      props.history.push('/');
-    }
-
     this.state = {
       errors: {},
       requestSent: false,

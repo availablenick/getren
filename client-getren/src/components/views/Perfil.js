@@ -2,18 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
-import { Link } from 'react-router-dom';
 import axios from 'axios';
 import api from '../../config/axios/api.js';
 
 class Perfil extends React.Component {
   constructor(props) {
     super(props);
-
-    if (!props.user.data) {
-      props.history.push('/');
-    }
-
     this.state = {
       user: {},
       federalStatesOptionsList: [],
@@ -28,20 +22,8 @@ class Perfil extends React.Component {
     api.get(url)
       .then(response => {
         if (response.status === 200) {
-          let theDate = new Date(response.data.birthdate);
-          let day = theDate.getUTCDate();
-          let month = theDate.getUTCMonth() + 1;
-          let year = theDate.getUTCFullYear();
-          let dateString =  year + '-' +
-            (month < 10 ? '0' + month : month) + '-' +
-            (day < 10 ? '0' + day : day);
-
           this.setState({
-            user: {
-              ...response.data,
-              birthdate: dateString,
-              email: this.props.user.data.email
-            }
+            user: response.data
           });
         }
 
@@ -108,7 +90,7 @@ class Perfil extends React.Component {
           <div>
             <label htmlFor='federal_state'>Estado</label>
             <select id='federal_state' name='federal_state'
-              defaultValue={this.state.user.federal_state}
+              value={this.state.user.federal_state}
               onChange={this.handleChangeStates}
             >
               {this.state.federalStatesOptionsList}
@@ -117,7 +99,7 @@ class Perfil extends React.Component {
 
           <div>
             <label htmlFor='city'>Cidade</label>
-            <select id='city' name='city' defaultValue={this.state.user.city}>
+            <select id='city' name='city' value={this.state.user.city}>
               {this.state.citiesOptionsList}
             </select>
           </div>
@@ -130,14 +112,18 @@ class Perfil extends React.Component {
         {this.state.didUpdateSucceed &&
           <span>Perfil atualizado com sucesso</span>
         }
-
-        <Link to='/'>Página inicial</Link>
       </div>
     );
   }
 
   handleChangeStates = (event) => {
     event.persist();
+    this.setState(prevState => ({
+      user: {
+        ...prevState.user,
+        federal_state: event.target.value
+      }
+    }));
     this.requestCitiesList(event.target.value)
       .then(response => {
         this.setState({
@@ -148,35 +134,17 @@ class Perfil extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    let form_data = new FormData(event.target);
-    let request_data = {
-      name: '',
-      email: '',
-      job: '',
-      birthdate: '',
-      city: '',
-      federal_state: ''
-    };
-    for (let [key, value] of form_data.entries()) {
-      request_data[key] = value;
+    let formData = new FormData(event.target);
+    let requestData = {};
+    for (let [key, value] of formData.entries()) {
+      requestData[key] = value;
     }
-    api.put('user/' + this.props.user.data.id, request_data)
+
+    api.put('user/' + this.props.user.data.id, requestData)
       .then(response => {
         if (response.status === 200) {
-          let theDate = new Date(response.data.birthdate);
-          let day = theDate.getUTCDate();
-          let month = theDate.getUTCMonth() + 1;
-          let year = theDate.getUTCFullYear();
-          let dateString =  year + '-' +
-            (month < 10 ? '0' + month : month) + '-' +
-            (day < 10 ? '0' + day : day);
-
           this.setState({
-            user: {
-              ...response.data,
-              email: this.props.user.data.email,
-              birthdate: dateString
-            },
+            user: response.data,
             didUpdateSucceed: true
           });
         }

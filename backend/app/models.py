@@ -1,6 +1,6 @@
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import date, datetime
 
 class Attends(db.Model):
   __tablename__ = "attends"
@@ -49,7 +49,11 @@ class User(db.Model):
     user_dict = {}
     for key in ['job', 'federal_state', 'name', 'city', 'birthdate', 'is_confirmed', 'email']:
       user_dict[key] = getattr(self, key)
-    user_dict['birthdate'] = datetime.strftime(user_dict['birthdate'], '%Y-%m-%d')
+
+    if user_dict['birthdate']:
+      user_dict['birthdate'] = datetime.strftime(user_dict['birthdate'], '%Y-%m-%d')
+    else:
+      user_dict['birthdate'] = date.today().strftime('%Y-%m-%d')
     return user_dict
   
   def set_password(self, password):

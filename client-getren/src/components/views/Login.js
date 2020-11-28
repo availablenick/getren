@@ -10,11 +10,6 @@ import api from '../../config/axios/api.js';
 class Login extends React.Component {
   constructor(props) {
     super(props);
-
-    if (props.user.data) {
-      props.history.push('/');
-    }
-
     this.state = {
       error: null,
       isPasswordVisible: false,

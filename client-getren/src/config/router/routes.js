@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Home from '../../components/views/Home.js';
 import Cadastro from '../../components/views/Cadastro.js';
 import Login from '../../components/views/Login.js';
@@ -9,38 +7,29 @@ import Perfil from '../../components/views/Perfil.js';
 const routes = [
   {
     path: '/',
-    // component: Home,
-    render: props => { 
-      return (<Home />);
-    },
+    component: Home,
   },
   {
     path: '/cadastro',
-    // component: Cadastro,
-    render: props => { 
-      return (<Cadastro />);
-    },
+    needsUserSignedOut: true,
+    redirectTo: '/',
+    component: Cadastro,
   },
   {
     path: '/login',
-    // component: Login,
-    render: props => { 
-      return (<Login />);
-    },
+    needsUserSignedOut: true,
+    redirectTo: '/',
+    component: Login,
   },
   {
     path: '/confirmacao',
-    // component: Login,
-    render: props => { 
-      return (<Confirmacao />);
-    },
+    component: Confirmacao,
   },
   {
     path: '/perfil',
-    // component: Login,
-    render: props => { 
-      return (<Perfil />);
-    },
+    needsUserSignedIn: true,
+    redirectTo: '/login',
+    component: Perfil,
   },
 ];
 
