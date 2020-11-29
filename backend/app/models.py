@@ -1,6 +1,8 @@
-from app import db
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date, datetime
+from sqlalchemy.sql import func
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from app import db
 
 class Attends(db.Model):
   __tablename__ = "attends"
@@ -10,6 +12,19 @@ class Attends(db.Model):
   is_payed = db.Column(db.Boolean)
   user = db.relationship("User", back_populates="courses_taken")
   course = db.relationship("Course", back_populates="users_attending")
+
+  @classmethod
+  def add(cls, id, request_attends):
+    request_attends['progress'] = 0
+    request_attends['user_id'] = id
+    try:
+      attends = cls(**request_attends)
+      db.session.add(attends)
+      db.session.commit()
+      return attends
+    except Exception as E:
+      return None
+
 
 class Watches(db.Model):
   __tablename__ = "watches"
@@ -55,13 +70,20 @@ class User(db.Model):
     else:
       user_dict['birthdate'] = date.today().strftime('%Y-%m-%d')
     return user_dict
-  
+
   def set_password(self, password):
     self.password_hash = generate_password_hash(password)
     return
-  
+
   def check_password(self, password):
     return check_password_hash(self.password_hash, password)
+
+  def get_courses(self):
+    attended_courses = self.courses_taken
+    course_list = []
+    for attended_course in attended_courses:
+      course_list.append(attended_course.course.as_dict())
+    return course_list
 
   @classmethod
   def register(cls, email, password):
@@ -155,9 +177,16 @@ class Course(db.Model):
       return None
 
   @classmethod
-  def get_all(cls):
+  def get_by_filter(cls, filter):
     try:
-      courses = cls.query.all()
+      if filter == 'all':
+        courses = cls.query.all()
+      elif filter == 'expired':
+        courses = db.session.query(Course).filter(func.date(Course.expires_at) < datetime.today().date()).all()
+      elif filter == 'active':
+        courses = db.session.query(Course).filter(func.date(Course.expires_at) >= datetime.today().date()).all()
+      else:
+        courses = db.session.query(Course).filter(Course.name.match(filter)).all()
     except Exception as e:
       return None
     courses_list = []
