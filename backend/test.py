@@ -5,28 +5,17 @@ import os
 import time
 
 from flask import Flask
+from sqlalchemy.exc import InvalidRequestError
 
 import models_test
 
 from app import create_test_app, test_db
 from app.config import Test_Config
-from app.models import User, Course, Video
+from app.models import User, Course, Video, Attends
 
-class MyTest_User(flask_testing.TestCase):
+TESTS = 0
 
-    def create_app(self):
-        app = create_test_app()
-        test_db.init_app(app)
-        return app
-
-    def setUp(self):
-        test_db.create_all()
-
-    def tearDown(self):
-        test_db.session.remove()
-        test_db.drop_all()
-
-class MyTest_Course(flask_testing.TestCase):
+class MyTest_User_Course(flask_testing.TestCase):
 
     def create_app(self):
         app = create_test_app()
@@ -34,31 +23,68 @@ class MyTest_Course(flask_testing.TestCase):
         return app
 
     def setUp(self):
-        test_db.create_all()
-        test_db.session.commit()
+        global TESTS
+        if TESTS == 0:
+            test_db.create_all()
+            clear_please(test_db)
+            TESTS+=1
 
     def tearDown(self):
-        test_db.session.remove()
-        test_db.drop_all()
+        #test_db.session.remove()
+        #test_db.drop_all()
+        clear_please(test_db)
+        seqs = ['user_id_seq', 'course_id_seq']
+        for seq in seqs:
+            query = f"ALTER SEQUENCE {seq} RESTART"
+            test_db.engine.execute(query)
 
 class MyTest_Video(flask_testing.TestCase):
 
     def create_app(self):
+        global TESTS
+        TESTS = 0
         app = create_test_app()
         test_db.init_app(app)
         return app
 
     def setUp(self):
-        test_db.create_all()
-        course = Course(name = "Curso de Teste")
-        test_db.session.add(course)
-        test_db.session.commit()
+        global TESTS
+        if TESTS == 0:
+            test_db.create_all()
+            clear_please(test_db)
+            TESTS+=1
 
     def tearDown(self):
-        test_db.session.remove()
-        test_db.drop_all()
+        clear_please(test_db)
+        seqs = ['video_id_seq', 'course_id_seq']
+        for seq in seqs:
+            query = f"ALTER SEQUENCE {seq} RESTART"
+            test_db.engine.execute(query)
 
-class ZZZ_UserTest(MyTest_User):
+class MyTest_Attends(flask_testing.TestCase):
+
+    def create_app(self):
+        global TESTS
+        TESTS = 0
+        app = create_test_app()
+        test_db.init_app(app)
+        return app
+
+    def setUp(self):
+        global TESTS
+        if TESTS == 0:
+            test_db.create_all()
+            clear_please(test_db)
+            TESTS+=1
+
+    def tearDown(self):
+        clear_please(test_db)
+        seqs = ['user_id_seq', 'course_id_seq']
+        for seq in seqs:
+            query = f"ALTER SEQUENCE {seq} RESTART"
+            test_db.engine.execute(query)
+
+class UserTest(MyTest_User_Course):
 
     def test_1_create(self):
         user = User.register("getren@gmail.com", "12345678")
@@ -104,12 +130,12 @@ class ZZZ_UserTest(MyTest_User):
         user = User.get_by_id(1)
         assert user is None
 
-    def test_ZZZ_repeated(self):
+    def test_10_repeated(self):
         user = User.register("getren@gmail.com", "12345678")
         new_user = User.register("getren@gmail.com", "81723981723")
         assert user is not None and new_user is None
 
-class CourseTest(MyTest_Course):
+class CourseTest(MyTest_User_Course):
     
     def test_01_add(self):
         course = Course.add({"name" : "Curso de teste"})
@@ -121,9 +147,27 @@ class CourseTest(MyTest_Course):
 
     def test_03_get_all(self):
         course = Course.add({"name" : "Curso de teste"})
-        courses = Course.get_all()
+        courses = Course.get_by_filter("all")
         assert list(courses[0].keys()) == ['id', 'name', 'number_of_videos',
                                             'duration', 'price', 'expires_at', 'is_watchable']
+
+    def test_04_get_expired(self):
+        course = Course.add({"name": "Curso de teste", "expires_at": "2020-11-20"})
+        course = Course.add({"name": "Curso de teste 2", "expires_at": "4020-12-10"})
+        courses = Course.get_by_filter("expired")
+        assert len(courses) == 1 and courses[0]['name'] == "Curso de teste"
+
+    def test_05_get_active(self):
+        course = Course.add({"name": "Curso de teste", "expires_at": "2020-11-20"})
+        course = Course.add({"name": "Curso de teste 2", "expires_at": "4020-12-10"})
+        courses = Course.get_by_filter("active")
+        assert len(courses) == 1 and courses[0]['name'] == "Curso de teste 2"
+
+    def test_05_get_with_search(self):
+        course = Course.add({"name": "Curso de teste", "expires_at": "2020-11-20"})
+        course = Course.add({"name": "Batata", "expires_at": "4020-12-10"})
+        courses = Course.get_by_filter("Batata")
+        assert len(courses) == 1 and courses[0]['name'] == "Batata"    
 
     def test_04_get_by_id(self):
         course = Course.add({"name" : "Curso de teste"})
@@ -158,27 +202,49 @@ class CourseTest(MyTest_Course):
 class VideoTest(MyTest_Video):
 
     def test_01_add(self):
+        course = Course.add({'name': "Curso de Teste"})
         video = Video.add(1, {'youtube_code': 'test_code', 'course_order': 1})
         assert video is not None
 
     def test_02_add_fail(self):
-        # CHANGE AFTER POSTGRES
         video = Video.add(2, {'youtube_code': 'test_code', 'course_order': 1})
-        assert video is not None
+        assert video is None
 
     def test_03_get_videos_as_dict(self):
+        course = Course.add({'name': "Curso de Teste"})
         course = Course.get_by_id(1)
         video = Video.add(1, {'youtube_code': 'test_code', 'course_order': 1})
         videos = course.get_videos_as_dict()
         assert list(videos[0].keys()) == ['id', 'youtube_code', 'course_order'] and videos[0]['youtube_code'] == 'test_code'
 
     def test_04_get_by_id(self):
+        course = Course.add({'name': "Curso de Teste"})
         video = Video.add(1, {'youtube_code': 'test_code', 'course_order': 1})
         new_video = Video.get_by_id(1)
         video_fail = Video.get_by_id(2)
         assert new_video is not None and new_video.id == video.id and video_fail is None
 
+class AttendsTest(MyTest_Attends):
+
+    def test_1_enroll(self):
+        course = Course.add({'name': 'Curso 1'})
+        user = User.register(email = 'user@gmail.com', password = '12345678')
+        attends = Attends.add(1, {'course_id': 1, 'is_payed': False})
+        assert attends is not None and attends.user_id == 1 and attends.course.name == 'Curso 1'
+
+    def test_2_enroll_fail(self):
+        course = Course.add({'name': 'Curso 1'})
+        user = User.register(email = 'user@gmail.com', password = '12345678')
+        attends = Attends.add(3, {'course_id': 3})
+        assert attends is None                
+
+def clear_please(db):
+    Attends.query.delete()
+    Video.query.delete()
+    User.query.delete()
+    Course.query.delete()
+    db.session.commit()
+
 if __name__ == "__main__":
     unittest.main()
-    
 

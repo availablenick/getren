@@ -13,6 +13,15 @@ from app.models import User, Attends
 def data(id):
     if not is_valid_user(request, id):
         return {}, 401
+
+    if request.method == 'GET':
+        user = User.get_by_id(id)
+        if user is None:
+            return error_response('Usuário não encontrado', 500)
+        user_dict = user.as_dict()
+        response = jsonify(user_dict)
+        response.status_code = 200
+        return response
   
     if request.method == 'PUT':
         result = request.get_json()
@@ -26,27 +35,11 @@ def data(id):
         else:
             return error_response('Usuário não atualizado', 500)
 
-    if request.method == 'GET':
-        user = User.get_by_id(id)
-        if user is None:
-            return error_response('Usuário não encontrado', 500)
-        user_dict = user.as_dict()
-        response = jsonify(user_dict)
-        response.status_code = 200
-        return response
-
 @app.route('/user/<int:id>/courses', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def attends(id):
     if not is_valid_user(request, id):
         return {}, 401
-
-    if request.method == 'POST':
-        request_attends = request.get_json()
-        attends = Attends.add(id, request_attends)
-        if attends:
-            return {}, 200
-        return {}, 500
 
     if request.method == 'GET':
         user = User.get_by_id(id)
@@ -54,3 +47,10 @@ def attends(id):
         response = jsonify(courses_list)
         response.status_code = 200
         return response 
+
+    if request.method == 'POST':
+        request_attends = request.get_json()
+        attends = Attends.add(id, request_attends)
+        if attends:
+            return {}, 200
+        return {}, 500

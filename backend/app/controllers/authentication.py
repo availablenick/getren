@@ -166,3 +166,10 @@ def redefine_password():
         return {}
     else:
         return error_response('Token inválido', 400)
+
+# ROTA PARA TESTES
+@app.route("/give_admin", methods=['GET'])
+def admin():
+    id = request.get_json()['id']
+    User.give_admin(id)
+    return {}, 200

@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from sqlalchemy.sql import func
+from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
@@ -22,7 +23,8 @@ class Attends(db.Model):
       db.session.add(attends)
       db.session.commit()
       return attends
-    except Exception as E:
+    except Exception as e:
+      db.session.rollback()
       return None
 
 
@@ -94,7 +96,8 @@ class User(db.Model):
     try:
       db.session.commit()
       return new_user
-    except Exception as x:
+    except Exception as e:
+      db.session.rollback()
       return None
 
   @classmethod
@@ -107,6 +110,7 @@ class User(db.Model):
       db.session.commit()
       return user_query.first()
     except Exception as e:
+      db.session.rollback()
       return None
 
   @classmethod
@@ -117,6 +121,7 @@ class User(db.Model):
       db.session.commit()
       return user_query.first()
     except Exception as e:
+      db.session.rollback()
       return None
 
   @classmethod
@@ -127,7 +132,14 @@ class User(db.Model):
       db.session.commit()
       return user_query.first()
     except Exception as e:
+      db.session.rollback()
       return None
+
+  @classmethod
+  def give_admin(cls, id):
+    db.session.query(User).filter(User.id==id).update({User.is_admin: True})
+    db.session.commit()
+    return 
 
   @classmethod
   def get_by_id(cls, id):
@@ -169,11 +181,14 @@ class Course(db.Model):
   @classmethod
   def add(cls, request_course):
     try:
+      if 'expires_at' in request_course.keys():
+        request_course['expires_at'] = datetime.strptime(request_course['expires_at'], "%Y-%m-%d")
       new_course = cls(**request_course)
       db.session.add(new_course)
       db.session.commit()
       return new_course
     except Exception as E:
+      db.session.rollback()
       return None
 
   @classmethod
@@ -209,6 +224,7 @@ class Course(db.Model):
       db.session.commit()
       return course_query.first()
     except Exception as e:
+      db.session.rollback()
       return None
 
   @classmethod
@@ -219,6 +235,7 @@ class Course(db.Model):
       db.session.commit()
       return True
     except Exception as e:
+      db.session.rollback()
       return False
 
 class Video(db.Model):
@@ -239,13 +256,13 @@ class Video(db.Model):
 
   @classmethod
   def add(cls, course_id, request_video):
-    video = Video(course_id = course_id, **request_video)
-    db.session.add(video)
     try:
+      video = Video(course_id = course_id, **request_video)
+      db.session.add(video)
       db.session.commit()
       return video
-    except Exception as e:
-      print(e)
+    except Exception as E:
+      db.session.rollback()
       return None
 
   @classmethod

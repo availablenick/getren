@@ -11,7 +11,13 @@ def videos(id):
     if course is None:
         return {}, 404
 
-    if request.method=='POST':
+    if request.method=='GET':
+        videos = course.get_videos_as_dict()
+        response = jsonify(videos)
+        response.status_code = 200
+        return response
+
+    elif request.method=='POST':
         if is_valid_admin(request):
             result = request.get_json()
             video = Video.add(id, result)
@@ -19,12 +25,6 @@ def videos(id):
                 return {}, 200
             return error_response('Vídeo não adicionado', 500)
         return error_response('Permissão negada', 401)
-
-    elif request.method=='GET':
-        videos = course.get_videos_as_dict()
-        response = jsonify(videos)
-        response.status_code = 200
-        return response
 
 @app.route('/video/<int:id>', methods = ['GET'])
 def video(id):

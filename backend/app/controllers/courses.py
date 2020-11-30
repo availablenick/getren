@@ -39,8 +39,7 @@ def course(id):
         response = jsonify(course_dict)
         response.status_code = 200
         return response
-    if is_valid_admin(request):
-        
+    if is_valid_admin(request):        
         if request.method == 'PUT':
             result = request.get_json()
             course = Course.update_data(id, result)
