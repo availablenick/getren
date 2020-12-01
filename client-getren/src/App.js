@@ -9,7 +9,6 @@ import routes from './config/router/routes.js';
 
 import { login } from './storage/user/userSlice.js';
 import api from './config/axios/api.js';
-import './App.scss';
 
 class App extends React.Component {
   constructor(props) {
