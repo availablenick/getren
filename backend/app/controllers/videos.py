@@ -5,6 +5,7 @@ from .utils import is_valid_admin, error_response, decode_duration, SECRET_KEY
 from app import app
 from app.models import User, Course, Video
 from .youtube import upload_video
+from json import loads
 
 @app.route('/course/<int:id>/videos', methods=['GET', 'POST'])
 def videos(id):
@@ -24,18 +25,20 @@ def videos(id):
             if request.files:
                 upload_succeded, video = upload_video(request.files['video'], request.form)
                 if upload_succeded:
+                    print(type(video))
+                    print(video)
+                    try:
+                        print(loads(video))
+                    except Exception as e:
+                        print('->', e)
+
                     info = video['snippet']
-                    duration = video['contentDetails']['duration']
-                    duration = decode_duration(duration)
                     request_video = {'youtube_code': video['id'],
                                     'title': info['title'],
                                     'description': info['description'],
-                                    'thumbnail': info['thumbnails']['default']['url'],
-                                    'duration': duration,
-                                    'course_order': int(request.form['order'])}
-                else:
-                    print(video)
-                    return error_response('Falha no Upload.', 500)                    
+                                    'thumbnail': info['thumbnails']['high']['url'],
+                                    'duration': request.form['duration'],
+                                    'course_order': int(request.form['order'])}                  
             else:
                 request_video = request.get_json()
             video = Video.add(id, request_video)

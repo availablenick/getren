@@ -3,7 +3,7 @@ import pickle
 from io import BytesIO
 from google_auth_oauthlib.flow import Flow, InstalledAppFlow
 from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload, MediaIoBaseUpload
+from googleapiclient.http import MediaFileUpload, MediaIoBaseUpload, HttpError
 from google.auth.transport.requests import Request
 from google.auth.credentials import Credentials
 
@@ -34,25 +34,24 @@ def upload_video(video, attributes_form):
             'description': attributes_form['description'],
         },
         'status': {
-            'privacyStatus': 'public',
+            'privacyStatus': 'unlisted',
             'selfDeclaredMadeForKids': False, 
         },
         'notifySubscribers': False
     }
-    mediaFile = MediaIoBaseUpload(BytesIO(video.read()), mimetype=video.mimetype, chunksize=-1)
+    mediaFile = MediaIoBaseUpload(BytesIO(video.read()), mimetype=video.mimetype, chunksize=-1, resumable=True)
 
     if not service:
         return
+    response_upload = service.videos().insert(
+        part='snippet,status',
+        body=request_body,
+        media_body=mediaFile
+    )
 
-    try:
-        response_upload = service.videos().insert(
-            part='snippet,status',
-            body=request_body,
-            media_body=mediaFile
-        ).execute()
-        return (True, response_upload)
-    except Exception as e:
-        return (False, e)
+    response = resumable_upload(response_upload)
+
+    return response
 
 def create_service():
     cred = None
@@ -86,3 +85,33 @@ def create_service():
         print('Unable to connect.')
         print(e)
         return None
+
+def resumable_upload(insert_request):
+  response = None
+  error = None
+  retry = 0
+  while response is None:
+    try:
+      print("Uploading file...")
+      status, response = insert_request.next_chunk()
+      if response is not None:
+        if 'id' in response:
+          print(f"Video id {response['id']} was successfully uploaded.")
+          return True, response
+        else:
+          print(f"The upload failed with an unexpected response: {response}")
+    except HttpError as e:
+        error = f"A retriable HTTP error {e.resp.status} occurred:\n{e.content}"
+    except Exception as e:
+      error = f"A retriable error occurred: {e}"
+
+    if error is not None:
+      print (error)
+      retry += 1
+      if retry > 3:
+        return False, error
+
+      max_sleep = 2 ** retry
+      sleep_seconds = random.random() * max_sleep
+      print (f"Sleeping {sleep_seconds} seconds and then retrying...")
+      time.sleep(sleep_seconds)
