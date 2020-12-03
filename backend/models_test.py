@@ -10,7 +10,7 @@ class Attends(db.Model):
   user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
   course_id = db.Column(db.Integer, db.ForeignKey('course.id'), primary_key=True)
   progress = db.Column(db.Integer)
-  is_payed = db.Column(db.Boolean)
+  is_paid = db.Column(db.Boolean)
   user = db.relationship("User", back_populates="courses_taken")
   course = db.relationship("Course", back_populates="users_attending")
 
@@ -153,8 +153,10 @@ class Course(db.Model):
   name = db.Column(db.String(128))
   created_at = db.Column(db.DateTime, default=datetime.utcnow)
   updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+  thumbnail = db.Column(db.LargeBinary)
   number_of_videos = db.Column(db.Integer)
   duration = db.Column(db.Integer)
+  is_available = db.Column(db.Boolean)
   expires_at = db.Column(db.DateTime)
   price = db.Column(db.Float)
   is_watchable = db.Column(db.Boolean)
@@ -243,6 +245,10 @@ class Video(db.Model):
   youtube_code = db.Column(db.String(128), unique=True, index=True)
   course_order = db.Column(db.Integer)
   course_id = db.Column(db.Integer, db.ForeignKey("course.id"))
+  title = db.Column(db.String(128))
+  description = db.Column(db.Text)
+  duration = db.Column(db.Integer)
+  thumbnail = db.Column(db.String(256))
   users_viewed = db.relationship("Watches", back_populates="video")
 
   def __repr__(self):
@@ -256,6 +262,10 @@ class Video(db.Model):
 
   @classmethod
   def add(cls, course_id, request_video):
+    if 'duration' in request_video:
+      duration = request_video['duration']
+      index = duration.index(':')
+      request_video['duration'] = int(duration[:index])*60 + int(duration[index+1:])
     try:
       video = Video(course_id = course_id, **request_video)
       db.session.add(video)
@@ -271,5 +281,3 @@ class Video(db.Model):
       return db.session.query(Video).filter(Video.id==id).first()
     except Exception as e:
       return None
-
-  

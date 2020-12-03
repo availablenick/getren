@@ -7,6 +7,14 @@ from app.models import User
 
 SECRET_KEY = app.config['SECRET_KEY']
 
+def to_seconds(duration):
+    return int(duration[0])*60 + int(duration[1])
+
+def decode_duration(duration):
+    m_index = duration.index('M')       
+    duration = (duration[2:m_index], duration[m_index+1:-1])
+    return int(duration[0])*60 + int(duration[1])    
+
 def validate_password(password, password_confirm):
     errors = {
         'password': [],

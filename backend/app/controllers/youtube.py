@@ -30,7 +30,6 @@ def upload_video(video, attributes_form):
     service = create_service()
     request_body = {
         'snippet': {
-            'categoryId': 19,
             'title': attributes_form['title'],
             'description': attributes_form['description'],
         },
@@ -40,7 +39,7 @@ def upload_video(video, attributes_form):
         },
         'notifySubscribers': False
     }
-    mediaFile = MediaIoBaseUpload(BytesIO(video.read()), mimetype=video.mimetype)
+    mediaFile = MediaIoBaseUpload(BytesIO(video.read()), mimetype=video.mimetype, chunksize=-1)
 
     if not service:
         return
