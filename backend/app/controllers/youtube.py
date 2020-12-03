@@ -1,9 +1,9 @@
 import os
-import requests
 import pickle
+from io import BytesIO
 from google_auth_oauthlib.flow import Flow, InstalledAppFlow
 from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
+from googleapiclient.http import MediaFileUpload, MediaIoBaseUpload
 from google.auth.transport.requests import Request
 from google.auth.credentials import Credentials
 
@@ -25,15 +25,14 @@ def callback():
         file.close()
     return code, 200
 
-@app.route('/youtube_upload', methods=['GET'])
-def upload_video():
+# @app.route('/youtube_upload', methods=['GET'])
+def upload_video(video, attributes_form):
     service = create_service()
     request_body = {
         'snippet': {
-            'categoryI': 19,
-            'title': 'Vamo Jorgin',
-            'description': 'Esse vídeo mostra que o Jorgin foi.',
-            'tags': ['Jorgin', 'Vamo', 'Fé', '#programmerlife']
+            'categoryId': 19,
+            'title': attributes_form['title'],
+            'description': attributes_form['description'],
         },
         'status': {
             'privacyStatus': 'public',
@@ -41,7 +40,7 @@ def upload_video():
         },
         'notifySubscribers': False
     }
-    mediaFile = MediaFileUpload('video.MP4')
+    mediaFile = MediaIoBaseUpload(BytesIO(video.read()), mimetype=video.mimetype)
 
     if not service:
         return
@@ -52,12 +51,9 @@ def upload_video():
             body=request_body,
             media_body=mediaFile
         ).execute()
-
-        return {response_upload.get('id')}, 200
-
+        return (True, response_upload)
     except Exception as e:
-        print(e)
-        return {}, 500
+        return (False, e)
 
 def create_service():
     cred = None

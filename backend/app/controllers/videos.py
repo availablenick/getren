@@ -4,6 +4,7 @@ from flask_cors import cross_origin
 from .utils import is_valid_admin, error_response, SECRET_KEY
 from app import app
 from app.models import User, Course, Video
+from .youtube import upload_video
 
 @app.route('/course/<int:id>/videos', methods=['GET', 'POST'])
 def videos(id):
@@ -19,8 +20,14 @@ def videos(id):
 
     elif request.method=='POST':
         if is_valid_admin(request):
-            result = request.get_json()
-            video = Video.add(id, result)
+            request_video = {}
+            if request.files:
+                upload_succeded, video = upload_video(request.files['video'], request.form)
+                if upload_succeded:
+                    request_video['youtube_code'] = video['id']
+            else:
+                request_video = request.get_json()
+            video = Video.add(id, request_video)
             if video:
                 return {}, 200
             return error_response('Vídeo não adicionado', 500)
