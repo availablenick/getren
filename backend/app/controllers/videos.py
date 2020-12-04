@@ -25,13 +25,6 @@ def videos(id):
             if request.files:
                 upload_succeded, video = upload_video(request.files['video'], request.form)
                 if upload_succeded:
-                    print(type(video))
-                    print(video)
-                    try:
-                        print(loads(video))
-                    except Exception as e:
-                        print('->', e)
-
                     info = video['snippet']
                     request_video = {'youtube_code': video['id'],
                                     'title': info['title'],

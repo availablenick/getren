@@ -6,7 +6,7 @@ from flask_cors import cross_origin
 
 from .utils import error_response, is_valid_user, SECRET_KEY
 from app import app
-from app.models import User, Attends
+from app.models import User, Attends, Watches
 
 @app.route('/user/<int:id>', methods=['GET', 'PUT'])
 @cross_origin(supports_credentials=True)
@@ -53,4 +53,32 @@ def attends(id):
         attends = Attends.add(id, request_attends)
         if attends:
             return {}, 200
+        return {}, 500
+
+@app.route('/user/<int:user_id>/video/<int:video_id>', methods=['GET', 'POST', 'PUT'])
+def watches(user_id, video_id):
+    if not is_valid_user(request, user_id):
+        return {}, 401
+
+    if request.method == 'GET':
+        watches = Watches.get_by_id(user_id, video_id)
+        if watches:
+            response = jsonify(watches)
+            response.status_code = 200
+            return response
+        return {}, 500
+
+    if request.method == 'POST':
+        watches = Watches.add(user_id, video_id)
+        if watches:
+            return {}, 200
+        return {}, 500
+ 
+    if request.method == 'PUT':
+        watches_request = request.get_json()
+        watches = Watches.update_data(user_id, video_id, watches_request)
+        if watches:
+            response = jsonify(watches.as_dict())
+            response.status_code = 200
+            return response
         return {}, 500
