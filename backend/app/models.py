@@ -293,7 +293,7 @@ class Video(db.Model):
 
   def as_dict(self):
     video_dict = {}
-    for key in ['id', 'youtube_code', 'course_order']:
+    for key in ['id', 'youtube_code', 'title', 'description', 'duration', 'thumbnail', 'course_order']:
       video_dict[key] = getattr(self, key)
     return video_dict
 
@@ -319,4 +319,25 @@ class Video(db.Model):
     except Exception as e:
       return None
 
+  @classmethod
+  def update_data(cls, id, request_course):
+    video_query = db.session.query(Video).filter(Video.id==id)
+    try:
+      video_query.update(request_course) 
+      db.session.commit()
+      return video_query.first()
+    except Exception as e:
+      db.session.rollback()
+      return None
+
+  @classmethod
+  def delete(cls, id):
+    video = db.session.query(Video).filter(Video.id==id)
+    try:
+      video.delete() 
+      db.session.commit()
+      return True
+    except Exception as e:
+      db.session.rollback()
+      return False
   

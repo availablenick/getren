@@ -40,13 +40,35 @@ def videos(id):
             return error_response('Vídeo não adicionado', 500)
         return error_response('Permissão negada', 401)
 
-@app.route('/video/<int:id>', methods = ['GET'])
+@app.route('/video/<int:id>', methods = ['GET', 'PUT', 'DELETE'])
 def video(id):
     video = Video.get_by_id(id)
     if video is None:
         return {}, 404
-    else:
+
+    if request.method == 'GET':
         video_dict = video.as_dict()
         response = jsonify(video_dict)
         response.status_code = 200
         return response
+
+    if is_valid_admin(request):        
+        if request.method == 'PUT':
+            result = request.get_json()
+            video = Video.update_data(id, result)
+            if video:
+                video_dict = video.as_dict()
+                response = jsonify(video_dict)
+                response.status_code = 200
+                return response
+            else:
+                return error_response('Video não atualizado', 500)
+
+        elif request.method == 'DELETE':
+            if Video.delete(id):
+                # deletar no youtube
+                return {}, 200
+            else:
+                return error_response('Video não deletado', 500)
+    else:
+        return error_response('Permissão negada', 401)
