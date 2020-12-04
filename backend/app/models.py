@@ -232,6 +232,8 @@ class Course(db.Model):
 
   @classmethod
   def get_by_filter(cls, filter):
+    ignorable = ['a', 'de', 'ante', 'para', 'por', 'sob', 'sobre', 'após', 'perante', 'com', 'entre', 'desde', 'o',
+    'um', 'uma']
     try:
       if filter == 'all':
         courses = cls.query.all()
@@ -240,7 +242,11 @@ class Course(db.Model):
       elif filter == 'active':
         courses = db.session.query(Course).filter(func.date(Course.expires_at) >= datetime.today().date()).all()
       else:
-        courses = db.session.query(Course).filter(Course.name.match(filter)).all()
+        search_words = filter.split('%20')
+        courses = db.session.query(Course)
+        for word in search_words:
+          courses = courses.filter(Course.name.match(word))
+        courses = courses.all()
     except Exception as e:
       return None
     courses_list = []
