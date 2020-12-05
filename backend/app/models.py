@@ -232,6 +232,8 @@ class Course(db.Model):
 
   @classmethod
   def get_by_filter(cls, filter):
+    ignorable = ['a', 'de', 'ante', 'para', 'por', 'sob', 'sobre', 'após', 'perante', 'com', 'entre', 'desde', 'o',
+    'um', 'uma']
     try:
       if filter == 'all':
         courses = cls.query.all()
@@ -240,7 +242,11 @@ class Course(db.Model):
       elif filter == 'active':
         courses = db.session.query(Course).filter(func.date(Course.expires_at) >= datetime.today().date()).all()
       else:
-        courses = db.session.query(Course).filter(Course.name.match(filter)).all()
+        search_words = filter.split('%20')
+        courses = db.session.query(Course)
+        for word in search_words:
+          courses = courses.filter(Course.name.match(word))
+        courses = courses.all()
     except Exception as e:
       return None
     courses_list = []
@@ -340,4 +346,48 @@ class Video(db.Model):
     except Exception as e:
       db.session.rollback()
       return False
+
+class Text(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  body = db.Column(db.Text, nullable=False)
+  section = db.Column(db.String(16), index = True)
+
+  @classmethod
+  def get_from_section(cls, section):
+    text = db.session.query(Text).filter(Text.section == section).first()
+    if text:
+      return text
+    return None
+
+  @classmethod
+  def add(cls, section, body):
+    try:
+      text = cls(section = section, body = body)
+      db.session.add(text)
+      db.session.commit()
+      return text
+    except Exception as e:
+      db.session.rollback()
+      return None
+
+  @classmethod
+  def update_body(cls, section, new_body):
+    try:
+      text = db.session.query(Text).filter(Text.section == section)
+      text.update({Text.body: new_body})
+      db.session.commit()
+      return text.first()
+    except Exception as e:
+      db.session.rollback()
+      return None
+
+
+
+    
+
+    
+    
+
+
+
   

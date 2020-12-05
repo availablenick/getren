@@ -9,9 +9,9 @@ class Config(object):
     SECRET_KEY = b'\xad\xd3\x10\x8f\xa8\xee\xf8{\xa9k\xceG\xa3\xfd\xec\x1b'
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = '465'
-    MAIL_USERNAME = 'getren.xp@gmail.com'
-    MAIL_PASSWORD = 'alfredogoldxp'
-    MAIL_DEFAULT_SENDER = 'getren.xp@gmail.com'
+    MAIL_USERNAME = os.environ.get('FLASK_MAIL_USERNAME')
+    MAIL_PASSWORD =  os.environ.get('FLASK_MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER = os.environ.get('FLASK_MAIL_SENDER')
     MAIL_USE_SSL = True
 
 class Test_Config(object):

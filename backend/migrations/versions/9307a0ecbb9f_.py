@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 7892d784e055
+Revision ID: 9307a0ecbb9f
 Revises: 
-Create Date: 2020-12-03 20:06:58.158088
+Create Date: 2020-12-04 21:12:10.106079
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7892d784e055'
+revision = '9307a0ecbb9f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -32,6 +32,13 @@ def upgrade():
     sa.Column('is_watchable', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('text',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('body', sa.Text(), nullable=False),
+    sa.Column('section', sa.String(length=16), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_text_section'), 'text', ['section'], unique=False)
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=64), nullable=True),
@@ -103,5 +110,7 @@ def downgrade():
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_index(op.f('ix_user_city'), table_name='user')
     op.drop_table('user')
+    op.drop_index(op.f('ix_text_section'), table_name='text')
+    op.drop_table('text')
     op.drop_table('course')
     # ### end Alembic commands ###
