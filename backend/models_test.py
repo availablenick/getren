@@ -1,15 +1,32 @@
-from app import test_db as db
+from datetime import date, datetime
+from sqlalchemy.sql import func
+from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+
+from app import test_db as db
 
 class Attends(db.Model):
   __tablename__ = "attends"
   user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
   course_id = db.Column(db.Integer, db.ForeignKey('course.id'), primary_key=True)
   progress = db.Column(db.Integer)
-  is_payed = db.Column(db.Boolean)
+  is_paid = db.Column(db.Boolean)
   user = db.relationship("User", back_populates="courses_taken")
   course = db.relationship("Course", back_populates="users_attending")
+
+  @classmethod
+  def add(cls, id, request_attends):
+    request_attends['progress'] = 0
+    request_attends['user_id'] = id
+    try:
+      attends = cls(**request_attends)
+      db.session.add(attends)
+      db.session.commit()
+      return attends
+    except Exception as e:
+      db.session.rollback()
+      return None
+
 
 class Watches(db.Model):
   __tablename__ = "watches"
@@ -49,15 +66,26 @@ class User(db.Model):
     user_dict = {}
     for key in ['job', 'federal_state', 'name', 'city', 'birthdate', 'is_confirmed', 'email']:
       user_dict[key] = getattr(self, key)
-    user_dict['birthdate'] = datetime.datetime.srtftime(user_dict['birthdate'], '%Y-%m-%d')
+
+    if user_dict['birthdate']:
+      user_dict['birthdate'] = datetime.strftime(user_dict['birthdate'], '%Y-%m-%d')
+    else:
+      user_dict['birthdate'] = date.today().strftime('%Y-%m-%d')
     return user_dict
-  
+
   def set_password(self, password):
     self.password_hash = generate_password_hash(password)
     return
-  
+
   def check_password(self, password):
     return check_password_hash(self.password_hash, password)
+
+  def get_courses(self):
+    attended_courses = self.courses_taken
+    course_list = []
+    for attended_course in attended_courses:
+      course_list.append(attended_course.course.as_dict())
+    return course_list
 
   @classmethod
   def register(cls, email, password):
@@ -68,7 +96,8 @@ class User(db.Model):
     try:
       db.session.commit()
       return new_user
-    except Exception as x:
+    except Exception as e:
+      db.session.rollback()
       return None
 
   @classmethod
@@ -81,6 +110,7 @@ class User(db.Model):
       db.session.commit()
       return user_query.first()
     except Exception as e:
+      db.session.rollback()
       return None
 
   @classmethod
@@ -91,6 +121,7 @@ class User(db.Model):
       db.session.commit()
       return user_query.first()
     except Exception as e:
+      db.session.rollback()
       return None
 
   @classmethod
@@ -101,7 +132,14 @@ class User(db.Model):
       db.session.commit()
       return user_query.first()
     except Exception as e:
+      db.session.rollback()
       return None
+
+  @classmethod
+  def give_admin(cls, id):
+    db.session.query(User).filter(User.id==id).update({User.is_admin: True})
+    db.session.commit()
+    return 
 
   @classmethod
   def get_by_id(cls, id):
@@ -115,8 +153,10 @@ class Course(db.Model):
   name = db.Column(db.String(128))
   created_at = db.Column(db.DateTime, default=datetime.utcnow)
   updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+  thumbnail = db.Column(db.LargeBinary)
   number_of_videos = db.Column(db.Integer)
   duration = db.Column(db.Integer)
+  is_available = db.Column(db.Boolean)
   expires_at = db.Column(db.DateTime)
   price = db.Column(db.Float)
   is_watchable = db.Column(db.Boolean)
@@ -143,17 +183,27 @@ class Course(db.Model):
   @classmethod
   def add(cls, request_course):
     try:
+      if 'expires_at' in request_course.keys():
+        request_course['expires_at'] = datetime.strptime(request_course['expires_at'], "%Y-%m-%d")
       new_course = cls(**request_course)
       db.session.add(new_course)
       db.session.commit()
       return new_course
     except Exception as E:
+      db.session.rollback()
       return None
 
   @classmethod
-  def get_all(cls):
+  def get_by_filter(cls, filter):
     try:
-      courses = cls.query.all()
+      if filter == 'all':
+        courses = cls.query.all()
+      elif filter == 'expired':
+        courses = db.session.query(Course).filter(func.date(Course.expires_at) < datetime.today().date()).all()
+      elif filter == 'active':
+        courses = db.session.query(Course).filter(func.date(Course.expires_at) >= datetime.today().date()).all()
+      else:
+        courses = db.session.query(Course).filter(Course.name.match(filter)).all()
     except Exception as e:
       return None
     courses_list = []
@@ -176,6 +226,7 @@ class Course(db.Model):
       db.session.commit()
       return course_query.first()
     except Exception as e:
+      db.session.rollback()
       return None
 
   @classmethod
@@ -186,6 +237,7 @@ class Course(db.Model):
       db.session.commit()
       return True
     except Exception as e:
+      db.session.rollback()
       return False
 
 class Video(db.Model):
@@ -193,6 +245,10 @@ class Video(db.Model):
   youtube_code = db.Column(db.String(128), unique=True, index=True)
   course_order = db.Column(db.Integer)
   course_id = db.Column(db.Integer, db.ForeignKey("course.id"))
+  title = db.Column(db.String(128))
+  description = db.Column(db.Text)
+  duration = db.Column(db.Integer)
+  thumbnail = db.Column(db.String(256))
   users_viewed = db.relationship("Watches", back_populates="video")
 
   def __repr__(self):
@@ -206,13 +262,17 @@ class Video(db.Model):
 
   @classmethod
   def add(cls, course_id, request_video):
-    video = Video(course_id = course_id, **request_video)
-    db.session.add(video)
+    if 'duration' in request_video:
+      duration = request_video['duration']
+      index = duration.index(':')
+      request_video['duration'] = int(duration[:index])*60 + int(duration[index+1:])
     try:
+      video = Video(course_id = course_id, **request_video)
+      db.session.add(video)
       db.session.commit()
       return video
-    except Exception as e:
-      print(e)
+    except Exception as E:
+      db.session.rollback()
       return None
 
   @classmethod
@@ -221,5 +281,3 @@ class Video(db.Model):
       return db.session.query(Video).filter(Video.id==id).first()
     except Exception as e:
       return None
-
-  

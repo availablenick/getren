@@ -15,7 +15,6 @@ class Config(object):
     MAIL_USE_SSL = True
 
 class Test_Config(object):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'tests.db')
+    SQLALCHEMY_DATABASE_URI = "postgresql://user:password@database:5432/test_api"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = b'\xad\xd3\x10\x8f\xa8\xee\xf8{\xa9k\xceG\xa3\xfd\xec\x1b'

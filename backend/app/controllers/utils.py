@@ -7,6 +7,14 @@ from app.models import User
 
 SECRET_KEY = app.config['SECRET_KEY']
 
+def to_seconds(duration):
+    return int(duration[0])*60 + int(duration[1])
+
+def decode_duration(duration):
+    m_index = duration.index('M')       
+    duration = (duration[2:m_index], duration[m_index+1:-1])
+    return int(duration[0])*60 + int(duration[1])    
+
 def validate_password(password, password_confirm):
     errors = {
         'password': [],
@@ -40,11 +48,24 @@ def error_response(error, code):
     response.status_code = code
     return response
 
-def is_valid_admin(request):
+def decode_user(request):
     cookie = request.cookies.get('user_token')
     if cookie:
-        user_token = jwt.decode(cookie, SECRET_KEY, algorithms=['HS256'])
-        user = User.get_by_id(user_token['id'])
+        user_payload = jwt.decode(cookie, SECRET_KEY, algorithms=['HS256'])
+        return user_payload
+    return None
+
+def is_valid_user(request, id):
+    user_payload = decode_user(request)
+    if user_payload:
+        if user_payload['id'] == id:
+            return True
+    return False
+
+def is_valid_admin(request):
+    user_payload = decode_user(request)
+    if user_payload:
+        user = User.get_by_id(user_payload['id'])
         if user.is_admin:
             return True
     return False

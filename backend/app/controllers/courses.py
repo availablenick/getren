@@ -5,8 +5,9 @@ from .utils import error_response, is_valid_admin, SECRET_KEY
 from app import app
 from app.models import User, Course
 
-@app.route('/courses', methods=['GET', 'POST'])
-def courses():
+@app.route('/courses', methods=['GET', 'POST'], defaults={'filter': 'all'})
+@app.route('/courses/<filter>')
+def courses(filter):
     if request.method == 'POST':
         result = request.get_json()
         if is_valid_admin(request):
@@ -20,7 +21,7 @@ def courses():
         else:
             return error_response('Permissão negada', 401)
     elif request.method == 'GET':
-        courses = Course.get_all()
+        courses = Course.get_by_filter(filter)
         if courses is not None:
             response = jsonify(courses)
             response.status_code = 200
@@ -38,8 +39,7 @@ def course(id):
         response = jsonify(course_dict)
         response.status_code = 200
         return response
-    if is_valid_admin(request):
-        
+    if is_valid_admin(request):        
         if request.method == 'PUT':
             result = request.get_json()
             course = Course.update_data(id, result)

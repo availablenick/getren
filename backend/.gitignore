@@ -143,3 +143,14 @@ app/*.db-journal
 
 # Bash de Testes
 tests.sh
+
+#videos
+*.mp4
+
+#images
+*.png
+
+#youtube_config_files
+client_secrets.json
+getren.ini
+*.pickle

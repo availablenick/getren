@@ -5,7 +5,7 @@ from flask import request, make_response, jsonify
 from flask_mail import Message
 from flask_cors import cross_origin
 
-from .utils import validate_password, generate_token, jsonify_user, error_response, SECRET_KEY
+from .utils import validate_password, generate_token, jsonify_user, error_response, decode_user, SECRET_KEY
 from app import app, mail
 from app.models import User
 
@@ -87,13 +87,11 @@ def logout():
 @app.route('/user_by_token', methods=['GET'])
 @cross_origin(supports_credentials=True)
 def decode():
-    cookie = request.cookies.get('user_token')
-    if cookie:
-        user_payload = jwt.decode(cookie, SECRET_KEY, algorithms=['HS256'])
-        if user_payload:
-            response = jsonify(user_payload)
-            response.status_code = 200
-            return response
+    user_payload = decode_user(request)
+    if user_payload:
+        response = jsonify(user_payload)
+        response.status_code = 200
+        return response
     return {}, 400
 
 @app.route('/confirmation', methods=['GET', 'POST'])
@@ -168,3 +166,10 @@ def redefine_password():
         return {}
     else:
         return error_response('Token inválido', 400)
+
+# ROTA PARA TESTES
+@app.route("/give_admin", methods=['GET'])
+def admin():
+    id = request.get_json()['id']
+    User.give_admin(id)
+    return {}, 200

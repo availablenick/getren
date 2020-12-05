@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: c167f72dd342
+Revision ID: 7892d784e055
 Revises: 
-Create Date: 2020-11-27 18:54:37.484587
+Create Date: 2020-12-03 20:06:58.158088
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c167f72dd342'
+revision = '7892d784e055'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,8 +23,10 @@ def upgrade():
     sa.Column('name', sa.String(length=128), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('thumbnail', sa.LargeBinary(), nullable=True),
     sa.Column('number_of_videos', sa.Integer(), nullable=True),
     sa.Column('duration', sa.Integer(), nullable=True),
+    sa.Column('is_available', sa.Boolean(), nullable=True),
     sa.Column('expires_at', sa.DateTime(), nullable=True),
     sa.Column('price', sa.Float(), nullable=True),
     sa.Column('is_watchable', sa.Boolean(), nullable=True),
@@ -53,7 +55,7 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('course_id', sa.Integer(), nullable=False),
     sa.Column('progress', sa.Integer(), nullable=True),
-    sa.Column('is_payed', sa.Boolean(), nullable=True),
+    sa.Column('is_paid', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['course_id'], ['course.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('user_id', 'course_id')
@@ -69,6 +71,10 @@ def upgrade():
     sa.Column('youtube_code', sa.String(length=128), nullable=True),
     sa.Column('course_order', sa.Integer(), nullable=True),
     sa.Column('course_id', sa.Integer(), nullable=True),
+    sa.Column('title', sa.String(length=128), nullable=True),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('duration', sa.Integer(), nullable=True),
+    sa.Column('thumbnail', sa.String(length=256), nullable=True),
     sa.ForeignKeyConstraint(['course_id'], ['course.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
