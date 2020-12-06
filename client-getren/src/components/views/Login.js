@@ -124,10 +124,7 @@ class Login extends React.Component {
     }).then(response => {
       if (response.status === 200) {
         this.props.dispatch(
-          login({
-            email: response.data.user.email,
-            id: response.data.user.id,
-          })
+          login(response.data.user)
         );
 
         this.props.history.push('/');
