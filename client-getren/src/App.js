@@ -38,7 +38,7 @@ class App extends React.Component {
     const routeComponents = routes.map((route, i) => {
       return (
         <Route key={i} 
-          exact={ route.path === '/' }
+          exact={ route.exact }
           path={ route.path }
           render={ () => {
             if ((route.needsUserSignedIn && !this.props.user.data) ||

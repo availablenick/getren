@@ -7,6 +7,12 @@ html, body, #root {
   background: rgb(225, 240, 255);
 }
 
+.children-no-border {
+  * {
+    border: 0;
+  }
+}
+
 .form-login {
   > * {
     margin-bottom: 1em;

@@ -9,6 +9,7 @@ const routes = [
   {
     path: '/',
     component: Home,
+    exact: true
   },
   {
     path: '/cadastro',
@@ -34,6 +35,11 @@ const routes = [
   },
   {
     path: '/cursos',
+    component: Cursos,
+    exact: true
+  },
+  {
+    path: '/cursos/page/:number',
     component: Cursos,
   },
 ];
