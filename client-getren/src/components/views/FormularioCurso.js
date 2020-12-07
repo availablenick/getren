@@ -29,7 +29,7 @@ class FormularioCurso extends React.Component {
         <form className='form-login' style={{width: '30em'}} onSubmit={this.handleSubmit} method='post'>
           <div>
             <label htmlFor='name'>Nome</label>
-            <input type='text' id='name' name='name' 
+            <input className='w-100' type='text' id='name' name='name' 
               onChange={this.handleInputChange}
               value={this.state.course.name !== null ? this.state.course.name : ''}
             />
@@ -44,7 +44,7 @@ class FormularioCurso extends React.Component {
           </div>
 
           <div>
-            <label htmlFor='birthdate'>Data de Expiração</label>
+            <label htmlFor='expires_at'>Data de Expiração</label>
             <input type='date' id='expires_at' name='expires_at'
               onChange={this.handleInputChange}
               value={
@@ -97,7 +97,7 @@ class FormularioCurso extends React.Component {
     let courseData = new FormData();
     let course = this.state.course;
     course['price'] = course['price'].replace(',', '.');
-    courseData.append('json_args', JSON.stringify(course)); 
+    courseData.append('json_args', JSON.stringify(course));
     courseData.append('thumbnail', document.querySelector('#thumbnail').files[0]);
     
     this.setState({ message: 'Cadastrando curso...'});

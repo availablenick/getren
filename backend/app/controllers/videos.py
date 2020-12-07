@@ -8,6 +8,7 @@ from .youtube import upload_video
 from json import loads
 
 @app.route('/course/<int:id>/videos', methods=['GET', 'POST'])
+@cross_origin(supports_credentials=True)
 def videos(id):
     course = Course.get_by_id(id)
     if course is None:
@@ -31,7 +32,7 @@ def videos(id):
                                     'description': info['description'],
                                     'thumbnail': info['thumbnails']['high']['url'],
                                     'duration': request.form['duration'],
-                                    'course_order': int(request.form['order'])}                  
+                                    'course_order': int(request.form['course_order'])}                  
             else:
                 request_video = request.get_json()
             video = Video.add(id, request_video)
