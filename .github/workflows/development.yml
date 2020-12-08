@@ -1,0 +1,93 @@
+name: Development CI
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+
+jobs:
+  python-test:
+    runs-on: ubuntu-latest
+    container: python:3.8-buster
+
+    services:
+      database:
+        image: postgres:12
+        env:
+          POSTGRES_DB: test_api
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          pip install -U Flask python-dotenv flask-sqlalchemy flask-migrate \
+            flask-cors flask_mail pytest PyJWT Flask-Testing psycopg2-binary \
+            google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+      - name: Test
+        run: |
+          cd ./backend
+          python3 test.py
+
+  postman-test:
+    runs-on: ubuntu-latest
+    container: python:3.8-buster
+
+    services:
+      database:
+        image: postgres:12
+        env:
+          POSTGRES_DB: getren_api
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          pip install -U Flask python-dotenv flask-sqlalchemy flask-migrate \
+            flask-cors flask_mail pytest PyJWT Flask-Testing psycopg2-binary \
+            google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+      - name: Run flask
+        run: |
+          cd ./backend
+          flask db upgrade
+          flask run &
+        env:
+          FLASK_APP: getren.py
+          FLASK_DEBUG: 1
+
+          FLASK_DB_PORT: 5432
+          FLASK_DB_HOST: database
+          FLASK_DB_NAME: getren_api
+          FLASK_DB_USER: user
+          FLASK_DB_PASSWORD: password
+
+          FLASK_MAIL_USERNAME: getren.xp@gmail.com
+          FLASK_MAIL_PASSWORD: alfredogoldxp
+          FLASK_MAIL_SENDER: getren.xp@gmail.com
+          GETREN_MAIL: getren.xp@gmail.com
+
+      - name: Test
+        uses: matt-ball/newman-action@master
+        with:
+          apiKey: PMAK-5fcfd5a90519e900591e3d02-b5084b883a75dd9d38a663570aa017799e
+          collection: postman_collection.json

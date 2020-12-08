@@ -1,0 +1,1961 @@
+{
+	"info": {
+		"_postman_id": "cadce6d4-6fa3-40cc-8f62-1b3a2f27892e",
+		"name": "Testes_Getren",
+		"description": "# Testes do backend GETREN",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register Correto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8a1ffb6b-1c61-4fe9-889c-472548bda90b",
+						"exec": [
+							"pm.test('Register -> Correct', function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"});\r",
+							"\r",
+							"pm.test('Register -> Cookie', function() {\r",
+							"    pm.cookies.has('user_token')\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"getren.xp@gmail.com\",\n    \"password\": \"12345678\",\n    \"password_confirm\": \"12345678\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/register",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Email Cadastrado",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "abe1e0c0-4955-4dda-bdc2-1f4c87948c43",
+						"exec": [
+							"pm.test('Register -> Email Already Registered', function() {\r",
+							"    pm.response.to.have.status(400)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"getren.xp@gmail.com\",\n    \"password\": \"12345678\",\n    \"password_confirm\": \"12345678\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/register",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Give Admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fe686fd1-a0df-43e8-a08e-35d5767b6205",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/give_admin",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"give_admin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Senha Pequena e Email Inválido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "74192cb7-2ae9-407d-a759-9f825d4b215a",
+						"exec": [
+							"pm.test('Register -> Short Password / Invalid Email', function() {\r",
+							"    pm.response.to.have.status(400)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"primeirotestepostmangmail.com\",\n    \"password\": \"123\",\n    \"password_confirm\": \"132\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/register",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Sem Senha e Email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d23c8871-de5d-4929-8b17-773e1e3afd73",
+						"exec": [
+							"pm.test('Register -> No Password / No Email', function() {\r",
+							"    pm.response.to.have.status(400)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"\",\n    \"password\": \"\",\n    \"password_confirm\": \"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/register",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login Usuario Cadastrado",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e6320844-dee7-4612-98bd-9479cc731200",
+						"exec": [
+							"pm.test('Login -> Correct', function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"});\r",
+							"\r",
+							"pm.test('Login -> Cookie', function() {\r",
+							"    pm.cookies.has('user_token')\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"getren.xp@gmail.com\",\n    \"password\": \"12345678\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/login",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login Email Incorreto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "339d87b4-7248-4771-9563-aeea7a4f290c",
+						"exec": [
+							"pm.test('Login -> Incorrect Email', function() {\r",
+							"    pm.response.to.have.status(400)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"getren.xp@gmail\",\n    \"password\": \"12345678\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/login",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login Senha Incorreta",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "982f263f-b836-4176-9a40-a814f4f857f6",
+						"exec": [
+							"pm.test('Login -> Incorrect Password', function() {\r",
+							"    pm.response.to.have.status(400)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"getren.xp@gmail.com\",\n    \"password\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/login",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirmation Confirmed True",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "21cbb182-cde7-48a0-a3b6-47ae25473d66",
+						"exec": [
+							"pm.test('Confirmation True -> Incorrect Token', function() {\r",
+							"    pm.response.to.have.status(400)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"getren.xp@gmail.com\",\n    \"token\": \"\",\n    \"confirmed\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/confirmation",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"confirmation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirmation Sem Confirmação com Email Inválido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "23109e85-04e4-47ca-a9d2-39633bec6430",
+						"exec": [
+							"pm.test('Confirmation False -> Unregistered User', function() {\r",
+							"    pm.response.to.have.status(500)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"primeirotestepostman@gmail.com\",\n    \"token\": \"\",\n    \"confirmed\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/confirmation",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"confirmation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirmation Sem Confirmação com Email Valido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf6b0688-5c14-49b8-bba5-0ec5c670d85c",
+						"exec": [
+							"pm.test('Confirmation False -> Valid Email', function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"getren.xp@gmail.com\",\n    \"token\": \"\",\n    \"confirmed\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/confirmation",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"confirmation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirmation Confirmed True Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d344b97c-b5cf-4df6-aaf2-86357537c068",
+						"exec": [
+							"pm.test('Confirmation True -> Correct Token', function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"getren.xp@gmail.com\",\n    \"token\": \"604d7208992bfddf9d08108f4a17c0ae78de70a8b5be973fd3e613c34460a2e55b32e6b6383d7630920267ce0d008e58\",\n    \"confirmed\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/confirmation",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"confirmation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ForgotPassword Email Existente",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ecc81a73-8dc1-4a8e-aeac-516738054d62",
+						"exec": [
+							"pm.test('Forgot Password -> Valid Email', function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"getren.xp@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/password_forgot",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"password_forgot"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ForgotPassword Email Inexistente",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cd64444f-12c6-4b63-8024-8c4bb5982569",
+						"exec": [
+							"pm.test('Forgot Password -> Unregistered User', function() {\r",
+							"    pm.response.to.have.status(500)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"testeemailinvalido@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/password_forgot",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"password_forgot"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RedefinePassword Token Correto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "11dc3518-f018-461c-9040-75e02398ed66",
+						"exec": [
+							"pm.test('Redefine Password -> Correct Token', function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"getren.xp@gmail.com\",\n    \"password\": \"1234567890\",\n    \"password_confirmed\": \"1234567890\",\n    \"token\": \"604d7208992bfddf9d08108f4a17c0ae78de70a8b5be973fd3e613c34460a2e55b32e6b6383d7630920267ce0d008e58\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/redefine_password",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"redefine_password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RedefinePassword Token Incorreto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "eadec9ab-b9c6-4c47-a49c-0cfb810b1a57",
+						"exec": [
+							"pm.test('Redefine Password -> Incorrect Token', function() {\r",
+							"    pm.response.to.have.status(400)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"getren.xp@gmail.com\",\n    \"password\": \"1234567890\",\n    \"password_confirmed\": \"1234567890\",\n    \"token\": \"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/redefine_password",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"redefine_password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RedefinePassword Email Inexistente",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1183e135-557c-43ce-b6df-825939c5fa2d",
+						"exec": [
+							"pm.test('Redefine Password -> Unregistered User', function() {\r",
+							"    pm.response.to.have.status(500)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"testeemailinvalido@gmail.com\",\n    \"password\": \"1234567890\",\n    \"password_confirmed\": \"1234567890\",\n    \"token\": \"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/redefine_password",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"redefine_password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dados Atualizados com Sucesso",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9fdae00f-3c39-447a-b50a-b1f7cef20c90",
+						"exec": [
+							"pm.test('Update Data -> Correct', function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Alfredo Homem de Ouro\",\n    \"birthdate\": \"1963-10-10\",\n    \"city\": \"São Paulo\",\n    \"federal_state\": \"SP\",\n    \"job\": \"Cientista da Computação\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/user/1",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dados Não Atualizados",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6e75e14a-8e87-43b4-b0b3-c85e59488ef4",
+						"exec": [
+							"pm.test('Update Data -> Unregistered User', function() {\r",
+							"    pm.response.to.have.status(401)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Alfredo Homem de Ouro\",\n    \"birthdate\": \"1963-10-10\",\n    \"city\": \"São Paulo\",\n    \"federal_state\": \"SP\",\n    \"job\": \"Cientista da Computação\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/user/2",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Decode Correto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c7af4193-cde0-4736-9982-277bd54197b1",
+						"exec": [
+							"pm.test(\"Decode -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/user_by_token",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"user_by_token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Course Add Correto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a0a0f09b-f233-4501-82ac-77da92addff0",
+						"exec": [
+							"pm.test(\"Add Course -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\": \"Curso 1\",\r\n\"expires_at\": \"2020-12-05\",\r\n\"price\": 199.90,\r\n\"is_watchable\": true}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/courses",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Course Add Incorreto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9f81840d-1eac-4f60-8274-570d98413568",
+						"exec": [
+							"pm.test(\"Add Course -> Incorrect\", function() {\r",
+							"    pm.response.to.have.status(500)\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"nome\": \"Curso 1\",\r\n\"expires_at\": \"2020-12-05\",\r\n\"price\": 199.90,\r\n\"is_watchable\": true}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/courses",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Course Add",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f38d5336-1cd7-481c-9736-b17ce09e0003",
+						"exec": [
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\": \"Curso 2\",\r\n\"expires_at\": \"2020-11-28\",\r\n\"price\": 199.90,\r\n\"is_watchable\": false}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/courses",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Courses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "48476f12-8549-4134-99eb-69704b1eaa23",
+						"exec": [
+							"pm.test(\"Get all Courses -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check Courses\", function() {\r",
+							"    console.log(pm.response.json());\r",
+							"    pm.expect(pm.response.json()[0].name).to.equal(\"Curso 1\");\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/courses",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Active Courses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "77a28d93-f85f-463b-b74e-b5f897f11279",
+						"exec": [
+							"pm.test(\"Get all Active Courses -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check Courses\", function() {\r",
+							"    pm.expect(pm.response.json().length).to.equal(1);\r",
+							"    pm.expect(pm.response.json()[0].name).to.equal(\"Curso 1\");\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/courses/active",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"courses",
+						"active"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Expired Courses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3c066a74-1dc7-4b78-a9a4-aca62706a0ec",
+						"exec": [
+							"pm.test(\"Get all Expired Courses -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check Courses\", function() {\r",
+							"    pm.expect(pm.response.json().length).to.equal(1);\r",
+							"    pm.expect(pm.response.json()[0].name).to.equal(\"Curso 2\");\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/courses/expired",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"courses",
+						"expired"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Courses by Search",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d689dbc5-fd96-47bb-90fb-bdf4c1193b17",
+						"exec": [
+							"pm.test(\"Get Courses By Search -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check Courses\", function() {\r",
+							"    pm.expect(pm.response.json().length).to.equal(1);\r",
+							"    pm.expect(pm.response.json()[0].name).to.equal(\"Curso 2\");\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/courses/2",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"courses",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get First Course",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8cbe275b-54f4-4783-a9cb-de20ad0ca27c",
+						"exec": [
+							"pm.test(\"Get First Course -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check Course\", function() {\r",
+							"    pm.expect(pm.response.json().name).to.equal(\"Curso 1\");\r",
+							"    pm.expect(pm.response.json().price).to.be.a(\"Number\");\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/course/1",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"course",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get MissingCourse",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c1663bbc-41de-42ab-8dc3-142341346029",
+						"exec": [
+							"pm.test(\"Get Course -> Inorrect\", function() {\r",
+							"    pm.response.to.have.status(404)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/course/3",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"course",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change First Course Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "318dd5c6-78ed-491e-bc2b-53ac9edfb3f5",
+						"exec": [
+							"pm.test(\"Change First Course -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check Course\", function() {\r",
+							"    pm.expect(pm.response.json().name).to.equal(\"Curso 1 Renomeado\");\r",
+							"    pm.expect(pm.response.json().price).to.be.a(\"Number\");\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\": \"Curso 1 Renomeado\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/course/1",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"course",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Course Incorrect",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "081b92bc-f46c-44a3-b87a-f6adace184ab",
+						"exec": [
+							"pm.test(\"Get Course -> Incorrect\", function() {\r",
+							"    pm.response.to.have.status(500)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"nome\": \"Curso 1 Renomeado\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/course/1",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"course",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Course Correct",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6b416ea6-bfd1-4748-ab55-2bce0a557ef5",
+						"exec": [
+							"pm.test(\"Delete Second Course -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/course/2",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"course",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Not Admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "230e328b-48a7-4cc9-a64b-fe6986c0689a",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\": \"not@admin.com\",\r\n\"password\": \"notadmin\",\r\n\"password_confirm\": \"notadmin\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/register",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Re Log In Admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "50aca7c5-ce5d-4c36-9631-c89ba32dcb74",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\": \"getren.xp@gmail.com\",\r\n\"password\": \"1234567890\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/login",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Another User Courses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7baa1ec4-7dc4-4211-b76f-7d429a6eb1f5",
+						"exec": [
+							"pm.test(\"Get Another User Courses -> Correct\", function() {\r",
+							"    pm.response.to.have.status(401);\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/user/2/courses",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						"2",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post User Course",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7f4731db-77aa-41fb-955f-53c714157b7f",
+						"exec": [
+							"pm.test(\"Post User Course -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"course_id\": 1,\r\n\"is_payed\": false}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/user/1/courses",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						"1",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post User Course Incorrect",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "36482f88-b499-4911-be70-8bf2123dd7c9",
+						"exec": [
+							"pm.test(\"Post User Course -> Incorrect\", function() {\r",
+							"    pm.response.to.have.status(500);\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"course_id\": 5,\r\n\"is_paid\": false}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/user/1/courses",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						"1",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User Courses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "60845506-d866-447a-8592-7fcc763cac97",
+						"exec": [
+							"pm.test(\"Get User Courses -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check Courses\", function() {\r",
+							"    pm.expect(pm.response.json()[0].name).to.equal(\"Curso 1 Renomeado\");\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/user/1/courses",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						"1",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Video Incorrect",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "785a046c-7fa9-459b-9429-be5fe54eaaac",
+						"exec": [
+							"pm.test(\"Get User Courses -> Correct\", function() {\r",
+							"    pm.response.to.have.status(404);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/course/5/videos",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"course",
+						"5",
+						"videos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Video Correct",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8cd9b926-55f2-4747-a2e0-ba0b685b755a",
+						"exec": [
+							"pm.test(\"Post Video -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"youtube_code\": \"1\",\r\n\"course_order\": 1}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/course/1/videos",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"course",
+						"1",
+						"videos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Video Incorrect",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "51573b2a-3e3a-4a2c-ab93-5272ce4c0678",
+						"exec": [
+							"pm.test(\"Post Videos -> Incorrect\", function() {\r",
+							"    pm.response.to.have.status(500);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"code\": \"2\",\r\n\"order\": 2}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/course/1/videos",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"course",
+						"1",
+						"videos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post New Video (No File)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47f32e43-63ab-4105-82ba-7949e5b216cf",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"title\": \"title\",\r\n\"description\": \"description\",\r\n\"course_order\": 1,\r\n\"duration\": \"15:51\",\r\n\"thumbnail\": \"image.url\",\r\n\"youtube_code\": \"123\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/course/1/videos",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"course",
+						"1",
+						"videos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Videos From Course",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bbd5d97f-a873-456e-823b-6923e5424d49",
+						"exec": [
+							"pm.test(\"Get Video from Course -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check Videos\", function() {\r",
+							"    pm.expect(pm.response.json().length).to.equal(2);\r",
+							"    pm.expect(pm.response.json()[0].youtube_code).to.equal(\"1\");\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/course/1/videos",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"course",
+						"1",
+						"videos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dc6be17b-8692-4f3a-bcc8-9a278ca41797",
+						"exec": [
+							"pm.test(\"Logout\", function() {\r",
+							"    pm.expect(pm.cookies.user_token).to.equal(undefined)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/logout",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Decode Sem Usuário",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b3b98275-528d-4256-8f8b-e0f839da655e",
+						"exec": [
+							"pm.test(\"Decode -> Incorrect\", function() {\r",
+							"    pm.response.to.have.status(400)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/user_by_token",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"user_by_token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clear Database",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/erase_db",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"erase_db"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
