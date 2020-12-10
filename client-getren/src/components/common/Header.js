@@ -11,7 +11,7 @@ import logo from '../../images/getren-logo.png';
 class Header extends React.Component {
   render() {
     return (
-      <header className='top-header'>
+      <header className='top-header w-100'>
         <nav className='navbar navbar-expand-md'>
           <div className='container-fluid'>
             <a className='navbar-brand' href='/'>
@@ -20,16 +20,35 @@ class Header extends React.Component {
           </div>
 
           <ul className='navbar-nav mr-auto d-none d-lg-flex'>
-            <li className='nav-item active mr-4'>
+            <li className='nav-item active pr-5'>
               <Link className='nav-link' to='/'>HOME</Link>
             </li>
-            <li className='nav-item active mr-4'>
+            <li className='sub-menu-dropdown h-100 nav-item active pr-5 position-relative'>
               <a className='nav-link' href='#'>CURSOS</a>
+              <ul className='sub-menu d-flex flex-column position-absolute 
+                w-100 left-0 p-0 text-white'
+              >
+                <li className='p-2 list-style-type-none'>
+                  TODOS
+                </li>
+                <li className='p-2 list-style-type-none'>
+                  ABERTOS
+                </li>
+                <li className='p-2 list-style-type-none'>
+                  ENCERRADOS
+                </li>
+                <li className='p-2 list-style-type-none'>
+                  MEUS CURSOS
+                </li>
+                <li className='p-2 list-style-type-none'>
+                  PERGUNTAS FREQUENTES
+                </li>
+              </ul>
             </li>
-            <li className='nav-item active mr-4'>
+            <li className='nav-item active pr-5'>
               <a className='nav-link about' href='#'>SOBRE</a>
             </li>
-            <li className='nav-item active mr-4'>
+            <li className='nav-item active pr-5'>
               <a className='nav-link' href='#'>CONTATO</a>
             </li>
 
@@ -40,7 +59,7 @@ class Header extends React.Component {
             }
 
             { this.props.user.data &&
-              <li className='nav-item active mr-4'>
+              <li className='nav-item active pr-5'>
                 <Link className='nav-link' to='/perfil'>PERFIL</Link>
               </li>
             }

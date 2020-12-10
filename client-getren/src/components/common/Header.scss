@@ -1,4 +1,7 @@
 .top-header {
+  position: fixed;
+  z-index: 15;
+
   nav {
     background-color: rgba(22,34,57,0.95);
     height: 4em;
@@ -13,6 +16,28 @@
       &:hover {
         box-shadow: 0 0 1px 1px rgb(248, 190, 0);
       }
+    }
+  }
+
+  .sub-menu-dropdown {
+    &:hover {
+      .sub-menu {
+        opacity: 1;
+      }
+    }
+
+    // eh pra colocar um padding-top no primeiro li??
+
+    .sub-menu {
+      background: rgba(22, 34, 57, 0.95);
+      font-size: 12px;
+      top: 100%;
+      opacity: 0;
+      > li:not(:last-child) {
+        border-bottom: 1px solid rgb(22, 34, 57);
+      }
+
+      transition: opacity 0.4s ease;
     }
   }
 

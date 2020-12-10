@@ -59,8 +59,8 @@ class App extends React.Component {
           style={ { opacity: (this.state.isFetchingUser ? '0.5' : '') } }
         >
           <Header />
-            <div className='flex-grow-1 p-5 bg-getren-color container-fluid
-              position-relative'
+            <div className='flex-grow-1 pb-5 px-5 bg-getren-color container-fluid
+              position-relative' style={ { paddingTop: 'calc(4em + 3rem)' } }
             >
               { !this.state.isFetchingUser &&
                 <Switch>

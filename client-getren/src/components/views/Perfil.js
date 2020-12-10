@@ -24,7 +24,7 @@ class Perfil extends React.Component {
       courses: [],
     };
   }
-  
+
   componentDidMount = () => {
     let url = 'user/' + this.props.user.data.id;
     api.get(url)
