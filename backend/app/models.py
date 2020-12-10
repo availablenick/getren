@@ -27,7 +27,6 @@ class Attends(db.Model):
       db.session.rollback()
       return None
 
-
 class Watches(db.Model):
   __tablename__ = "watches"
   user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
@@ -44,7 +43,7 @@ class Watches(db.Model):
     return watches_dict
 
   @classmethod
-  def get_by_id(cls, user_id, video_id):
+  def get_by_ids(cls, user_id, video_id):
     try:
       watches = db.session.query(Watches).filter(Watches.user_id==user_id, Watches.video_id==video_id).first()
       return watches.as_dict()
@@ -70,14 +69,8 @@ class Watches(db.Model):
       db.session.commit()
       return watches.first()
     except Exception as e:
-      print(e )
       db.session.rollback()
       return None
-
-teaches = db.Table('teaches',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('course_id', db.Integer, db.ForeignKey('course.id'))
-)
 
 class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -93,7 +86,6 @@ class User(db.Model):
   confirmation_token = db.Column(db.String(128))
   password_token = db.Column(db.String(128))
   courses_taken = db.relationship("Attends", back_populates="user")
-  courses_taught = db.relationship("Course", secondary=teaches, back_populates="users_teaching")
   videos_watched = db.relationship("Watches", back_populates="user")
 
   def __repr__(self):
@@ -199,14 +191,13 @@ class Course(db.Model):
   is_watchable = db.Column(db.Boolean)
   videos = db.relationship('Video', backref='course', lazy='dynamic')
   users_attending = db.relationship("Attends", back_populates="course")
-  users_teaching = db.relationship("User", secondary=teaches, back_populates="courses_taught")
 
   def __repr__(self):
     return self.name
 
   def as_dict(self):
     course_dict = {}
-    for key in ['id', 'name', 'number_of_videos', 'duration', 'price', 'expires_at', 'is_watchable']:
+    for key in ['id', 'name', 'number_of_videos', 'duration', 'price', 'expires_at', 'is_watchable', 'thumbnail']:
       course_dict[key] = getattr(self, key)
     return course_dict
 
@@ -295,7 +286,7 @@ class Video(db.Model):
   users_viewed = db.relationship("Watches", back_populates="video")
 
   def __repr__(self):
-    return self.youtube_code
+    return self.title
 
   def as_dict(self):
     video_dict = {}

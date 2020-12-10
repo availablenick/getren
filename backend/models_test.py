@@ -27,7 +27,6 @@ class Attends(db.Model):
       db.session.rollback()
       return None
 
-
 class Watches(db.Model):
   __tablename__ = "watches"
   user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
@@ -37,10 +36,41 @@ class Watches(db.Model):
   user = db.relationship("User", back_populates="videos_watched")
   video =  db.relationship("Video", back_populates="users_viewed")
 
-teaches = db.Table('teaches',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('course_id', db.Integer, db.ForeignKey('course.id'))
-)
+  def as_dict(self):
+    watches_dict = {}
+    for key in ['user_id', 'video_id', 'watched_time', 'finished']:
+      watches_dict[key] = getattr(self, key)
+    return watches_dict
+
+  @classmethod
+  def get_by_ids(cls, user_id, video_id):
+    try:
+      watches = db.session.query(Watches).filter(Watches.user_id==user_id, Watches.video_id==video_id).first()
+      return watches.as_dict()
+    except Exception as E:
+      return None
+
+  @classmethod
+  def add(cls, user_id, video_id):
+    try:
+      watches = Watches(user_id=user_id, video_id=video_id, watched_time=0, finished=False)
+      db.session.add(watches)
+      db.session.commit()
+      return watches
+    except Exception as e:
+      db.session.rollback()
+      return None
+
+  @classmethod
+  def update_data(cls, user_id, video_id, watches_args):
+    try:
+      watches = db.session.query(Watches).filter(Watches.user_id==user_id, Watches.video_id==video_id)
+      watches.update(watches_args)
+      db.session.commit()
+      return watches.first()
+    except Exception as e:
+      db.session.rollback()
+      return None
 
 class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -56,7 +86,6 @@ class User(db.Model):
   confirmation_token = db.Column(db.String(128))
   password_token = db.Column(db.String(128))
   courses_taken = db.relationship("Attends", back_populates="user")
-  courses_taught = db.relationship("Course", secondary=teaches, back_populates="users_teaching")
   videos_watched = db.relationship("Watches", back_populates="user")
 
   def __repr__(self):
@@ -162,14 +191,13 @@ class Course(db.Model):
   is_watchable = db.Column(db.Boolean)
   videos = db.relationship('Video', backref='course', lazy='dynamic')
   users_attending = db.relationship("Attends", back_populates="course")
-  users_teaching = db.relationship("User", secondary=teaches, back_populates="courses_taught")
 
   def __repr__(self):
     return self.name
 
   def as_dict(self):
     course_dict = {}
-    for key in ['id', 'name', 'number_of_videos', 'duration', 'price', 'expires_at', 'is_watchable']:
+    for key in ['id', 'name', 'number_of_videos', 'duration', 'price', 'expires_at', 'is_watchable', 'thumbnail']:
       course_dict[key] = getattr(self, key)
     return course_dict
 
@@ -195,6 +223,8 @@ class Course(db.Model):
 
   @classmethod
   def get_by_filter(cls, filter):
+    ignorable = ['a', 'de', 'ante', 'para', 'por', 'sob', 'sobre', 'após', 'perante', 'com', 'entre', 'desde', 'o',
+    'um', 'uma']
     try:
       if filter == 'all':
         courses = cls.query.all()
@@ -203,7 +233,11 @@ class Course(db.Model):
       elif filter == 'active':
         courses = db.session.query(Course).filter(func.date(Course.expires_at) >= datetime.today().date()).all()
       else:
-        courses = db.session.query(Course).filter(Course.name.match(filter)).all()
+        search_words = filter.split('%20')
+        courses = db.session.query(Course)
+        for word in search_words:
+          courses = courses.filter(Course.name.match(word))
+        courses = courses.all()
     except Exception as e:
       return None
     courses_list = []
@@ -252,11 +286,11 @@ class Video(db.Model):
   users_viewed = db.relationship("Watches", back_populates="video")
 
   def __repr__(self):
-    return self.youtube_code
+    return self.title
 
   def as_dict(self):
     video_dict = {}
-    for key in ['id', 'youtube_code', 'course_order']:
+    for key in ['id', 'youtube_code', 'title', 'description', 'duration', 'thumbnail', 'course_order']:
       video_dict[key] = getattr(self, key)
     return video_dict
 
@@ -280,4 +314,60 @@ class Video(db.Model):
     try:
       return db.session.query(Video).filter(Video.id==id).first()
     except Exception as e:
+      return None
+
+  @classmethod
+  def update_data(cls, id, request_course):
+    video_query = db.session.query(Video).filter(Video.id==id)
+    try:
+      video_query.update(request_course) 
+      db.session.commit()
+      return video_query.first()
+    except Exception as e:
+      db.session.rollback()
+      return None
+
+  @classmethod
+  def delete(cls, id):
+    video = db.session.query(Video).filter(Video.id==id)
+    try:
+      video.delete() 
+      db.session.commit()
+      return True
+    except Exception as e:
+      db.session.rollback()
+      return False
+
+class Text(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  body = db.Column(db.Text, nullable=False)
+  section = db.Column(db.String(16), index = True)
+
+  @classmethod
+  def get_from_section(cls, section):
+    text = db.session.query(Text).filter(Text.section == section).first()
+    if text:
+      return text
+    return None
+
+  @classmethod
+  def add(cls, section, body):
+    try:
+      text = cls(section = section, body = body)
+      db.session.add(text)
+      db.session.commit()
+      return text
+    except Exception as e:
+      db.session.rollback()
+      return None
+
+  @classmethod
+  def update_body(cls, section, new_body):
+    try:
+      text = db.session.query(Text).filter(Text.section == section)
+      text.update({Text.body: new_body})
+      db.session.commit()
+      return text.first()
+    except Exception as e:
+      db.session.rollback()
       return None
