@@ -1,45 +1,91 @@
 .top-header {
   position: fixed;
   z-index: 15;
+  height: 4em;
+  background-color: rgba(22, 34, 57, 0.95);
 
-  nav {
-    background-color: rgba(22,34,57,0.95);
-    height: 4em;
-    width: 100%;
+  > nav > ul {
+    height: 100%;
+    
+    > li {
+      &:not(:last-child) {
+        padding-right: 2em;
+      }
 
-    a {
-      color: white;
-      font-size: 0.8em;
-      font-weight: bold;
-      transition: all 0.25s ease-in;
-
-      &:hover {
-        box-shadow: 0 0 1px 1px rgb(248, 190, 0);
+      display: inline-flex;
+      align-items: center;
+      height: 100%;
+      list-style-type: none;
+      
+      > a {
+        color: white;
+        font-size: 0.8em;
+        font-weight: bold;
+        transition: all 0.25s ease-in;
+        padding: 0.75em 1em;
+  
+        &:hover {
+          box-shadow: 0 0 1px 1px rgb(248, 190, 0);
+          text-decoration: none;
+        }
+      }
+  
+      > button {
+        color: white;
+        border: none;
+        background: transparent;
+        font-size: 0.8em;
+        font-weight: bold;
+        transition: all 0.25s ease-in;
+        padding: 0.75em 1em;
+  
+        &:hover {
+          box-shadow: 0 0 1px 1px rgb(248, 190, 0);
+          text-decoration: none;
+        }
       }
     }
   }
 
   .sub-menu-dropdown {
+    position: relative;
+
     &:hover {
       .sub-menu {
         opacity: 1;
       }
     }
 
-    // eh pra colocar um padding-top no primeiro li??
-
     .sub-menu {
       background: rgba(22, 34, 57, 0.95);
       font-size: 12px;
+      width: 125px;
       top: 100%;
       opacity: 0;
-      > li:not(:last-child) {
-        border-bottom: 1px solid rgb(22, 34, 57);
-      }
-
       transition: opacity 0.4s ease;
+      
+      > li {
+        list-style-type: none;
+        padding: 1em 1.5em;
+        
+        > a {
+          color: white;
+          font-size: 0.8em;
+          font-weight: bold;
+          transition: all 0.25s ease-in;
+
+          &:hover {
+            color: rgb(248, 190, 0);
+            text-decoration: none;
+          }
+        }
+
+        &:not(:last-child) {
+          border-bottom: 1px solid rgb(22, 34, 57);
+        }
+      }
     }
-  }
+  }w
 
   .bars {
     background: none;
