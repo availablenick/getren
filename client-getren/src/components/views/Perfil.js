@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { Spinner } from 'react-bootstrap';
+import { Pagination, Spinner, Toast } from 'react-bootstrap';
 
 import axios from 'axios';
 import api from '../../config/axios/api.js';
+import { logout } from '../../storage/user/userSlice';
 import './Perfil.scss';
 import logo from '../../images/getren-logo-large.png';
 
@@ -17,9 +18,10 @@ class Perfil extends React.Component {
       citiesOptionsList: [],
       errors: {},
       didUpdateSucceed: false,
-      selectedTab: 'minhasCompras',
+      selectedTab: 'perfil',
+      currentPage: 1,
       isLoading: true,
-      courses: []
+      courses: [],
     };
   }
   
@@ -50,6 +52,27 @@ class Perfil extends React.Component {
       })
       .then(response => {
         this.setState({ citiesOptionsList: response });
+
+        return new Promise((resolve) => {
+          setTimeout(() => { 
+            let courses = [];
+            for (let i = 0; i < 50; i++) {
+              courses[i] = {
+                id: i,
+                name: 'Rei dos cursos ' + i,
+                number_of_videos: 100,
+                description: 'Descrição do curso',
+                duration: '4 anos',
+                image: logo
+              };
+            }
+  
+            resolve(courses);
+          }, 1000);
+        });
+      })
+      .then(courses => {
+        this.setState({ courses: courses, isLoading: false });
       });
   }
 
@@ -59,7 +82,7 @@ class Perfil extends React.Component {
       content = 
         <>
           <h2 className='border-bottom w-100 text-center pb-3'>PERFIL</h2>
-          <form className='form-login w-100 p-5' onSubmit={ this.handleSubmit } method='post'>
+          <form className='form-login w-75 p-5' onSubmit={ this.handleSubmit } method='post'>
             <div>
               <label htmlFor='name'>Nome</label>
               <input type='text' id='name' name='name'
@@ -80,7 +103,7 @@ class Perfil extends React.Component {
                 defaultValue={this.state.user.job !== null ? this.state.user.job : ''}
               />
             </div>
-            MINHAS COMPRAS
+
             <div>
               <label htmlFor='birthdate'>Data de nascimento</label>
               <input type='date' id='birthdate' name='birthdate'
@@ -114,27 +137,79 @@ class Perfil extends React.Component {
               <button className='btn btn-primary'>Atualizar</button>
             </div>
           </form>
-          
-          {this.state.didUpdateSucceed &&
-            <span>Perfil atualizado com sucesso</span>
-          }
         </>;
     } else if (this.state.selectedTab === 'minhasCompras') {
-      new Promise(() => {
-        setTimeout(() => { 
-          let courses = [];
-          for (let i = 0; i < 10; i++) {
-            courses[i] = {
-              id: i,
-              name: 'Rei dos cursos ' + i,
-              number_of_videos: 100,
-              duration: '4 anos',
-              image: logo
-            };
-          }
-          this.setState({ courses: courses, isLoading: false });
-        }, 1000);
-      });
+      let coursesPerPage = 5;
+      let firstIndex = (this.state.currentPage - 1) * coursesPerPage;
+      let lastIndex = firstIndex + coursesPerPage;
+      let pageAmount = this.state.courses.length / coursesPerPage;
+      const coursesToShow = this.state.courses.slice(firstIndex, lastIndex);
+
+      let paginationItems = [];
+
+      if (this.state.currentPage <= 3) {
+        for (let i = 1; i <= 3; i++) {
+          paginationItems.push(
+            <Pagination.Item key={ i }
+              active={ this.state.currentPage === i }
+              onClick={ () => { this.setState({ currentPage: i }) } }
+            >
+              { i }
+            </Pagination.Item>
+          );
+        }
+
+        paginationItems.push(<Pagination.Ellipsis key={ 'e1' }/>);
+        paginationItems.push(
+          <Pagination.Item key={ pageAmount }
+            onClick={ () => { this.setState({ currentPage: pageAmount }) } }
+          >
+            { pageAmount }
+          </Pagination.Item>
+        );
+      } else if (this.state.currentPage > 3 && this.state.currentPage <= pageAmount - 3) {
+        paginationItems.push(
+          <Pagination.Item key={ 1 }
+            onClick={ () => { this.setState({ currentPage: 1 }) } }
+          >
+            1
+          </Pagination.Item>
+        );
+        paginationItems.push(<Pagination.Ellipsis key={ 'e1' } />);
+        paginationItems.push(
+          <Pagination.Item key={ this.state.currentPage } active>
+            { this.state.currentPage }
+          </Pagination.Item>
+        );
+        paginationItems.push(<Pagination.Ellipsis key={ 'e2' } />);
+        paginationItems.push(
+          <Pagination.Item key={ pageAmount }
+            onClick={ () => { this.setState({ currentPage: pageAmount }) } }
+          >
+            { pageAmount }
+          </Pagination.Item>
+        );
+      } else {
+        paginationItems.push(
+          <Pagination.Item key={ 1 }
+            onClick={ () => { this.setState({ currentPage: 1 }) } }
+          >
+            1
+          </Pagination.Item>
+        );
+        paginationItems.push(<Pagination.Ellipsis key={ 'e1' } />);
+        for (let i = pageAmount - 2; i <= pageAmount; i++) {
+          paginationItems.push(
+            <Pagination.Item key={ i }
+              active={ this.state.currentPage === i }
+              onClick={ () => { this.setState({ currentPage: i }) } }
+            >
+              { i }
+            </Pagination.Item>
+          );
+        }
+      }
+
       content =
         <>
           <h2 className='border-bottom w-100 text-center pb-3'>MINHAS COMPRAS</h2>
@@ -146,32 +221,64 @@ class Perfil extends React.Component {
                 <span className='sr-only'>Carregando cursos...</span>
               </Spinner>
               <span className='mt-2'>Carregando cursos...</span>
-            </div> 
+            </div>
           }
           { !this.state.isLoading &&
-            <ul className='mt-5 pl-5 w-100 '>
-              { this.state.courses.map((course, index) => {
-                  return (
-                    <li key={ index } className='d-flex justify-content-center border-bottom mb-3 pb-3'
-                      style={ { listStyleType: 'none' } }
-                    >
-                      <a className='no-decoration horizontal-card-link w-100' href='#'>
-                        <div className='d-flex'>
-                          <div className='bg-white'>
-                            <img src={ logo } style={{ width: '15em' }}/>
+            <>
+              <ul className='mt-5 pl-5 w-100 '>
+                { coursesToShow.map((course, index) => {
+                    return (
+                      <li key={ index }
+                        className='horizontal-card d-flex justify-content-center
+                          mb-3 pb-3'
+                        style={ { listStyleType: 'none' } }
+                      >
+                        <a className='no-decoration w-100' href='#'>
+                          <div className='d-flex'>
+                            <div className='bg-white'>
+                              <img src={ logo } style={{ width: '15em' }}/>
+                            </div>
+                            <div className='px-3'>
+                              <b>
+                                { course.name }
+                              </b>
+
+                              <p>{ course.description }</p>
+                            </div>
                           </div>
-                          <div className='px-3'>
-                            <b>
-                              { course.name }
-                            </b>
-                          </div>
-                        </div>
-                      </a>
-                    </li>
-                  )
-                })
-              }
-            </ul>
+                        </a>
+                      </li>
+                    )
+                  })
+                }
+              </ul>
+
+              <Pagination className='children-no-border'>
+                <Pagination.First disabled={ this.state.currentPage === 1 }
+                  onClick={ () => { this.setState({ currentPage: 1 }) } }
+                />
+                <Pagination.Prev disabled={ this.state.currentPage === 1 }
+                  onClick={ () => {
+                    this.setState(prevState =>
+                      ({ currentPage: prevState.currentPage - 1 })
+                    )
+                  } }
+                />
+
+                { paginationItems }
+
+                <Pagination.Next disabled={ this.state.currentPage === pageAmount }
+                  onClick={ () => {
+                    this.setState(prevState =>
+                      ({ currentPage: prevState.currentPage + 1 })
+                    )
+                  } }
+                />
+                <Pagination.Last disabled={ this.state.currentPage === pageAmount }
+                  onClick={ () => { this.setState({ currentPage: pageAmount }) } }
+                />
+              </Pagination>
+            </>
           }
         </>;
     }
@@ -180,13 +287,13 @@ class Perfil extends React.Component {
       <div className='d-flex justify-content-center
         h-100 w-100'
       >
-        <div className='row w-50 m-0 p-0'>
+        <div className='row w-100 m-0 p-0'>
           <div className='d-flex justify-content-center
             col-3 border-right px-0'
           >
             <ul className='sidebar w-100 px-0' style={{ marginTop: '15em' }}>
               <li>
-                <button name='perfil' 
+                <button name='perfil'
                   disabled={ this.state.selectedTab === 'perfil' ? true : false }
                   onClick={ this.handleSidebarClick }
                 >
@@ -213,6 +320,18 @@ class Perfil extends React.Component {
             
           </div>
         </div>
+
+        <Toast className='position-fixed'
+          style={{ bottom: '1em', right: '1em', width: '30em' ,zIndex: '10' }}
+          onClose={ () => { this.setState({ didUpdateSucceed: false }) } }
+          show={ this.state.didUpdateSucceed } delay={ 3000 } autohide
+        >
+          <Toast.Header>
+            <strong className="mr-auto">Perfil atualizado!</strong>
+            <small>Há poucos segundos</small>
+          </Toast.Header>
+          <Toast.Body>Seus dados foram atualizados!</Toast.Body>
+        </Toast>
       </div>
     );
   }
@@ -258,7 +377,13 @@ class Perfil extends React.Component {
     } else if (event.target.name === 'minhas-compras') {
       this.setState({ selectedTab: 'minhasCompras' });
     } else {
-      
+      api.get('logout')
+        .then(response => {
+          if (response.status === 200) {
+            this.props.dispatch(logout());
+            this.props.history.push('/');
+          }
+        });
     }
   }
 

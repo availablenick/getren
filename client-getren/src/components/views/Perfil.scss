@@ -21,23 +21,29 @@
   }
 }
 
-.horizontal-card-link {
-  color: rgba(22,34,57,0.95);
-  
-  img {
-    height: 8em;
+.horizontal-card {
+  &:not(:last-child) {
+    border-bottom: 1px solid #dee2e6;
   }
 
-  &:hover {
+  a {
     color: rgba(22,34,57,0.95);
     
-    div > div:first-child {
-      background: rgba(0, 0, 0, 0.1);
-      transition: all 0.1s ease-in;
+    img {
+      height: 8em;
     }
-  }
 
-  &:focus {
-    outline: none;
+    &:hover {
+      color: rgba(22,34,57,0.95);
+      
+      div > div:first-child {
+        background: rgba(0, 0, 0, 0.1);
+        transition: all 0.1s ease-in;
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
   }
 }

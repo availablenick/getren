@@ -115,3 +115,9 @@ html, body, #root {
 .no-decoration:hover {
   text-decoration: none;
 }
+
+.children-no-border {
+  * {
+    border: 0;
+  }
+}
