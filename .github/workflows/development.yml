@@ -89,5 +89,5 @@ jobs:
       - name: Test
         uses: matt-ball/newman-action@master
         with:
-          apiKey: PMAK-5fcfd5a90519e900591e3d02-b5084b883a75dd9d38a663570aa017799e
+          apiKey: ${{secrets.POSTMAN_KEY}}
           collection: postman_collection.json
