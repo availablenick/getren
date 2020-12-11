@@ -5,6 +5,8 @@ import Confirmacao from '../../components/views/Confirmacao.js';
 import Perfil from '../../components/views/Perfil.js';
 import Cursos from '../../components/views/Cursos.js';
 
+import Admin from '../../components/views/Admin.js';
+
 const routes = [
   {
     path: '/',
@@ -42,6 +44,13 @@ const routes = [
     path: '/cursos/page/:number',
     component: Cursos,
   },
+  {
+    path: '/admin',
+    needsUserSignedIn: true,
+    needsUserToBeAdmin: true,
+    redirectTo: '/',
+    component: Admin,
+  }
 ];
 
 export default routes;

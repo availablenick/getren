@@ -1,3 +1,5 @@
+import json
+
 from flask import request, make_response, jsonify
 from flask_cors import cross_origin
 
@@ -7,9 +9,13 @@ from app.models import User, Course
 
 @app.route('/courses', methods=['GET', 'POST'], defaults={'filter': 'all'})
 @app.route('/courses/<filter>')
+@cross_origin(supports_credentials=True)
 def courses(filter):
     if request.method == 'POST':
-        result = request.get_json()
+        json_args = request.form['json_args']
+        result = json.loads(json_args) 
+        thumbnail = request.files.get('thumbnail')
+        result['thumbnail'] = thumbnail.read()
         if is_valid_admin(request):
             course = Course.add(result)
             if course:

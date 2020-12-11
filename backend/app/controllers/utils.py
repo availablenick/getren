@@ -30,18 +30,16 @@ def validate_password(password, password_confirm):
     return errors
 
 def generate_token(user):
-    return jwt.encode({
-                'email': user.email,
-                'id': user.id
-            }, SECRET_KEY, algorithm='HS256')
+    user_payload = { 'email': user.email, 'id': user.id }
+    if user.is_admin:
+        user_payload['is_admin'] = True
+    return jwt.encode(user_payload, SECRET_KEY, algorithm='HS256')
 
 def jsonify_user(user):
-    return jsonify({
-            'user': {
-                'email': user.email,
-                'id': user.id
-            }
-        })
+    user_payload = { 'email': user.email, 'id': user.id }
+    if user.is_admin:
+        user_payload['is_admin'] = True
+    return jsonify({ 'user': user_payload })
 
 def error_response(error, code):
     response = jsonify({'error': error})
@@ -65,7 +63,6 @@ def is_valid_user(request, id):
 def is_valid_admin(request):
     user_payload = decode_user(request)
     if user_payload:
-        user = User.get_by_id(user_payload['id'])
-        if user.is_admin:
+        if 'is_admin' in user_payload and user_payload['is_admin']:
             return True
     return False

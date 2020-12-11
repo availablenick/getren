@@ -23,10 +23,7 @@ class App extends React.Component {
       .then(response => {
         if (response.status === 200) {
           this.props.dispatch(
-            login({
-              email: response.data.email,
-              id: response.data.id,
-            })
+            login(response.data)
           );
         }
       }).finally(() => {
@@ -42,7 +39,8 @@ class App extends React.Component {
           path={ route.path }
           render={ () => {
             if ((route.needsUserSignedIn && !this.props.user.data) ||
-                (route.needsUserSignedOut && this.props.user.data)) {
+                (route.needsUserSignedOut && this.props.user.data) ||
+                (route.needsUserToBeAdmin && !this.props.user.data.is_admin)) {
               return <Redirect to={route.redirectTo} />;
             }
 
