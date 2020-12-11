@@ -3,6 +3,16 @@ html, body, #root {
   font-family: 'Montserrat', sans-serif;
 }
 
+.bg-getren-color {
+  background: rgb(225, 240, 255);
+}
+
+.children-no-border {
+  * {
+    border: 0;
+  }
+}
+
 .form-login {
   > * {
     margin-bottom: 1em;
@@ -103,6 +113,10 @@ html, body, #root {
   &:hover {
     color: white;
   }
+}
+
+.no-decoration:hover {
+  text-decoration: none;
 }
 
 .social-media {

@@ -3,11 +3,13 @@ import Cadastro from '../../components/views/Cadastro.js';
 import Login from '../../components/views/Login.js';
 import Confirmacao from '../../components/views/Confirmacao.js';
 import Perfil from '../../components/views/Perfil.js';
+import Cursos from '../../components/views/Cursos.js';
 
 const routes = [
   {
     path: '/',
     component: Home,
+    exact: true
   },
   {
     path: '/cadastro',
@@ -30,6 +32,15 @@ const routes = [
     needsUserSignedIn: true,
     redirectTo: '/login',
     component: Perfil,
+  },
+  {
+    path: '/cursos',
+    component: Cursos,
+    exact: true
+  },
+  {
+    path: '/cursos/page/:number',
+    component: Cursos,
   },
 ];
 
