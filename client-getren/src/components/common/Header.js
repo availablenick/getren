@@ -26,16 +26,16 @@ class Header extends React.Component {
               <Link to='/'>HOME</Link>
             </li>
             <li className='sub-menu-dropdown'>
-              <a href='#'>
+              <Link to='/cursos'>
                 CURSOS 
-              </a>
+              </Link>
               <ul className='sub-menu d-flex flex-column position-absolute 
                 left-0 p-0 text-white'
               >
                 <li>
-                  <a href='#'>
+                  <Link to='/cursos'>
                     TODOS
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a href='#'>

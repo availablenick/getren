@@ -66,19 +66,63 @@ class Cursos extends React.Component {
       </ul>
 
     let pageAmount = this.state.courses.length / coursesPerPage;
-    let pageButtons = [];
-    let firstNumber = 
-      this.state.currentPage % 5 === 0 ?
-      this.state.currentPage / 5
-      :
-      Math.floor(this.state.currentPage / 5) * 5 + 1
-    ;
+    let paginationItems = [];
+    if (this.state.currentPage <= 3) {
+      for (let i = 1; i <= 3; i++) {
+        paginationItems.push(
+          <Pagination.Item key={ i }
+            active={ this.state.currentPage === i }
+            onClick={ () => { this.setState({ currentPage: i }) } }
+          >
+            { i }
+          </Pagination.Item>
+        );
+      }
 
-    for (let i = firstNumber; i < firstNumber + 5; i++) {
-      if (i <= pageAmount) {
-        pageButtons.push(
-          <Pagination.Item active={ this.state.currentPage === i }
-            onClick={ this.handleClick }
+      paginationItems.push(<Pagination.Ellipsis key={ 'e1' }/>);
+      paginationItems.push(
+        <Pagination.Item key={ pageAmount }
+          onClick={ () => { this.setState({ currentPage: pageAmount }) } }
+        >
+          { pageAmount }
+        </Pagination.Item>
+      );
+    } else if (this.state.currentPage > 3 && this.state.currentPage <= pageAmount - 3) {
+      paginationItems.push(
+        <Pagination.Item key={ 1 }
+          onClick={ () => { this.setState({ currentPage: 1 }) } }
+        >
+          1
+        </Pagination.Item>
+      );
+      paginationItems.push(<Pagination.Ellipsis key={ 'e1' } />);
+      paginationItems.push(
+        <Pagination.Item key={ this.state.currentPage } active>
+          { this.state.currentPage }
+        </Pagination.Item>
+      );
+      paginationItems.push(<Pagination.Ellipsis key={ 'e2' } />);
+      paginationItems.push(
+        <Pagination.Item key={ pageAmount }
+          onClick={ () => { this.setState({ currentPage: pageAmount }) } }
+        >
+          { pageAmount }
+        </Pagination.Item>
+      );
+    } else {
+      paginationItems.push(
+        <Pagination.Item key={ 1 }
+          onClick={ () => { this.setState({ currentPage: 1 }) } }
+        >
+          1
+        </Pagination.Item>
+      );
+      paginationItems.push(<Pagination.Ellipsis key={ 'e1' } />);
+      for (let i = pageAmount - 2; i <= pageAmount; i++) {
+        paginationItems.push(
+          <Pagination.Item key={ i }
+            active={ this.state.currentPage === i }
+            onClick={ () => { this.setState({ currentPage: i }) } }
           >
             { i }
           </Pagination.Item>
@@ -111,7 +155,7 @@ class Cursos extends React.Component {
             } }
           />
           
-          { pageButtons }
+          { paginationItems }
 
           <Pagination.Next
             disabled={ this.state.currentPage === pageAmount }
