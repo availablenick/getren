@@ -1,0 +1,49 @@
+.sidebar {
+  > li {
+    list-style-type: none;
+    > button {
+      border: none;
+      background: transparent;
+      width: 100%;
+      padding: 0.3em 0;
+      &:hover {
+        background: rgba(22,34,57,0.95);
+        color: white;
+      }
+      &:disabled {
+        background: rgba(22,34,57,0.95);
+        color: white;
+      }
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+}
+
+.horizontal-card {
+  &:not(:last-child) {
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  a {
+    color: rgba(22,34,57,0.95);
+    
+    img {
+      height: 8em;
+    }
+
+    &:hover {
+      color: rgba(22,34,57,0.95);
+      
+      div > div:first-child {
+        background: rgba(0, 0, 0, 0.1);
+        transition: all 0.1s ease-in;
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+}

@@ -111,3 +111,17 @@ html, body, #root {
     margin-right: 0.5em;
   } 
 }
+
+.no-decoration:hover {
+  text-decoration: none;
+}
+
+.children-no-border {
+  * {
+    border: 0;
+  }
+}
+
+.list-style-type-none {
+  list-style-type: none;
+}

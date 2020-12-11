@@ -11,51 +11,80 @@ import logo from '../../images/getren-logo.png';
 class Header extends React.Component {
   render() {
     return (
-      <header className='top-header'>
-        <nav className='navbar navbar-expand-md'>
-          <div className='container-fluid'>
-            <a className='navbar-brand' href='/'>
+      <header className='top-header w-100'>
+        <nav className='d-flex justify-content-between align-items-center 
+          w-100 h-100 px-5'
+        >
+          <div>
+            <Link to='/'>
               <img src={logo} alt='getren-logo'></img>
-            </a>
+            </Link>
           </div>
-
-          <ul className='navbar-nav mr-auto d-none d-lg-flex'>
-            <li className='nav-item active mr-4'>
-              <Link className='nav-link' to='/'>HOME</Link>
+          
+          <ul className='m-0 p-0'>
+            <li>
+              <Link to='/'>HOME</Link>
             </li>
-            <li className='nav-item active mr-4'>
-              <a className='nav-link' href='#'>CURSOS</a>
+            <li className='sub-menu-dropdown'>
+              <a href='#'>
+                CURSOS 
+              </a>
+              <ul className='sub-menu d-flex flex-column position-absolute 
+                left-0 p-0 text-white'
+              >
+                <li>
+                  <a href='#'>
+                    TODOS
+                  </a>
+                </li>
+                <li>
+                  <a href='#'>
+                    ABERTOS
+                  </a>
+                </li>
+                <li>
+                  <a href='#'>
+                    ENCERRADOS
+                  </a>
+                </li>
+                <li>
+                  <a href='#'>
+                    MEUS CURSOS
+                  </a>
+                </li>
+                <li>
+                  <a href='#'>
+                    PERGUNTAS FREQUENTES
+                  </a>
+                </li>
+              </ul>
             </li>
-            <li className='nav-item active mr-4'>
-              <a className='nav-link about' href='#'>SOBRE</a>
+            <li>
+              <a href='#'>
+                SOBRE
+              </a>
             </li>
-            <li className='nav-item active mr-4'>
-              <a className='nav-link' href='#'>CONTATO</a>
+            <li>
+              <a href='#'>
+                CONTATO
+              </a>
             </li>
-
             { !this.props.user.data &&
-              <li className='nav-item active'>
-                <Link className='nav-link' to='/login'>LOGIN</Link>
+              <li>
+                <Link to='/login'>LOGIN</Link>
               </li>
             }
-
             { this.props.user.data &&
-              <li className='nav-item active mr-4'>
-                <Link className='nav-link' to='/perfil'>PERFIL</Link>
+              <li>
+                <Link to='/perfil'>PERFIL</Link>
               </li>
             }
-
             { this.props.user.data &&
-              <li className='nav-item active'>
-                <a className='nav-link hand-cursor'
-                  onClick={ this.handleClick }>SAIR</a>
+              <li>
+                <button type='button' onClick={ this.handleClick }>SAIR</button>
               </li>
             }
           </ul>
-
-          <button className='bars d-lg-none'>
-            <FontAwesomeIcon icon='bars' />
-          </button>
         </nav>
       </header>
     );
