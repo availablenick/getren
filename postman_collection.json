@@ -508,6 +508,47 @@
 			"response": []
 		},
 		{
+			"name": "ForgotPassword Email Existente",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ecc81a73-8dc1-4a8e-aeac-516738054d62",
+						"exec": [
+							"pm.test('Forgot Password -> Valid Email', function() {\r",
+							"    pm.response.to.have.status(200)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"getren.xp@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/password_forgot",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"password_forgot"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "ForgotPassword Email Inexistente",
 			"event": [
 				{
@@ -809,8 +850,14 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\"name\": \"Curso 1\",\r\n\"expires_at\": \"4040-12-05\",\r\n\"price\": 199.90,\r\n\"is_watchable\": true}",
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "json_args",
+							"value": "\"{\\\"name\\\": \\\"Curso 1\\\", \\\"expires-at\\\": \\\"4040-12-05\\\", \\\"price\\\": 199.90, \\\"is_watchable\\\": true}\"",
+							"type": "text"
+						}
+					],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -892,8 +939,14 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\"name\": \"Curso 2\",\r\n\"expires_at\": \"2020-11-28\",\r\n\"price\": 199.90,\r\n\"is_watchable\": false}",
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "json_args",
+							"value": "\"{\\\"name\\\": \\\"Curso 2\\\", \\\"expires-at\\\": \\\"2020-12-05\\\", \\\"price\\\": 199.90, \\\"is_watchable\\\": false}\"",
+							"type": "text"
+						}
+					],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -901,13 +954,19 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/courses",
+					"raw": "localhost:5000/courses?",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
 						"courses"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null
+						}
 					]
 				}
 			},
@@ -1676,7 +1735,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"youtube_code\": \"1\",\r\n\"title\": \"Vídeo Getren\",\r\n\"description\": \"Vídeo de teste para o getren\",\r\n\"thumbnail\": \"url.com\",\r\n\"duration\": \"14:32\",\r\n\"course_order\": 1}",
+					"raw": "{\"youtube_code\": \"abcdefgh\",\r\n\"title\": \"Vídeo Getren\",\r\n\"description\": \"Vídeo de teste para o getren\",\r\n\"thumbnail\": \"url.com\",\r\n\"duration\": \"14:32\",\r\n\"course_order\": 1}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1828,6 +1887,47 @@
 						"course",
 						"1",
 						"videos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contact Forms",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f85483a2-fc10-4017-9625-6f570164a668",
+						"exec": [
+							"pm.test(\"Contact Forms -> Correct\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\": \"getren@gmail.com\",\r\n\"name\": \"Getren\",\r\n\"subject\": \"Teste de Contato\",\r\n\"message\": \"Olá!\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/contact",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"contact"
 					]
 				}
 			},

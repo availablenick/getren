@@ -1,3 +1,5 @@
+import base64
+
 from datetime import date, datetime
 from sqlalchemy.sql import func
 from sqlalchemy.exc import SQLAlchemyError
@@ -197,8 +199,11 @@ class Course(db.Model):
 
   def as_dict(self):
     course_dict = {}
-    for key in ['id', 'name', 'number_of_videos', 'duration', 'price', 'expires_at', 'is_watchable', 'thumbnail']:
+    for key in ['id', 'name', 'number_of_videos', 'duration', 'price', 'expires_at', 'is_watchable']:
       course_dict[key] = getattr(self, key)
+    if self.thumbnail:
+      thumbnail_base64 = base64.b64encode(self.thumbnail)
+      course_dict['thumbnail'] = thumbnail_base64.decode()
     return course_dict
 
   def get_videos_as_dict(self):

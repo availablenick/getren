@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 import FormularioCurso from './FormularioCurso.js';
 import FormularioVideo from './FormularioVideo.js';
@@ -33,7 +33,11 @@ class Admin extends React.Component {
       <div className='d-flex flex-row h-100 justify-content-around'>
         <ul className="nav nav-pills flex-column justify-content-between">
           <li className="nav-item">
-            <a className="nav-link active" component-to-load="FormularioCurso" onClick={this.handleMenuItemClick}>Cursos</a>
+            {/* <a className="nav-link active" component-to-load="FormularioCurso" onClick={this.handleMenuItemClick}>Cadastra Curso</a> */}
+            <Link className="nav-link active" to='/admin/cadastrar-curso'>Cadastrar Curso</Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link active" to='/cursos'>Cursos</Link>
           </li>
           <li className="nav-item">
             <a className="nav-link active" component-to-load="FormularioVideo" onClick={this.handleMenuItemClick}>Vídeos</a>
