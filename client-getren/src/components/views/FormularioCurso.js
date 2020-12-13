@@ -24,7 +24,6 @@ class FormularioCurso extends React.Component {
         expires_at: new Date().toISOString().slice(0, 10),
         is_watchable: false,
         is_available: false,
-        thumbnail: '',
       },
       message: null,
       method: method,
@@ -124,18 +123,35 @@ class FormularioCurso extends React.Component {
 
     let courseData = new FormData();
     let course = this.state.course;
-    course['price'] = course['price'].replace(',', '.');
+    if (course['price']) {
+      course['price'] = course['price'].replace(',', '.');
+    }
     courseData.append('json_args', JSON.stringify(course));
     if (this.thumbnailRef.current.files) {
       courseData.append('thumbnail', this.thumbnailRef.current.files[0]);
     }
+
+    let preMessage, postMessage, request;
+
+    if (this.state.method === "CADASTRAR"){
+      preMessage = 'Cadastrando curso...';
+      postMessage = 'Curso cadastrado!';
+      request = api.post('/courses', courseData, {
+        headers: {'Content-Type': 'multipart/form-data' }
+      });
+    } else {
+      preMessage = 'Atualizando curso...';
+      postMessage = 'Curso atualizado!';
+      let id = this.props.match.params.id;
+      request = api.put(`/course/${id}`, courseData, {
+        headers: {'Content-Type': 'multipart/form-data' }
+      });
+    }
     
-    this.setState({ message: 'Cadastrando curso...'});
-    api.post('/courses', courseData, {
-      headers: {'Content-Type': 'multipart/form-data' }
-    }).then(response => {
+    this.setState({ message: preMessage});
+    request.then(response => {
       if (response.status === 200) {
-        this.setState({ message: 'Curso cadastrado!'});
+        this.setState({ message: postMessage});
         setTimeout(() => {
           this.setState({ message: null});
         }, 2000);

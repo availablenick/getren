@@ -48,7 +48,8 @@ def course(id):
         return response
     if is_valid_admin(request):        
         if request.method == 'PUT':
-            result = request.get_json()
+            json_args = request.form['json_args']
+            result = json.loads(json_args)
             course = Course.update_data(id, result)
             if course:
                 course_dict = course.as_dict()
@@ -62,6 +63,6 @@ def course(id):
             if Course.delete(id):
                 return {}, 200
             else:
-                return error_response('Curso não deletado', 500)
+                return error_response('Curso não deletado. Tente novamente em alguns minutos.', 500)
     else:
         return error_response('Permissão negada', 401)

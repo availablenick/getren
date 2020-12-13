@@ -199,8 +199,10 @@ class Course(db.Model):
 
   def as_dict(self):
     course_dict = {}
-    for key in ['id', 'name', 'number_of_videos', 'duration', 'price', 'expires_at', 'is_watchable']:
+    for key in ['id', 'name', 'number_of_videos', 'duration', 'price', 'is_watchable']:
       course_dict[key] = getattr(self, key)
+    if self.expires_at:
+      course_dict['expires_at'] = datetime.strftime(getattr(self, 'expires_at'), "%Y-%m-%d")
     if self.thumbnail:
       thumbnail_base64 = base64.b64encode(self.thumbnail)
       course_dict['thumbnail'] = thumbnail_base64.decode()
@@ -223,6 +225,7 @@ class Course(db.Model):
       db.session.commit()
       return new_course
     except Exception as E:
+      print(E)
       db.session.rollback()
       return None
 
