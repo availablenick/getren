@@ -8,6 +8,7 @@ import Curso from '../../components/views/Curso.js';
 import FormularioCurso from '../../components/views/FormularioCurso.js';
 
 import Admin from '../../components/views/Admin.js';
+import FormularioVideo from '../../components/views/FormularioVideo.js';
 
 const routes = [
   {
@@ -54,6 +55,16 @@ const routes = [
   {
     path: '/admin/editar-curso/:id',
     component: FormularioCurso,
+    needsUserToBeAdmin: true,
+  },
+  {
+    path: '/admin/cadastrar-video/:id',
+    component: FormularioVideo,
+    needsUserToBeAdmin: true,
+  },
+  {
+    path: '/admin/editar-video/:id',
+    component: FormularioVideo,
     needsUserToBeAdmin: true,
   },
   {

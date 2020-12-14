@@ -79,11 +79,9 @@ def create_service():
 
     try:
         service = build(API_NAME, API_VERSION, credentials=cred)
-        print(API_NAME, 'service created successfully')
+        #print(API_NAME, 'service created successfully')
         return service
     except Exception as e:
-        print('Unable to connect.')
-        print(e)
         return None
 
 def resumable_upload(insert_request):
@@ -92,26 +90,26 @@ def resumable_upload(insert_request):
   retry = 0
   while response is None:
     try:
-      print("Uploading file...")
+      #print("Uploading file...")
       status, response = insert_request.next_chunk()
       if response is not None:
         if 'id' in response:
-          print(f"Video id {response['id']} was successfully uploaded.")
+          #print(f"Video id {response['id']} was successfully uploaded.")
           return True, response
         else:
-          print(f"The upload failed with an unexpected response: {response}")
+          #print(f"The upload failed with an unexpected response: {response}")
     except HttpError as e:
         error = f"A retriable HTTP error {e.resp.status} occurred:\n{e.content}"
     except Exception as e:
       error = f"A retriable error occurred: {e}"
 
     if error is not None:
-      print (error)
+      #print (error)
       retry += 1
       if retry > 3:
         return False, error
 
       max_sleep = 2 ** retry
       sleep_seconds = random.random() * max_sleep
-      print (f"Sleeping {sleep_seconds} seconds and then retrying...")
+      #print (f"Sleeping {sleep_seconds} seconds and then retrying...")
       time.sleep(sleep_seconds)

@@ -213,6 +213,7 @@ class Course(db.Model):
     videos_list = []
     for video in videos:
       videos_list.append(video.as_dict())
+    videos_list = sorted(videos_list, key=lambda x: x['course_order'])
     return videos_list    
 
   @classmethod
@@ -225,7 +226,6 @@ class Course(db.Model):
       db.session.commit()
       return new_course
     except Exception as E:
-      print(E)
       db.session.rollback()
       return None
 
@@ -325,10 +325,14 @@ class Video(db.Model):
       return None
 
   @classmethod
-  def update_data(cls, id, request_course):
+  def update_data(cls, id, request_video):
     video_query = db.session.query(Video).filter(Video.id==id)
+    if 'duration' in request_video:
+      duration = request_video['duration']
+      index = duration.index(':')
+      request_video['duration'] = int(duration[:index])*60 + int(duration[index+1:])
     try:
-      video_query.update(request_course) 
+      video_query.update(request_video) 
       db.session.commit()
       return video_query.first()
     except Exception as e:
