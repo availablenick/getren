@@ -14,6 +14,8 @@ def courses(filter):
     if request.method == 'POST':
         json_args = request.form['json_args']
         result = json.loads(json_args)
+        while type(result) == str:
+            result = json.loads(result)
         if request.files:
             thumbnail = request.files.get('thumbnail')
             result['thumbnail'] = thumbnail.read()
@@ -50,6 +52,8 @@ def course(id):
         if request.method == 'PUT':
             json_args = request.form['json_args']
             result = json.loads(json_args)
+            while type(result) == str:
+                result = json.loads(result)
             course = Course.update_data(id, result)
             if course:
                 course_dict = course.as_dict()
