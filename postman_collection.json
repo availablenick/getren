@@ -809,8 +809,14 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\"name\": \"Curso 1\",\r\n\"expires_at\": \"4040-12-05\",\r\n\"price\": 199.90,\r\n\"is_watchable\": true}",
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "json_args",
+							"value": "\"{\\\"name\\\": \\\"Curso 1\\\", \\\"expires_at\\\": \\\"4040-12-05\\\", \\\"price\\\": 199.90, \\\"is_watchable\\\": true}\"",
+							"type": "text"
+						}
+					],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -852,8 +858,14 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\"nome\": \"Curso 1\",\r\n\"expires_at\": \"2020-12-05\",\r\n\"price\": 199.90,\r\n\"is_watchable\": true}",
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "json_args",
+							"value": "\"{\\\"nome\\\": \\\"Curso 1\\\", \\\"expires-at\\\": \\\"4040-12-05\\\", \\\"price\\\": 199.90, \\\"is_watchable\\\": true}\"",
+							"type": "text"
+						}
+					],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -892,8 +904,14 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\"name\": \"Curso 2\",\r\n\"expires_at\": \"2020-11-28\",\r\n\"price\": 199.90,\r\n\"is_watchable\": false}",
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "json_args",
+							"value": "\"{\\\"name\\\": \\\"Curso 2\\\", \\\"expires_at\\\": \\\"2020-12-05\\\", \\\"price\\\": 199.90, \\\"is_watchable\\\": false}\"",
+							"type": "text"
+						}
+					],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -901,13 +919,19 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/courses",
+					"raw": "localhost:5000/courses?",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
 						"courses"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null
+						}
 					]
 				}
 			},
@@ -1237,8 +1261,14 @@
 				"method": "PUT",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\"name\": \"Curso 1 Renomeado\"}",
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "json_args",
+							"value": "\"{\\\"name\\\": \\\"Curso 1 Renomeado\\\"}\"",
+							"type": "text"
+						}
+					],
 					"options": {
 						"raw": {
 							"language": "json"

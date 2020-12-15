@@ -194,7 +194,7 @@ class CourseTest(MyTest_User_Course):
         course = Course.add({"name" : "Curso de teste"})
         courses = Course.get_by_filter("all")
         assert list(courses[0].keys()) == ['id', 'name', 'number_of_videos',
-                                            'duration', 'price', 'expires_at', 'is_watchable', 'thumbnail']
+                                            'duration', 'price', 'is_watchable']
 
     def test_04_get_expired(self):
         course = Course.add({"name": "Curso de teste", "expires_at": "2020-11-20"})

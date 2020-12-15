@@ -7,6 +7,16 @@ import api from '../../config/axios/api.js';
 class FormularioCurso extends React.Component {
   constructor(props){
     super(props);
+
+    let method;
+    if (props.match.path.includes('cadastrar')) {
+      method = 'CADASTRAR';
+    } else if (props.match.path.includes('editar')) {
+      method = 'EDITAR';
+    }
+
+    this.thumbnailRef = React.createRef();
+
     this.state = {
       course: {
         name: '',
@@ -14,10 +24,27 @@ class FormularioCurso extends React.Component {
         expires_at: new Date().toISOString().slice(0, 10),
         is_watchable: false,
         is_available: false,
-        thumbnail: '',
       },
       message: null,
+      method: method,
     };
+  }
+
+  componentDidMount() {
+    if (this.state.method === 'EDITAR') {
+      if (!this.props.location.course) {
+        api.get('/course/' + this.props.match.params.id)
+          .then(response => {
+            if (response.status === 200) {
+              this.setState({ course: response.data});
+            }
+          }).catch(error => {
+
+          });
+      } else {
+        this.setState({ course: this.props.location.course});
+      }
+    }
   }
   
   render() {
@@ -25,7 +52,7 @@ class FormularioCurso extends React.Component {
       <div className='d-flex justify-content-center align-items-center
         flex-column h-100'
       >
-        <h2>CADASTRAR CURSO</h2>
+        <h2>{this.state.method} CURSO</h2>
         <form className='form-login' style={{width: '30em'}} onSubmit={this.handleSubmit} method='post'>
           <div>
             <label htmlFor='name'>Nome</label>
@@ -58,7 +85,7 @@ class FormularioCurso extends React.Component {
 
           <div className='form-group'>
             <label htmlFor='thumbnail'>Thumbnail do curso</label>
-            <input type='file' name='thumbnail' className='form-control-file' id='thumbnail' />
+            <input type='file' name='thumbnail' className='form-control-file' ref={this.thumbnailRef} />
           </div>
 
           <div className='form-check'>
@@ -80,7 +107,7 @@ class FormularioCurso extends React.Component {
           </div>
 
           <div className='d-flex justify-content-center'>
-            <button className='btn btn-primary'>Cadastrar</button>
+            <button className='btn btn-primary'>{this.state.method}</button>
           </div>
         </form>
 
@@ -96,16 +123,35 @@ class FormularioCurso extends React.Component {
 
     let courseData = new FormData();
     let course = this.state.course;
-    course['price'] = course['price'].replace(',', '.');
+    if (course['price']) {
+      course['price'] = course['price'].replace(',', '.');
+    }
     courseData.append('json_args', JSON.stringify(course));
-    courseData.append('thumbnail', document.querySelector('#thumbnail').files[0]);
+    if (this.thumbnailRef.current.files) {
+      courseData.append('thumbnail', this.thumbnailRef.current.files[0]);
+    }
+
+    let preMessage, postMessage, request;
+
+    if (this.state.method === "CADASTRAR"){
+      preMessage = 'Cadastrando curso...';
+      postMessage = 'Curso cadastrado!';
+      request = api.post('/courses', courseData, {
+        headers: {'Content-Type': 'multipart/form-data' }
+      });
+    } else {
+      preMessage = 'Atualizando curso...';
+      postMessage = 'Curso atualizado!';
+      let id = this.props.match.params.id;
+      request = api.put(`/course/${id}`, courseData, {
+        headers: {'Content-Type': 'multipart/form-data' }
+      });
+    }
     
-    this.setState({ message: 'Cadastrando curso...'});
-    api.post('/courses', courseData, {
-      headers: {'Content-Type': 'multipart/form-data' }
-    }).then(response => {
+    this.setState({ message: preMessage});
+    request.then(response => {
       if (response.status === 200) {
-        this.setState({ message: 'Curso cadastrado!'});
+        this.setState({ message: postMessage});
         setTimeout(() => {
           this.setState({ message: null});
         }, 2000);
@@ -137,4 +183,4 @@ class FormularioCurso extends React.Component {
 
 }
 
-export default FormularioCurso;
+export default withRouter(FormularioCurso);

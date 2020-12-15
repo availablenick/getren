@@ -7,18 +7,44 @@ import api from '../../config/axios/api.js';
 class FormularioVideo extends React.Component {
   constructor(props){
     super(props);
+
+    let method;
+    if (props.match.path.includes('cadastrar')) {
+      method = 'CADASTRAR';
+    } else if (props.match.path.includes('editar')) {
+      method = 'EDITAR';
+    }
+
     this.state = {
       video: {
         title: '',
         description: '',
         duration: '',
-        course_order: 0,
+        course_order: '',
         thumbnail: '',
         youtube_code: '',
       },
+      courseId: props.match.params.id,
       message: null,
-      inputModeUrl: true
+      inputModeUrl: true,
+      method: method,
     };
+  }
+
+  componentDidMount() {
+    if (this.state.method === 'EDITAR') {
+      if (!this.props.location.video) {
+        api.get('/video/' + this.props.match.params.id)
+          .then(response => {
+            if (response.status === 200) {
+              this.processVideoData(response.data);
+            }
+          }).catch(error => {
+          });
+      } else {
+        this.processVideoData(this.props.location.video);
+      }
+    }
   }
   
   render() {
@@ -149,11 +175,30 @@ class FormularioVideo extends React.Component {
       videoData.append('video', document.querySelector('#video').files[0]);
       headers = {'Content-Type': 'multipart/formdata'};
     }
-    
-    this.setState({ message: 'Cadastrando vídeo...'});
-    api.post('/course/1/videos', videoData,headers).then(response => {
+
+    let preMessage;
+    let postMessage;
+    let request;
+
+    if (this.state.method === "CADASTRAR"){
+      preMessage = 'Cadastrando vídeo...';
+      postMessage = 'Vídeo cadastrado!';
+      request = api.post(`course/${this.state.courseId}/videos`, videoData, {
+        headers: headers
+      });
+    } else {
+      preMessage = 'Atualizando vídeo...';
+      postMessage = 'Vídeo atualizado!';
+      let id = this.props.match.params.id;
+      request = api.put(`/video/${id}`, videoData, {
+        headers: headers
+      });
+    }
+
+    this.setState({ message: preMessage});
+    request.then(response => {
       if (response.status === 200) {
-        this.setState({ message: 'Vídeo cadastrado!'});
+        this.setState({ message: postMessage});
         setTimeout(() => {
           this.setState({ message: null});
         }, 2000);
@@ -190,6 +235,15 @@ class FormularioVideo extends React.Component {
     })
   }
 
+  processVideoData = (video) => {
+    video.youtube_code = '/' + video.youtube_code;
+    let duration = video.duration;
+    let minutes = Math.floor(duration/60);
+    let seconds = duration % 60;
+    video.duration = `${minutes}:${seconds}`
+    this.setState({ video: video});
+  }
+
 }
 
-export default FormularioVideo;
+export default withRouter(FormularioVideo);

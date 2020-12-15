@@ -1,3 +1,5 @@
+import base64
+
 from datetime import date, datetime
 from sqlalchemy.sql import func
 from sqlalchemy.exc import SQLAlchemyError
@@ -197,8 +199,13 @@ class Course(db.Model):
 
   def as_dict(self):
     course_dict = {}
-    for key in ['id', 'name', 'number_of_videos', 'duration', 'price', 'expires_at', 'is_watchable', 'thumbnail']:
+    for key in ['id', 'name', 'number_of_videos', 'duration', 'price', 'is_watchable']:
       course_dict[key] = getattr(self, key)
+    if self.expires_at:
+      course_dict['expires_at'] = datetime.strftime(getattr(self, 'expires_at'), "%Y-%m-%d")
+    if self.thumbnail:
+      thumbnail_base64 = base64.b64encode(self.thumbnail)
+      course_dict['thumbnail'] = thumbnail_base64.decode()
     return course_dict
 
   def get_videos_as_dict(self):
@@ -206,6 +213,7 @@ class Course(db.Model):
     videos_list = []
     for video in videos:
       videos_list.append(video.as_dict())
+    videos_list = sorted(videos_list, key=lambda x: x['course_order'])
     return videos_list    
 
   @classmethod
@@ -317,10 +325,14 @@ class Video(db.Model):
       return None
 
   @classmethod
-  def update_data(cls, id, request_course):
+  def update_data(cls, id, request_video):
     video_query = db.session.query(Video).filter(Video.id==id)
+    if 'duration' in request_video:
+      duration = request_video['duration']
+      index = duration.index(':')
+      request_video['duration'] = int(duration[:index])*60 + int(duration[index+1:])
     try:
-      video_query.update(request_course) 
+      video_query.update(request_video) 
       db.session.commit()
       return video_query.first()
     except Exception as e:
