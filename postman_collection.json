@@ -854,7 +854,7 @@
 					"formdata": [
 						{
 							"key": "json_args",
-							"value": "\"{\\\"name\\\": \\\"Curso 1\\\", \\\"expires-at\\\": \\\"4040-12-05\\\", \\\"price\\\": 199.90, \\\"is_watchable\\\": true}\"",
+							"value": "{\\\"name\\\": \\\"Curso 1\\\", \\\"expires-at\\\": \\\"4040-12-05\\\", \\\"price\\\": 199.90, \\\"is_watchable\\\": true}",
 							"type": "text"
 						}
 					],
@@ -900,7 +900,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"nome\": \"Curso 1\",\r\n\"expires_at\": \"2020-12-05\",\r\n\"price\": 199.90,\r\n\"is_watchable\": true}",
+					"raw": "{nome\": \"Curso 1\",\r\n\"expires_at\": \"2020-12-05\",\r\n\"price\": 199.90,\r\n\"is_watchable\": true}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -943,7 +943,7 @@
 					"formdata": [
 						{
 							"key": "json_args",
-							"value": "\"{\\\"name\\\": \\\"Curso 2\\\", \\\"expires-at\\\": \\\"2020-12-05\\\", \\\"price\\\": 199.90, \\\"is_watchable\\\": false}\"",
+							"value": "{\\\"name\\\": \\\"Curso 2\\\", \\\"expires-at\\\": \\\"2020-12-05\\\", \\\"price\\\": 199.90, \\\"is_watchable\\\": false}",
 							"type": "text"
 						}
 					],

@@ -13,7 +13,7 @@ from app.models import User, Course
 def courses(filter):
     if request.method == 'POST':
         json_args = request.form['json_args']
-        result = json.loads(json_args) 
+        result = json.loads(json_args)
         if request.files:
             thumbnail = request.files.get('thumbnail')
             result['thumbnail'] = thumbnail.read()

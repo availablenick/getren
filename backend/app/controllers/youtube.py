@@ -97,6 +97,7 @@ def resumable_upload(insert_request):
           #print(f"Video id {response['id']} was successfully uploaded.")
           return True, response
         else:
+          pass  
           #print(f"The upload failed with an unexpected response: {response}")
     except HttpError as e:
         error = f"A retriable HTTP error {e.resp.status} occurred:\n{e.content}"
