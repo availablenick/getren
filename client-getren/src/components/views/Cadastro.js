@@ -120,7 +120,7 @@ class Cadastro extends React.Component {
               { errorSection['password_confirm'] }
             </div>
             <div className='d-flex justify-content-center mt-4'>
-              <button className='btn btn-primary'>Cadastrar</button>
+              <button type='submit' className='btn btn-primary'>Cadastrar</button>
             </div>
           </form>
           {
@@ -134,7 +134,7 @@ class Cadastro extends React.Component {
       content = 
         <div>
           <span>
-            Usuário cadastrado. 
+            Usuário cadastrado.
             Um email foi enviado para tu {/* this.props.user.data.email */} para confirmar
             seu cadastro.
             Clique no botão para reenviar o email.
@@ -189,7 +189,7 @@ class Cadastro extends React.Component {
           this.props.history.push('/');
         }, 5000);
       } else if (error.response.status === 400) {
-        this.setState({ 
+        this.setState({
           errors: error.response.data.errors,
           requestSent: false
         });

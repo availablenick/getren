@@ -74,7 +74,7 @@ class Login extends React.Component {
             >
               Esqueci minha senha
             </button>
-            <button className='btn btn-primary'>Entrar</button>
+            <button type='submit' className='btn btn-primary'>Entrar</button>
           </div>
         </form>
 

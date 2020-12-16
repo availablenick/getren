@@ -54,7 +54,7 @@ class Perfil extends React.Component {
         this.setState({ citiesOptionsList: response });
 
         return new Promise((resolve) => {
-          setTimeout(() => { 
+          setTimeout(() => {
             let courses = [];
             for (let i = 0; i < 50; i++) {
               courses[i] = {
@@ -134,7 +134,7 @@ class Perfil extends React.Component {
             </div>
 
             <div className='d-flex justify-content-center'>
-              <button className='btn btn-primary'>Atualizar</button>
+              <button type='submit' className='btn btn-primary'>Atualizar</button>
             </div>
           </form>
         </>;
