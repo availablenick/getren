@@ -1,8 +1,9 @@
 import React from 'react';
-import { Card, Pagination, Spinner } from 'react-bootstrap';
+import { Card, Spinner } from 'react-bootstrap';
 import { withRouter, Link } from 'react-router-dom';
 
 import api from '../../config/axios/api.js';
+import Pagination from '../common/Pagination.js';
 
 class Cursos extends React.Component {
   constructor(props) {
@@ -27,12 +28,10 @@ class Cursos extends React.Component {
           for (let course of courses) {
             course.thumbnail = 'data:image/jpeg;base64, ' + course.thumbnail;
           }
-          console.log(courses);
           this.setState({ courses: courses, isFetchingCourses: false });
         }
       }).catch(error => {
         if (error.response) {
-          console.log(error.response);
         }
       });
   }
@@ -49,7 +48,9 @@ class Cursos extends React.Component {
     } else {
       let coursesPerPage = 9;
       let firstIndex = (this.state.currentPage - 1) * coursesPerPage;
-      const coursesToShow = this.state.courses.slice(firstIndex, firstIndex + coursesPerPage);
+      let lastIndex = firstIndex + coursesPerPage;
+      let pageAmount = Math.ceil(this.state.courses.length / coursesPerPage);
+      const coursesToShow = this.state.courses.slice(firstIndex, lastIndex);
       const coursesList =
         <ul className='row p-0'>
           {
@@ -77,118 +78,19 @@ class Cursos extends React.Component {
           }
         </ul>
 
-      let pageAmount = this.state.courses.length / coursesPerPage;
-      pageAmount = (pageAmount > 1) ? pageAmount : 1;
-      let paginationItems = [];
-      if (this.state.currentPage <= 3) {
-        for (let i = 1; i <= 3; i++) {
-          paginationItems.push(
-            <Pagination.Item key={ i }
-              active={ this.state.currentPage === i }
-              onClick={ () => { this.setState({ currentPage: i }) } }
-            >
-              { i }
-            </Pagination.Item>
-          );
-        }
-
-        paginationItems.push(<Pagination.Ellipsis key={ 'e1' }/>);
-        paginationItems.push(
-          <Pagination.Item key={ pageAmount }
-            onClick={ () => { this.setState({ currentPage: pageAmount }) } }
-          >
-            { pageAmount }
-          </Pagination.Item>
-        );
-      } else if (this.state.currentPage > 3 && this.state.currentPage <= pageAmount - 3) {
-        paginationItems.push(
-          <Pagination.Item key={ 1 }
-            onClick={ () => { this.setState({ currentPage: 1 }) } }
-          >
-            1
-          </Pagination.Item>
-        );
-        paginationItems.push(<Pagination.Ellipsis key={ 'e1' } />);
-        paginationItems.push(
-          <Pagination.Item key={ this.state.currentPage } active>
-            { this.state.currentPage }
-          </Pagination.Item>
-        );
-        paginationItems.push(<Pagination.Ellipsis key={ 'e2' } />);
-        paginationItems.push(
-          <Pagination.Item key={ pageAmount }
-            onClick={ () => { this.setState({ currentPage: pageAmount }) } }
-          >
-            { pageAmount }
-          </Pagination.Item>
-        );
-      } else {
-        paginationItems.push(
-          <Pagination.Item key={ 1 }
-            onClick={ () => { this.setState({ currentPage: 1 }) } }
-          >
-            1
-          </Pagination.Item>
-        );
-        paginationItems.push(<Pagination.Ellipsis key={ 'e1' } />);
-        for (let i = pageAmount - 2; i <= pageAmount; i++) {
-          paginationItems.push(
-            <Pagination.Item key={ i }
-              active={ this.state.currentPage === i }
-              onClick={ () => { this.setState({ currentPage: i }) } }
-            >
-              { i }
-            </Pagination.Item>
-          );
-        }
+      let info = {
+        pageAmount: pageAmount,
+        currentPage: this.state.currentPage,
       }
-
       return (
         <>
           <h1 className='display-4 text-center mb-5'>Cursos</h1>
           { coursesList }
 
-          <Pagination className='d-flex justify-content-center children-no-border'>
-            <Pagination.First
-              disabled={ this.state.currentPage === 1 }
-              onClick={ event => {
-                event.preventDefault();
-                this.props.history.push('/cursos/page/1');
-                this.setState({ currentPage: 1 });
-              } }
-            />
-            <Pagination.Prev
-              disabled={ this.state.currentPage === 1 }
-              onClick={ event => {
-                event.preventDefault();
-                this.props.history.push('/cursos/page/' + (this.state.currentPage - 1));
-                this.setState(prevState => ({
-                  currentPage: prevState.currentPage - 1
-                }));
-              } }
-            />
-            
-            { paginationItems }
-
-            <Pagination.Next
-              disabled={ this.state.currentPage === pageAmount }
-              onClick={ event => {
-                event.preventDefault();
-                this.props.history.push('/cursos/page/' + (this.state.currentPage + 1));
-                this.setState(prevState => ({
-                  currentPage: prevState.currentPage + 1
-                }));
-              } }
-            />
-            <Pagination.Last className='last-page'
-              disabled={ this.state.currentPage === pageAmount } 
-              onClick={ event => {
-                event.preventDefault();
-                this.props.history.push('/cursos/page/' + pageAmount);
-                this.setState({ currentPage: pageAmount });
-              } }
-            />
-          </Pagination>
+          <Pagination info={info} onClick={(page) => {
+              this.props.history.push('/cursos/page/' + page);
+              this.setState({ currentPage: page });
+          }}/>
         </>
       )
     }

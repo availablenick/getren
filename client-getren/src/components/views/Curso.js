@@ -60,6 +60,7 @@ class Curso extends React.Component {
         video: this.state.videosData[this.state.currentVideo],
       }
     }
+    //REFATORAR
 
     extraButtons = 
       <>
