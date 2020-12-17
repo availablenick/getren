@@ -14,6 +14,7 @@ services:
     build: ./backend
     command: bash -c "flask db upgrade && flask run"
     restart: always
+    tty: true
     environment:
       - FLASK_RUN_HOST=0.0.0.0
       - FLASK_ENV=development

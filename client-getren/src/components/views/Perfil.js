@@ -52,27 +52,24 @@ class Perfil extends React.Component {
       })
       .then(response => {
         this.setState({ citiesOptionsList: response });
-
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            let courses = [];
-            for (let i = 0; i < 50; i++) {
-              courses[i] = {
-                id: i,
-                name: 'Rei dos cursos ' + i,
-                number_of_videos: 100,
-                description: 'Descrição do curso',
-                duration: '4 anos',
-                image: logo
-              };
-            }
-  
-            resolve(courses);
-          }, 1000);
-        });
+        return api.get('user/' + this.props.user.data.id + '/courses');
       })
-      .then(courses => {
-        this.setState({ courses: courses, isLoading: false });
+      .then(response => {
+        if (response.status === 200) {
+          let processedCourses = response.data.map(course => {
+            let defaultThumbnail;
+            if (!course.thumbnail) {
+              defaultThumbnail = logo;
+            } else {
+              defaultThumbnail = 'data:image/jpeg;base64, ' + course.thumbnail;
+            }
+            return {
+              ...course,
+              thumbnail: defaultThumbnail
+            };
+          });
+          this.setState({ courses: processedCourses, isLoading: false });
+        }
       });
   }
 
@@ -146,67 +143,70 @@ class Perfil extends React.Component {
       const coursesToShow = this.state.courses.slice(firstIndex, lastIndex);
 
       let paginationItems = [];
+      if (pageAmount > 1) {
+        if (this.state.currentPage <= 3) {
+          for (let i = 1; i <= Math.min(3, pageAmount); i++) {
+            paginationItems.push(
+              <Pagination.Item key={ i }
+                active={ this.state.currentPage === i }
+                onClick={ () => { this.setState({ currentPage: i }) } }
+              >
+                { i }
+              </Pagination.Item>
+            );
+          }
 
-      if (this.state.currentPage <= 3) {
-        for (let i = 1; i <= 3; i++) {
+          if (pageAmount > 3) {
+            paginationItems.push(<Pagination.Ellipsis key={ 'e1' }/>);
+            paginationItems.push(
+              <Pagination.Item key={ pageAmount }
+                onClick={ () => { this.setState({ currentPage: pageAmount }) } }
+              >
+                { pageAmount }
+              </Pagination.Item>
+            );
+          }
+        } else if (this.state.currentPage > 3 && this.state.currentPage <= pageAmount - 3) {
           paginationItems.push(
-            <Pagination.Item key={ i }
-              active={ this.state.currentPage === i }
-              onClick={ () => { this.setState({ currentPage: i }) } }
+            <Pagination.Item key={ 1 }
+              onClick={ () => { this.setState({ currentPage: 1 }) } }
             >
-              { i }
+              1
             </Pagination.Item>
           );
-        }
-
-        paginationItems.push(<Pagination.Ellipsis key={ 'e1' }/>);
-        paginationItems.push(
-          <Pagination.Item key={ pageAmount }
-            onClick={ () => { this.setState({ currentPage: pageAmount }) } }
-          >
-            { pageAmount }
-          </Pagination.Item>
-        );
-      } else if (this.state.currentPage > 3 && this.state.currentPage <= pageAmount - 3) {
-        paginationItems.push(
-          <Pagination.Item key={ 1 }
-            onClick={ () => { this.setState({ currentPage: 1 }) } }
-          >
-            1
-          </Pagination.Item>
-        );
-        paginationItems.push(<Pagination.Ellipsis key={ 'e1' } />);
-        paginationItems.push(
-          <Pagination.Item key={ this.state.currentPage } active>
-            { this.state.currentPage }
-          </Pagination.Item>
-        );
-        paginationItems.push(<Pagination.Ellipsis key={ 'e2' } />);
-        paginationItems.push(
-          <Pagination.Item key={ pageAmount }
-            onClick={ () => { this.setState({ currentPage: pageAmount }) } }
-          >
-            { pageAmount }
-          </Pagination.Item>
-        );
-      } else {
-        paginationItems.push(
-          <Pagination.Item key={ 1 }
-            onClick={ () => { this.setState({ currentPage: 1 }) } }
-          >
-            1
-          </Pagination.Item>
-        );
-        paginationItems.push(<Pagination.Ellipsis key={ 'e1' } />);
-        for (let i = pageAmount - 2; i <= pageAmount; i++) {
+          paginationItems.push(<Pagination.Ellipsis key={ 'e1' } />);
           paginationItems.push(
-            <Pagination.Item key={ i }
-              active={ this.state.currentPage === i }
-              onClick={ () => { this.setState({ currentPage: i }) } }
-            >
-              { i }
+            <Pagination.Item key={ this.state.currentPage } active>
+              { this.state.currentPage }
             </Pagination.Item>
           );
+          paginationItems.push(<Pagination.Ellipsis key={ 'e2' } />);
+          paginationItems.push(
+            <Pagination.Item key={ pageAmount }
+              onClick={ () => { this.setState({ currentPage: pageAmount }) } }
+            >
+              { pageAmount }
+            </Pagination.Item>
+          );
+        } else {
+          paginationItems.push(
+            <Pagination.Item key={ 1 }
+              onClick={ () => { this.setState({ currentPage: 1 }) } }
+            >
+              1
+            </Pagination.Item>
+          );
+          paginationItems.push(<Pagination.Ellipsis key={ 'e1' } />);
+          for (let i = pageAmount - 2; i <= pageAmount; i++) {
+            paginationItems.push(
+              <Pagination.Item key={ i }
+                active={ this.state.currentPage === i }
+                onClick={ () => { this.setState({ currentPage: i }) } }
+              >
+                { i }
+              </Pagination.Item>
+            );
+          }
         }
       }
 
@@ -253,31 +253,39 @@ class Perfil extends React.Component {
                 }
               </ul>
 
-              <Pagination className='children-no-border'>
-                <Pagination.First disabled={ this.state.currentPage === 1 }
-                  onClick={ () => { this.setState({ currentPage: 1 }) } }
-                />
-                <Pagination.Prev disabled={ this.state.currentPage === 1 }
-                  onClick={ () => {
-                    this.setState(prevState =>
-                      ({ currentPage: prevState.currentPage - 1 })
-                    )
-                  } }
-                />
+              { pageAmount > 1 &&
+                <Pagination className='children-no-border'>
+                  <Pagination.First disabled={ this.state.currentPage === 1 }
+                    onClick={ () => { this.setState({ currentPage: 1 }) } }
+                  />
+                  <Pagination.Prev disabled={ this.state.currentPage === 1 }
+                    onClick={ () => {
+                      this.setState(prevState =>
+                        ({ currentPage: prevState.currentPage - 1 })
+                      )
+                    } }
+                  />
 
-                { paginationItems }
+                  { paginationItems }
 
-                <Pagination.Next disabled={ this.state.currentPage === pageAmount }
-                  onClick={ () => {
-                    this.setState(prevState =>
-                      ({ currentPage: prevState.currentPage + 1 })
-                    )
-                  } }
-                />
-                <Pagination.Last disabled={ this.state.currentPage === pageAmount }
-                  onClick={ () => { this.setState({ currentPage: pageAmount }) } }
-                />
-              </Pagination>
+                  <Pagination.Next disabled={ this.state.currentPage === pageAmount }
+                    onClick={ () => {
+                      this.setState(prevState =>
+                        ({ currentPage: prevState.currentPage + 1 })
+                      )
+                    } }
+                  />
+                  <Pagination.Last disabled={ this.state.currentPage === pageAmount }
+                    onClick={ () => { this.setState({ currentPage: pageAmount }) } }
+                  />
+                </Pagination>
+              }
+
+              { this.state.courses.length <= 0 &&
+                <p>
+                  Você ainda não se inscreveu em nenhum curso.
+                </p>
+              }
             </>
           }
         </>;
@@ -294,7 +302,10 @@ class Perfil extends React.Component {
             <ul className='sidebar w-100 px-0' style={{ marginTop: '15em' }}>
               <li>
                 <button name='perfil'
-                  disabled={ this.state.selectedTab === 'perfil' ? true : false }
+                  disabled={
+                    this.state.selectedTab === 'perfil' && this.state.isLoading ?
+                    true : false
+                  }
                   onClick={ this.handleSidebarClick }
                 >
                   Perfil
@@ -302,14 +313,21 @@ class Perfil extends React.Component {
               </li>
               <li>
                 <button name='minhas-compras' 
-                  disabled={ this.state.selectedTab === 'minhasCompras' ? true : false }
+                  disabled={
+                    this.state.selectedTab === 'minhasCompras' &&
+                    this.state.isLoading ?
+                    true : false
+                  }
                   onClick={ this.handleSidebarClick }
                 >
                   Minhas Compras
                 </button>
               </li>
               <li>
-                <button name='sair' onClick={ this.handleSidebarClick }>
+                <button name='sair'
+                  disabled={ this.state.isLoading ? true : false }
+                  onClick={ this.handleSidebarClick }
+                >
                   Sair
                 </button>
               </li>

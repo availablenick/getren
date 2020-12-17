@@ -31,7 +31,8 @@ Cypress.Commands.add("form_request", (url, formData) => {
     .window()
     .then(win => {
       var xhr = new win.XMLHttpRequest();
-      xhr.open(method, url);
+      xhr.open('POST', url);
+      xhr.withCredentials = true;
       xhr.send(formData);
     })
     .wait("@formRequest");
