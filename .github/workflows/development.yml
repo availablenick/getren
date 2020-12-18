@@ -13,40 +13,27 @@ on:
 jobs:
   python-test:
     runs-on: ubuntu-latest
-    container: python:3.8-buster
-
-    services:
-      database:
-        image: postgres:12
-        env:
-          POSTGRES_DB: test_api
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - name: Install dependencies
+      - name: Initialize containers
         run: |
-          pip install -U Flask python-dotenv flask-sqlalchemy flask-migrate \
-            flask-cors flask_mail pytest PyJWT Flask-Testing psycopg2-binary \
-            google-api-python-client google-auth-httplib2 google-auth-oauthlib
+          docker-compose -f docker-compose.prod.yml up -d server database
+          until curl localhost:5000 > /dev/null 2>&1 > /dev/null 2>&1; do \
+            echo 'Containers ainda não inicializados'
+            sleep 1
+            echo 'Testando conexão com containers...'
+          done
+          echo 'Containers inicializados'
 
-      - name: Test
+      - name: Run tests
         run: |
-          cd ./backend
-          python3 test.py
+          docker-compose -f docker-compose.prod.yml exec -T server python3 test.py
 
   postman-test:
     runs-on: ubuntu-latest
     container: python:3.8-buster
-
     services:
       database:
         image: postgres:12
@@ -95,3 +82,24 @@ jobs:
         with:
           apiKey: ${{secrets.POSTMAN_KEY}}
           collection: postman_collection.json
+
+  cypress-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Initialize containers
+        run: |
+          docker-compose -f docker-compose.prod.yml up -d
+          until curl localhost:5000 > /dev/null 2>&1 && curl localhost:3000 > /dev/null 2>&1; do \
+            echo 'Containers ainda não inicializados'
+            sleep 1
+            echo 'Testando conexão com containers...'
+          done
+          echo 'Containers inicializados'
+
+      - name: Run cypress
+        run: |
+          docker run --rm -t --net host -v "${PWD}/client-getren":/app \
+            -w /app --name cypress cypress/included:6.1.0

@@ -1,73 +1,104 @@
 # Getren
 Uma aplicação
 
-## Como utilizar (apenas para desenvolvimento)
+## Uso
 
-### Containers isolados
+- [Com Docker](#Com-Docker)
+- [Sem Docker](#Sem-Docker)
 
-#### Servidor Flask
-Para rodar a aplicação do servidor, vá à raiz do diretório rode:
+### Com Docker
 
-```bash
-  $ docker build -t getren_server ./backend
-  $ docker run --rm -it -p 5000:5000 -e "FLASK_RUN_HOST=0.0.0.0" -e "FLASK_ENV=development" -v "$PWD/backend":/app --name getren_server getren_server bash
+Instale o [docker-compose](https://docs.docker.com/compose/install/). Vá à raiz do diretório e rode:
+```
+  $ docker-compose up
 ```
 
-Dentro do container, rode:
-```bash
+Após isso, vá até http://localhost:3000.
+
+### Sem Docker
+
+- Instale o [PostgreSQL 12](https://www.postgresql.org/download/linux/debian/).
+- Instale as dependência especificados no arquivo requirements.txt presente no repositório.
+- Instale o [npm](https://github.com/nodesource/distributions#debinstall).
+
+
+Cheque se o postgres está ativo:
+```
+  $ sudo systemctl status postgresql
+```
+
+Se não estiver, inicie-o:
+```
+  $ sudo systemctl start postgresql
+```
+
+Entre no diretório __*backend*__, instale as dependências, execute as migrations pela primeira vez e inicie o servidor:
+
+```
+  $ pip install requirements.txt
+  $ flask db upgrade
   $ flask run
 ```
 
-Após isso, vá até http://localhost:5000.
-
-#### Cliente React
-Para rodar a aplicação do cliente, vá à raiz do diretório e rode:
-
-```bash
-  $ docker run --rm -it -p 3000:3000 -w /app -v "$PWD/client-getren":/app --name getren_client node:12.19.0 bash
+Em outro terminal, entre no diretório __*client-getren*__ instale as dependências e inicie o cliente:
 ```
-
-Dentro do container, rode:
-```bash
   $ npm install
   $ npm start
 ```
 
 Após isso, vá até http://localhost:3000.
 
-### Containers em rede
+## Testes
 
-#### Docker Compose
-Vá à raiz do diretório e rode:
-```bash
-  $ docker-compose up --build
+- [Testes com Docker](#Testes-com-Docker)
+- [Testes sem Docker](#Testes-sem-Docker)
+
+### Testes com Docker
+
+#### Backend
+
+##### Modelos
+Em outro terminal, após iniciar os containers, rode:
+```
+  $ docker-compose exec server python3 test.py
 ```
 
-Após isso, vá até http://localhost:3000.
-
-#### Manualmente
-Se não for possível usar o Docker Compose, crie uma rede do tipo bridge:
-```bash
-  $ docker network create getren_network
+##### Rotas
+Em outro terminal, após iniciar os containers, rode:
+```
+  $ docker run --rm -it --net host -v "$PWD":/etc/newman --name postman postman/newman:5.2.1 run ./postman_collection.json
 ```
 
-Para cada container, inicialize-o conectado à rede. Faça-o na seguinte ordem, dentro da raiz do diretório:
-
-##### Banco de dados:
-```bash
-  $ docker run --rm -d -e "POSTGRES_DB=getren" -e "POSTGRES_USER=user" -e "POSTGRES_PASSWORD=password" --network getren_network --network-alias database --name getren_database postgres:12
+#### Frontend
+Em outro terminal, após iniciar os containers, rode:
+```
+  $ docker run --rm -it --net host -v "$PWD/client-getren":/app -w /app --name cypress cypress/included:6.1.0
 ```
 
-##### Servidor Flask:
-```bash
-  $ docker build -t getren_server ./backend
-  $ docker run --rm -it -p 5000:5000 -e "FLASK_RUN_HOST=0.0.0.0" -e "FLASK_ENV=development" --network getren_network --network-alias server -v "$PWD/backend":/app --name getren_server getren_server flask run
+### Testes sem Docker
+
+#### Instalação das ferramentas
+
+É necessário instalar as seguintes aplicações:
+- [Cypress 6.1.0](https://docs.cypress.io/guides/getting-started/installing-cypress.html#System-requirements)
+- [Postman/newman 5.2.1](https://learning.postman.com/docs/getting-started/installation-and-updates/#installing-postman-on-linux)
+
+#### Backend
+
+##### Modelos
+Em outro terminal, após iniciar o cliente e o servidor, entre no diretório __*backend*__ e rode:
+```
+  $ python3 test.py
 ```
 
-##### Cliente React:
-```bash
-  $ docker build -t getren_client ./client-getren
-  $ docker run --rm -it -p 3000:3000 --network getren_network --network-alias client -v "$PWD/client-getren":/app --name getren_client getren_client npm start
+##### Rotas
+Em outro terminal, após iniciar o cliente e o servidor, entre no diretório __*backend*__ e rode:
+```
+  $ newman run postman_collection.json
 ```
 
-Após isso, vá até http://localhost:3000.
+#### Frontend
+Em outro terminal, após iniciar o cliente e o servidor, entre no diretório __*client-getren*__ e rode:
+```
+  $ npx cypress run
+```

@@ -1,0 +1,805 @@
+openapi: 3.0.0
+info:
+  title: Getren backend API
+  description: Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.
+  version: 1.0.0
+
+servers:
+  # - url: http://api.example.com/v1
+  #   description: Optional server description, e.g. Main (production) server
+  - url: http://localhost:5000
+    description: Development server
+
+tags:
+  - name: user
+    description: 'User related operations'
+  - name: courses
+    description: 'Courses related operations'
+  - name: videos
+    description: 'Videos related operations'
+  - name: enrolls
+    description: 'Operations related about the subscription of a user in a course'
+  - name: watches
+    description: 'Operations related about a user watching a video'
+
+paths:
+  /register:
+    post:
+      summary: 'Register a user on site'
+      tags: 
+        - 'user'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - password_confirm
+              properties:
+                email:
+                  type: string
+                  example: 'user@example.com'
+                password:
+                  type: string
+                  example: 'asecurepassword1234'
+                password_confirm:
+                  type: string
+                  example: 'asecurepassword1234'
+      responses:
+        200:
+          $ref: '#/components/responses/UserPayload'
+        400:
+          description: 'Errors'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: 'Error on password. Too short'
+  
+  /login:
+    post:
+      summary: 'Log-in a registered user on site'
+      tags: 
+        - 'user'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: 'user@example.com'
+                password:
+                  type: string
+                  example: 'asecurepassword1234'
+      responses:
+        200:
+          $ref: '#/components/responses/UserPayload'
+        400:
+          description: 'Errors'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: 'Error on password. Too short'
+  
+  
+  /logout:
+    get:
+      summary: 'Log-out a registered user on site, destroying the user_token cookie.'
+      tags: 
+        - 'user'
+      security: 
+        - cookieAuth: []
+      responses:
+        200:
+          description: 'OK'
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: 'user_token=asdadsdass; HttpOnly, expires_at=01/01/1970'
+                description: 'Destroy the user_token cookie'
+        401:
+          description: 'Not authenticated'
+  
+  /user_by_token:
+    get:
+      summary: 'Retrieve user credentials using user_token cookie'
+      tags: 
+        - 'user'
+      security: 
+        - cookieAuth: []
+      responses:
+        200:
+          $ref: '#/components/responses/UserPayload'
+        401:
+          description: 'Not authenticated'
+  
+  /user/{id}:
+    get:
+      summary: 'Get user profile information'
+      tags: 
+        - 'user'
+      security: 
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/UserProfile'
+        401:
+          description: 'Not authorized'
+        500:
+          description: 'Something went wrong on server'
+
+    put:
+      summary: 'Update user profile information'
+      tags: 
+        - 'user'
+      security: 
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to update
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/UserProfile'
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/UserProfile'
+        401:
+          description: 'Not authorized'
+        500:
+          description: 'Something went wrong on server'
+
+  /password_forgot:
+    post:
+      summary: 'Send a redefine password link to the specified email'
+      tags: 
+        - 'user'
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: 'user@example.com'
+      responses:
+        200:
+          description: "Email sent"
+        500:
+          description: 'Something went wrong on server'
+
+  /redefine_password:
+    post:
+      summary: 'Redefine the user password using token received in email'
+      tags: 
+        - 'user'
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: 'user@example.com'
+                password:
+                  type: string
+                  example: 'anewsecurepassword1234'
+                password_confirm:
+                  type: string
+                  example: 'asnewecurepassword1234'  
+                token:
+                  type: string
+                  example: 'token138032189received1923012on1221email'
+      responses:
+        200:
+          description: "Password updated"
+        400:
+          description: "Invalid token"
+        500:
+          description: 'Something went wrong on server'
+
+  /courses:
+    get:
+      summary: 'Get all courses'
+      tags: 
+        - 'courses'
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+        500:
+          description: 'Something went wrong on server'
+    post:
+      summary: 'Post a new course'
+      description: 'This can only be done by a logged administrator.'
+      tags: 
+        - 'courses'
+      security: 
+        - cookieAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/CourseForm'
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        401:
+          description: 'Not authorized'
+        500:
+          description: 'Something went wrong on server'
+
+  /course/{id}:
+    get:
+      summary: 'Get specific course data'
+      tags: 
+        - 'courses'
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the course to get
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Course'
+        500:
+          description: 'Something went wrong on server'
+
+    put:
+      summary: 'Update data of a specific course'
+      description: 'This can only be done by a logged administrator.'
+      tags: 
+        - 'courses'
+      security: 
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the course to update
+      requestBody:
+        $ref: '#/components/requestBodies/CourseForm'
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        401:
+          description: 'Not authorized'
+        500:
+          description: 'Something went wrong on server'
+
+    delete:
+      summary: 'Delete specific course'
+      description: 'This can only be done by a logged administrator.'
+      tags: 
+        - 'courses'
+      security: 
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the course to delete
+      responses:
+        200:
+          description: 'OK'
+        401:
+          description: 'Not authorized'
+        500:
+          description: 'Something went wrong on server'
+  
+  /courses/{filter}:
+    get:
+      summary: 'Get courses with a specific filter'
+      tags: 
+        - 'courses'
+      parameters:
+        - in: path
+          name: filter
+          schema:
+            type: string
+          required: true
+          description: 'Filter string to specifiy what courses to get. There are some default values
+            like all, active and expired; or if pass another filter it will serve as a search index'
+      responses:
+        200:
+          description: 'OK'
+          content:
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+        500:
+          description: 'Something went wrong on server'
+
+  /courses/{id}/videos:
+    get:
+      summary: 'Get all videos from a specific course'
+      tags: 
+        - 'videos'
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the course
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Video'
+        500:
+          description: 'Something went wrong on server'
+    post:
+      summary: 'Post a new video on a specific course'
+      description: 'This can only be done by a logged administrator.'
+      tags: 
+        - 'videos'
+      security: 
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the course
+      requestBody:
+        $ref: '#/components/requestBodies/VideoForm'
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Video'
+        401:
+          description: 'Not authorized'
+        500:
+          description: 'Something went wrong on server'
+
+  /video/{id}:
+    get:
+      summary: 'Get specific video data'
+      tags: 
+        - 'videos'
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the video to get
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Video'
+        500:
+          description: 'Something went wrong on server'
+
+    put:
+      summary: 'Update data of a specific video'
+      description: 'This can only be done by a logged administrator.'
+      tags: 
+        - 'videos'
+      security: 
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the video to update
+      requestBody:
+        $ref: '#/components/requestBodies/VideoForm'
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        401:
+          description: 'Not authorized'
+        500:
+          description: 'Something went wrong on server'
+
+    delete:
+      summary: 'Delete specific video'
+      description: 'This can only be done by a logged administrator.'
+      tags: 
+        - 'videos'
+      security: 
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the video to delete
+      responses:
+        200:
+          description: 'OK'
+        401:
+          description: 'Not authorized'
+        500:
+          description: 'Something went wrong on server'
+
+  /user/{id}/courses:
+    get:
+      summary: 'Get all courses that a specific user is enrolled'
+      tags: 
+        - 'enrolls'
+      security: 
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+        500:
+          description: 'Something went wrong on server'
+    post:
+      summary: 'Enrolls a specific user in a course'
+      tags: 
+        - 'enrolls'
+      security: 
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to enrolls
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                course_id:
+                  type: integer
+                  format: int32
+                  description: 'The id of the course to be enrolled'
+      responses:
+        200:
+          description: "OK"
+        401:
+          description: 'Not authorized'
+        500:
+          description: 'Something went wrong on server'
+
+  /user/{userId}/video/{videoId}:
+    get:
+      summary: 'Get info about an user watching a specific video'
+      tags: 
+        - 'watches'
+      security: 
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user
+        - in: path
+          name: videoId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the video
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Watches'
+        500:
+          description: 'Something went wrong on server'
+    post:
+      summary: 'Post that a specific user will watch a specific video'
+      tags: 
+        - 'watches'
+      security: 
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user
+        - in: path
+          name: videoId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the video
+      responses:
+        200:
+          description: "OK"
+        401:
+          description: 'Not authorized'
+        500:
+          description: 'Something went wrong on server'
+    put:
+      summary: 'Update info about an user watching a specific video'
+      tags: 
+        - 'watches'
+      security: 
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user
+        - in: path
+          name: videoId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the video
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                watched_time:
+                  type: integer
+                  format: int32
+                  example: 4
+                finished:
+                  type: boolean
+                  example: false
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Watches'
+
+components:
+  schemas:
+    UserProfile:
+      type: object
+      properties:
+        job:
+          type: string
+          example: 'Developer'
+        federal_state:
+          type: string
+          example: 'SP'
+        name:
+          type: string
+          example: 'Alfredo homem de ouro'
+        city:
+          type: string
+          example: 'Carapicuiba'
+        birthdate:
+          type: string
+          format: 'date'
+        is_confirmed:
+          type: boolean
+        email:
+          type: string
+          example: 'example@example.com'
+
+    Course:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+          example: 'Course name'
+        number_of_videos:
+          type: integer
+          format: int32   
+        duration:
+          type: integer
+          format: int32   
+        price:
+          type: number
+          format: float   
+        expires_at:
+          type: string
+          format: date
+        is_watchable:
+          type: boolean
+          description: 'Can the user watch the course videos without payment?'     
+        is_available:
+          type: boolean
+          description: 'Is the course visible to the users?'  
+        thumbnail:
+          type: string
+          format: byte
+          example: 'U3dhZ2dlciByb2Nrcw==' 
+   
+    Video:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        youtube_code:
+          type: string
+          example: 'asdt43562je'
+        title:
+          type: string
+          example: 'Video title'
+        description:
+          type: string
+          example: 'This can be a looooooooong... video description'
+        duration:
+          type: integer
+          format: int32   
+        course_order:
+          type: integer
+          format: int32   
+        thumbnail:
+          type: string
+          example: 'http://imgur.com/123df' 
+    
+    Watches:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int32
+        video_id:
+          type: integer
+          format: int32
+        watched_time:
+          type: integer
+          format: int32
+        finished:
+          type: boolean
+          example: false
+
+
+  requestBodies:
+    CourseForm:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              json_args:
+                description: 'Actually, this field is the whole course 
+                object (name, number_of_videos, expires_at...) jsonified in a string.'
+                type: string
+              thumbnail:
+                type: string
+                format: binary
+                description: 'the thumbnail file'  
+    
+    VideoForm:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              json_args:
+                description: 'Actually, this field is the whole video 
+                object (title, description, thumbnail...) jsonified in a string.'
+                type: string
+              video:
+                type: string
+                format: binary
+                description: 'the video file'  
+
+  responses:
+    UserPayload:
+      description: "OK"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int32
+              email:
+                type: string
+                example: 'user@example.com' 
+      headers:
+        Set-Cookie:
+          schema:
+            type: string
+            example: 'user_token=asdadsdass; HttpOnly'
+            description: 'Set the user_token cookies to user server side authentication'
+ 
+
+  securitySchemes:
+    cookieAuth:      
+      type: apiKey
+      in: cookie
+      name: 'user_token'  
