@@ -33,7 +33,6 @@ class Admin extends React.Component {
       <div className='d-flex flex-row h-100 justify-content-around'>
         <ul className="nav nav-pills flex-column justify-content-between">
           <li className="nav-item">
-            {/* <a className="nav-link active" component-to-load="FormularioCurso" onClick={this.handleMenuItemClick}>Cadastra Curso</a> */}
             <Link className="nav-link active" to='/admin/cadastrar-curso'>Cadastrar Curso</Link>
           </li>
           <li className="nav-item">
