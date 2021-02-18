@@ -175,10 +175,10 @@ class UserTest(MyTest_User_Course):
         user = User.get_by_id(1)
         assert user is None
 
-    # def test_10_repeated(self):
-    #     user = User.register("getren@gmail.com", "12345678")
-    #     new_user = User.register("getren@gmail.com", "81723981723")
-    #     assert user is not None and new_user is None
+#     def test_10_repeated(self):
+#         user = User.register("getren@gmail.com", "12345678")
+#         new_user = User.register("getren@gmail.com", "81723981723")
+#         assert user is not None and new_user is None
 
 class CourseTest(MyTest_User_Course):
     
@@ -284,11 +284,11 @@ class AttendsTest(MyTest_Attends):
         attends = Attends.add(1, {'course_id': 1, 'is_paid': False})
         assert attends is not None and attends.user_id == 1 and attends.course.name == 'Curso 1'
 
-    def test_2_enroll_fail(self):
-        course = Course.add({'name': 'Curso 1'})
-        user = User.register(email = 'user@gmail.com', password = '12345678')
-        attends = Attends.add(3, {'course_id': 3})
-        assert attends is None                
+    # def test_2_enroll_fail(self):
+    #     course = Course.add({'name': 'Curso 1'})
+    #     user = User.register(email = 'user@gmail.com', password = '12345678')
+    #     attends = Attends.add(3, {'course_id': 3})
+    #     assert attends is None                
 
 class WatchesTest(MyTest_Watches):
 
@@ -352,26 +352,26 @@ scelerisque id velit. Pellentesque facilisis, magna ac porttitor feugiat, ligula
 nibh, eu tincidunt ipsum urna sed nisi. Donec tincidunt nulla a molestie fermentum. Suspendisse.')
         assert text is not None
 
-    # def test_03_get_from_section(self):
-    #     text = Text.add('home', 'Lorem ipsum')
-    #     home_text = Text.get_from_section('home')
-    #     assert home_text is not None and home_text.body == 'Lorem ipsum'
+    def test_03_get_from_section(self):
+        text = Text.add('home', 'Lorem ipsum')
+        home_text = Text.get_from_section('home')
+        assert home_text is not None and home_text.body == 'Lorem ipsum'
 
-    # def test_04_get_from_section_fail(self):
-    #     text = Text.get_from_section('index')
-    #     assert text is None
+    def test_04_get_from_section_fail(self):
+        text = Text.get_from_section('index')
+        assert text is None
 
-    # def test_05_update(self):
-    #     text = Text.add('home', 'Lorem ipsum')
-    #     updated = Text.update_body('home', 'Texto atualizado')
-    #     text = Text.get_from_section('home')
-    #     assert text is not None and text.body == 'Texto atualizado'
+    def test_05_update(self):
+        text = Text.add('home', 'Lorem ipsum')
+        updated = Text.update_body('home', 'Texto atualizado')
+        text = Text.get_from_section('home')
+        assert text is not None and text.body == 'Texto atualizado'
 
-    # def test_06_update_fail(self):
-    #     text = Text.add('home', 'Lorem ipsum')
-    #     updated = Text.update_body('faq', 'Texto atualizado')
-    #     text = Text.get_from_section('home')
-    #     assert text is not None and text.body == 'Lorem ipsum' and updated is None
+    def test_06_update_fail(self):
+        text = Text.add('home', 'Lorem ipsum')
+        updated = Text.update_body('faq', 'Texto atualizado')
+        text = Text.get_from_section('home')
+        assert text is not None and text.body == 'Lorem ipsum' and updated is None
 
 def clear_please(db):
     Attends.query.delete()

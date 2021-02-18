@@ -7,11 +7,14 @@ services:
       - POSTGRES_DB=getren_api
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
+    volumes:
+      - dbdata:/var/lib/postgresql/data
 
   server:
-    build: ./backend
+    build: ./server
     command: bash -c "flask db upgrade && flask run"
     restart: always
+    tty: true
     environment:
       - FLASK_RUN_HOST=0.0.0.0
       - FLASK_ENV=development
@@ -22,21 +25,26 @@ services:
       - FLASK_DB_NAME=getren_api
       - FLASK_DB_USER=user
       - FLASK_DB_PASSWORD=password
-      - FLASK_MAIL_USERNAME=getren.xp@gmail.com
-      - FLASK_MAIL_PASSWORD=alfredogoldxp
-      - FLASK_MAIL_SENDER=getren.xp@gmail.com
-      - GETREN_MAIL=getren.xp@gmail.com
     depends_on:
       - database
     ports:
       - 5000:5000
+    volumes:
+      - ./server:/app
 
   client:
-    build: ./client-getren
+    image: node:12.19.0
+    command: npm start
     restart: always
+    working_dir: /app
     stdin_open: true
     depends_on:
       - database
       - server
     ports:
       - 3000:3000
+    volumes:
+      - ./client:/app
+
+volumes:
+  dbdata:

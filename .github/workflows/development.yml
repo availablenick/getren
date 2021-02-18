@@ -19,7 +19,7 @@ jobs:
 
       - name: Initialize containers
         run: |
-          docker-compose -f docker-compose.prod.yml up -d server database
+          docker-compose up -d server database
           until curl localhost:5000 > /dev/null 2>&1 > /dev/null 2>&1; do \
             echo 'Containers ainda não inicializados'
             sleep 1
@@ -29,53 +29,62 @@ jobs:
 
       - name: Run tests
         run: |
-          docker-compose -f docker-compose.prod.yml exec -T server python3 test.py
+          docker-compose exec -T server python3 test.py
 
   postman-test:
     runs-on: ubuntu-latest
-    container: python:3.8-buster
-    services:
-      database:
-        image: postgres:12
-        env:
-          POSTGRES_DB: getren_api
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    # container: python:3.8-buster
+    # services:
+    #   database:
+    #     image: postgres:12
+    #     env:
+    #       POSTGRES_DB: getren_api
+    #       POSTGRES_USER: user
+    #       POSTGRES_PASSWORD: password
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
 
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - name: Install dependencies
+      - name: Initialize containers
         run: |
-          pip install -U Flask python-dotenv flask-sqlalchemy flask-migrate \
-            flask-cors flask_mail pytest PyJWT Flask-Testing psycopg2-binary \
-            google-api-python-client google-auth-httplib2 google-auth-oauthlib
+          docker-compose up -d server database
+          until curl localhost:5000 > /dev/null 2>&1 > /dev/null 2>&1; do \
+            echo 'Containers ainda não inicializados'
+            sleep 1
+            echo 'Testando conexão com containers...'
+          done
+          echo 'Containers inicializados'
+      # - name: Install dependencies
+      #   run: |
+      #     pip install -U Flask python-dotenv flask-sqlalchemy flask-migrate \
+      #       flask-cors flask_mail pytest PyJWT Flask-Testing psycopg2-binary \
+      #       google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
-      - name: Run flask
-        run: |
-          cd ./backend
-          flask db upgrade
-          flask run &
-        env:
-          FLASK_APP: getren.py
-          FLASK_DEBUG: 1
+      # - name: Run flask
+      #   run: |
+      #     cd ./backend
+      #     flask db upgrade
+      #     flask run &
+      #   env:
+      #     FLASK_APP: getren.py
+      #     FLASK_DEBUG: 1
 
-          FLASK_DB_PORT: 5432
-          FLASK_DB_HOST: database
-          FLASK_DB_NAME: getren_api
-          FLASK_DB_USER: user
-          FLASK_DB_PASSWORD: password
+      #     FLASK_DB_PORT: 5432
+      #     FLASK_DB_HOST: database
+      #     FLASK_DB_NAME: getren_api
+      #     FLASK_DB_USER: user
+      #     FLASK_DB_PASSWORD: password
 
-          FLASK_MAIL_USERNAME: getren.xp@gmail.com
-          FLASK_MAIL_PASSWORD: alfredogoldxp
-          FLASK_MAIL_SENDER: getren.xp@gmail.com
-          GETREN_MAIL: getren.xp@gmail.com
+      #     FLASK_MAIL_USERNAME: getren.xp@gmail.com
+      #     FLASK_MAIL_PASSWORD: alfredogoldxp
+      #     FLASK_MAIL_SENDER: getren.xp@gmail.com
+      #     GETREN_MAIL: getren.xp@gmail.com
 
       - name: Test
         uses: matt-ball/newman-action@master
@@ -91,7 +100,7 @@ jobs:
 
       - name: Initialize containers
         run: |
-          docker-compose -f docker-compose.prod.yml up -d
+          docker-compose up -d
           until curl localhost:5000 > /dev/null 2>&1 && curl localhost:3000 > /dev/null 2>&1; do \
             echo 'Containers ainda não inicializados'
             sleep 1
@@ -101,5 +110,5 @@ jobs:
 
       - name: Run cypress
         run: |
-          docker run --rm -t --net host -v "${PWD}/client-getren":/app \
+          docker run --rm -t --net host -v "${PWD}/client":/app \
             -w /app --name cypress cypress/included:6.1.0
