@@ -1,8 +1,11 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { 
-  faBars, 
+import {
+  faCaretDown,
+  faCaretRight,
+  faBars,
   faEye, 
   faEyeSlash,
+  faSearch
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -13,10 +16,13 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 
 library.add(
+  faCaretDown,
+  faCaretRight,
   faBars, 
   faEye,
   faEyeSlash,
   faFacebookSquare,
+  faSearch,
   faTwitter,
   faInstagram,
   faYoutube

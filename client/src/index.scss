@@ -119,6 +119,20 @@ html, body, #root {
   text-decoration: none;
 }
 
+.custom-border-rounded {
+  border: 0;
+  border-radius: 50px;
+}
+
+.custom-outline-blue-focus:focus {
+  outline: none;
+  box-shadow: 0 0 3px rgb(0, 160, 255);
+}
+
+.custom-outline-none-focus:focus {
+  outline: none;
+}
+
 .social-media {
   font-size: 1.25em;
   *:not(:last-child){
@@ -126,16 +140,23 @@ html, body, #root {
   } 
 }
 
-.no-decoration:hover {
-  text-decoration: none;
-}
-
-.children-no-border {
-  * {
-    border: 0;
-  }
-}
-
-.list-style-type-none {
+.custom-list-style-type-none {
   list-style-type: none;
+}
+
+.custom-input-with-icon {
+  position: relative;
+
+  input {
+    padding-left: 1em;
+    padding-right: 2.5em;
+  }
+
+  .custom-icon-item {
+    align-items: center;
+    display: inline-flex;
+    height: 100%;
+    position: absolute;
+    right: 1em;
+  }
 }
