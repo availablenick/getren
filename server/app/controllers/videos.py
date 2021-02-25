@@ -1,13 +1,16 @@
-from flask import request, make_response, jsonify
+from flask import Blueprint, request, make_response, jsonify
 from flask_cors import cross_origin
-
-from .utils import is_valid_admin, error_response, decode_duration, SECRET_KEY
-from app import app
-from app.models import User, Course, Video
-from .youtube import upload_video
 from json import loads
 
-@app.route('/course/<int:id>/videos', methods=['GET', 'POST'])
+from .utils import is_valid_admin, error_response, decode_duration, SECRET_KEY
+from ..models.user import User
+from ..models.course import Course
+from ..models.video import Video
+from .youtube import upload_video
+
+bp = Blueprint('videos', __name__)
+
+@bp.route('/course/<int:id>/videos', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def videos(id):
     course = Course.get_by_id(id)
@@ -41,7 +44,7 @@ def videos(id):
             return error_response('Vídeo não adicionado', 500)
         return error_response('Permissão negada', 401)
 
-@app.route('/video/<int:id>', methods = ['GET', 'PUT', 'DELETE'])
+@bp.route('/video/<int:id>', methods = ['GET', 'PUT', 'DELETE'])
 def video(id):
     video = Video.get_by_id(id)
     if video is None:

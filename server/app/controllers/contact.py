@@ -1,15 +1,18 @@
 import os
 
-from flask import request, make_response, jsonify
+from flask import Blueprint, request, make_response, jsonify
 from flask_mail import Message
 from flask_cors import cross_origin
 
-from .utils import validate_password, generate_token, jsonify_user, error_response, decode_user, SECRET_KEY
-from app import app, mail
+from .utils import (validate_password, generate_token, jsonify_user,
+    error_response, decode_user, SECRET_KEY)
+from .. import mail
 
 GETREN_MAIL = os.environ.get('GETREN_MAIL')
 
-@app.route('/contact', methods=['POST'])
+bp = Blueprint('contact', __name__)
+
+@bp.route('/contact', methods=['POST'])
 def contact():
     if request.method == 'POST':
         result = request.get_json()

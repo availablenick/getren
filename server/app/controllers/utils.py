@@ -1,11 +1,10 @@
 import jwt
 
-from flask import jsonify
+from flask import current_app, jsonify
 
-from app import app
-from app.models import User
+from ..models.user import User
 
-SECRET_KEY = app.config['SECRET_KEY']
+SECRET_KEY = current_app.config['SECRET_KEY']
 
 def to_seconds(duration):
     return int(duration[0])*60 + int(duration[1])

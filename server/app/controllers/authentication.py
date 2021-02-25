@@ -1,22 +1,23 @@
 import re
 import jwt
 
-from flask import request, make_response, jsonify
+from flask import Blueprint, current_app, request, make_response, jsonify
 from flask_mail import Message
 from flask_cors import cross_origin
 
 from .utils import validate_password, generate_token, jsonify_user, error_response, decode_user, SECRET_KEY
-from app import app, mail
-from app.models import User
+from .. import mail
+from ..models.user import User
 
 fixed_token = '604d7208992bfddf9d08108f4a17c0ae78de70a8b5be973fd3e613c34460a2e55b32e6b6383d7630920267ce0d008e58'
-SECRET_KEY = app.config['SECRET_KEY']
+SECRET_KEY = current_app.config['SECRET_KEY']
 domain = 'localhost:3000'
 
-@app.route('/register', methods = ['GET', 'POST'])
+bp = Blueprint('authentication', __name__)
+
+@bp.route('/register', methods = ['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def register():
-    error = None
     if request.method == 'POST':
         result = request.get_json()
         email = result['email']
@@ -58,7 +59,7 @@ def register():
         return response
     return {}, 404
 
-@app.route('/login', methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def login():
     if request.method == 'POST':
@@ -76,7 +77,7 @@ def login():
         return response
     return {}, 404
 
-@app.route('/logout', methods=['GET'])
+@bp.route('/logout', methods=['GET'])
 @cross_origin(supports_credentials=True)
 def logout():
     response = make_response()
@@ -84,7 +85,7 @@ def logout():
     response.status_code = 200
     return response
 
-@app.route('/user_by_token', methods=['GET'])
+@bp.route('/user_by_token', methods=['GET'])
 @cross_origin(supports_credentials=True)
 def decode():
     user_payload = decode_user(request)
@@ -94,7 +95,7 @@ def decode():
         return response
     return {}, 400
 
-@app.route('/confirmation', methods=['GET', 'POST'])
+@bp.route('/confirmation', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def confirmation():
     result = request.get_json()
@@ -126,7 +127,7 @@ def confirmation():
         else:
             return error_response('Token inválido', 400)
 
-@app.route('/password_forgot', methods=['GET', 'POST'])
+@bp.route('/password_forgot', methods=['GET', 'POST'])
 def forgotten_password():
     result = request.get_json()
     email = result['email']
@@ -143,7 +144,7 @@ def forgotten_password():
     except Exception as E:
         return error_response('Email não enviado', 500)
 
-@app.route('/redefine_password', methods=['GET', 'POST'])
+@bp.route('/redefine_password', methods=['GET', 'POST'])
 def redefine_password():
     result = request.get_json()
     email = result['email']
@@ -168,7 +169,7 @@ def redefine_password():
         return error_response('Token inválido', 400)
 
 # ROTA PARA TESTES
-@app.route("/give_admin", methods=['GET'])
+@bp.route("/give_admin", methods=['GET'])
 def admin():
     id = request.get_json()['id']
     User.give_admin(id)

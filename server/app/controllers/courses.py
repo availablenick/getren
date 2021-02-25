@@ -1,14 +1,16 @@
 import json
 
-from flask import request, make_response, jsonify
+from flask import Blueprint, request, make_response, jsonify
 from flask_cors import cross_origin
 
 from .utils import error_response, is_valid_admin, SECRET_KEY
-from app import app
-from app.models import User, Course
+from ..models.user import User
+from ..models.course import Course
 
-@app.route('/courses', methods=['GET', 'POST'], defaults={'filter': 'all'})
-@app.route('/courses/<filter>')
+bp = Blueprint('courses', __name__)
+
+@bp.route('/courses', methods=['GET', 'POST'], defaults={'filter': 'all'})
+@bp.route('/courses/<filter>')
 @cross_origin(supports_credentials=True)
 def courses(filter):
     if request.method == 'POST':
@@ -38,7 +40,7 @@ def courses(filter):
         return error_response('Não foi possível recuperar os cursos', 500) 
 
 
-@app.route('/course/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+@bp.route('/course/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def course(id):
     course = Course.get_by_id(id)
     if course is None:

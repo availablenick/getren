@@ -1,5 +1,6 @@
 import os
 import pickle
+
 from io import BytesIO
 from google_auth_oauthlib.flow import Flow, InstalledAppFlow
 from googleapiclient.discovery import build
@@ -7,15 +8,16 @@ from googleapiclient.http import MediaFileUpload, MediaIoBaseUpload, HttpError
 from google.auth.transport.requests import Request
 from google.auth.credentials import Credentials
 
-from flask import request, g
-from app import app
+from flask import Blueprint, request, g
 
 CLIENT_SECRET_FILE = '../../client_secrets.json'
 API_NAME = 'youtube'
 API_VERSION = 'v3'
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
 
-@app.route('/youtube_oauth_callback', methods=['GET'])
+bp = Blueprint('youtube', __name__)
+
+@bp.route('/youtube_oauth_callback', methods=['GET'])
 def callback():
     code = request.args.get('code')
     path_file = 'getren.ini'
@@ -25,7 +27,7 @@ def callback():
         file.close()
     return code, 200
 
-# @app.route('/youtube_upload', methods=['GET'])
+# @bp.route('/youtube_upload', methods=['GET'])
 def upload_video(video, attributes_form):
     service = create_service()
     request_body = {

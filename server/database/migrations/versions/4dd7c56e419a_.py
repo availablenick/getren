@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 9307a0ecbb9f
+Revision ID: 4dd7c56e419a
 Revises: 
-Create Date: 2020-12-04 21:12:10.106079
+Create Date: 2021-03-03 01:00:08.087128
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9307a0ecbb9f'
+revision = '4dd7c56e419a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -44,7 +44,7 @@ def upgrade():
     sa.Column('email', sa.String(length=64), nullable=True),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
     sa.Column('name', sa.String(length=128), nullable=True),
-    sa.Column('birthdate', sa.DateTime(), nullable=True),
+    sa.Column('birthdate', sa.Date(), nullable=True),
     sa.Column('federal_state', sa.String(length=64), nullable=True),
     sa.Column('city', sa.String(length=64), nullable=True),
     sa.Column('job', sa.String(length=64), nullable=True),
@@ -66,12 +66,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['course_id'], ['course.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('user_id', 'course_id')
-    )
-    op.create_table('teaches',
-    sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.Column('course_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['course_id'], ['course.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], )
     )
     op.create_table('video',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -103,7 +97,6 @@ def downgrade():
     op.drop_table('watches')
     op.drop_index(op.f('ix_video_youtube_code'), table_name='video')
     op.drop_table('video')
-    op.drop_table('teaches')
     op.drop_table('attends')
     op.drop_index(op.f('ix_user_job'), table_name='user')
     op.drop_index(op.f('ix_user_federal_state'), table_name='user')

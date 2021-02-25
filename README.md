@@ -60,7 +60,7 @@ Após isso, vá até http://localhost:3000.
 ##### Modelos
 Em outro terminal, após iniciar os containers, rode:
 ```
-  $ docker-compose exec server python3 test.py
+  $ docker-compose exec server pytest
 ```
 
 ##### Rotas
@@ -88,7 +88,7 @@ Em outro terminal, após iniciar os containers, rode:
 ##### Modelos
 Em outro terminal, após iniciar o cliente e o servidor, entre no diretório __*server*__ e rode:
 ```
-  $ python3 test.py
+  $ pytest
 ```
 
 ##### Rotas

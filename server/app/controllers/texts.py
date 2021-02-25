@@ -1,11 +1,12 @@
-from flask import request, make_response, jsonify
+from flask import Blueprint, request, make_response, jsonify
 from flask_cors import cross_origin
 
 from .utils import is_valid_admin, error_response
-from app import app
-from app.models import Text
+from ..models.text import Text
 
-@app.route('/texts/<section>', methods = ['GET', 'POST', 'PUT'])
+bp = Blueprint('texts', __name__)
+
+@bp.route('/texts/<section>', methods = ['GET', 'POST', 'PUT'])
 def text(section):
     sections = ['home', 'quem-somos', 'faq']
     if section not in sections:
