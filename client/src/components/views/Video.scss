@@ -1,0 +1,9 @@
+.custom-video-not-selected {
+  background: none;
+  color: black;
+
+  &:hover {
+    background: rgb(110, 140, 170);
+    color: #ccc;
+  }
+}

@@ -39,8 +39,7 @@ def courses(filter):
             return response   
         return error_response('Não foi possível recuperar os cursos', 500) 
 
-
-@bp.route('/course/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+@bp.route('/courses/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def course(id):
     course = Course.get_by_id(id)
     if course is None:

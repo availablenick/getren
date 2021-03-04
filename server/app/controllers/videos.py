@@ -10,7 +10,7 @@ from .youtube import upload_video
 
 bp = Blueprint('videos', __name__)
 
-@bp.route('/course/<int:id>/videos', methods=['GET', 'POST'])
+@bp.route('/courses/<int:id>/videos', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def videos(id):
     course = Course.get_by_id(id)
@@ -44,7 +44,7 @@ def videos(id):
             return error_response('Vídeo não adicionado', 500)
         return error_response('Permissão negada', 401)
 
-@bp.route('/video/<int:id>', methods = ['GET', 'PUT', 'DELETE'])
+@bp.route('/videos/<int:id>', methods = ['GET', 'PUT', 'DELETE'])
 def video(id):
     video = Video.get_by_id(id)
     if video is None:

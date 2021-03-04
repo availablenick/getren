@@ -11,8 +11,7 @@ class Cursos extends React.Component {
     super(props);
 
     let currentPage = this.props.match.params.number ?
-      Number(this.props.match.params.number) : 1
-    ;
+      Number(this.props.match.params.number) : 1;
 
     this.state = {
       courses: [],
@@ -27,7 +26,6 @@ class Cursos extends React.Component {
         if (response.status === 200) {
           let courses = response.data;
           for (let course of courses) {
-            console.log('course.thumbnail', course.thumbnail);
             if (course.thumbnail) {
               course.thumbnail = 'data:image/jpeg;base64, ' + course.thumbnail;
             } else {
@@ -53,9 +51,7 @@ class Cursos extends React.Component {
         >
           <Spinner animation='border' size='lg' role='status'
             style={ { height: '5em', width: '5em' } }
-          >
-            <span className='sr-only'>Carregando lista de cursos...</span>
-          </Spinner>
+          ></Spinner>
           <p className='mt-3'>Carregando lista de cursos...</p>
         </div>
       );
@@ -69,20 +65,17 @@ class Cursos extends React.Component {
         <ul className='row p-0'>
           {
             coursesToShow.map((course, index) => {
-              const toObject = {
-                pathname: '/curso/' + course.id,
-                course: course,
-              };
+              let pathname = '/cursos/' + course.id + '/comprar'
 
               return (
-                <li key={ index } className='d-flex justify-content-center col-12 col-lg-4'
-                  style={ { listStyleType: 'none', marginBottom: '30px' } }
+                <li key={index} className='d-flex justify-content-center col-12 col-lg-4'
+                  style={{ listStyleType: 'none', marginBottom: '30px' }}
                 >
-                  <Link className='no-decoration' to={toObject}>
+                  <Link className='no-decoration' to={pathname}>
                     <Card className='border-0' style={{ width: '18rem' }}>
-                      <Card.Img variant='top' src={ course.thumbnail } />
+                      <Card.Img variant='top' src={course.thumbnail} />
                       <Card.Body className='text-center text-dark bg-getren-color'>
-                        <Card.Title>{ course.name }</Card.Title>
+                        <Card.Title>{course.name}</Card.Title>
                       </Card.Body>
                     </Card>
                   </Link>
@@ -95,11 +88,12 @@ class Cursos extends React.Component {
       let info = {
         pageAmount: pageAmount,
         currentPage: this.state.currentPage,
-      }
+      };
+
       return (
         <>
           <h1 className='display-4 text-center mb-5'>Cursos</h1>
-          { coursesList }
+          {coursesList}
 
           <Pagination info={info} onClick={(page) => {
               this.props.history.push('/cursos/page/' + page);
