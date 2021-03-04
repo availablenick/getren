@@ -47,16 +47,10 @@
     }
   }
 
-  .sub-menu-dropdown {
+  .submenu-dropdown {
     position: relative;
 
-    &:hover {
-      .sub-menu {
-        opacity: 1;
-      }
-    }
-
-    .sub-menu {
+    .submenu {
       background: rgba(22, 34, 57, 0.95);
       font-size: 12px;
       width: 125px;
@@ -85,20 +79,5 @@
         }
       }
     }
-  }w
-
-  .bars {
-    background: none;
-    border: 0;
-    color: white;
-    font-size: 1.5em;
-
-    &:focus {
-      outline: none;
-    }
-  }
-
-  .hand-cursor:hover{
-    cursor: pointer;
   }
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import api from '../../config/axios/api.js';
 import { logout } from '../../storage/user/userSlice';
@@ -9,6 +8,22 @@ import './Header.scss';
 import logo from '../../images/getren-logo.png';
 
 class Header extends React.Component {
+  componentDidMount() {
+    let submenuDropdowns = document.getElementsByClassName('submenu-dropdown'); 
+    let submenuTriggers = document.getElementsByClassName('submenu-trigger');
+    for (let trigger of submenuTriggers) {
+      trigger.addEventListener('mouseenter', () => {
+        trigger.nextElementSibling.style.opacity = '1';
+      });
+    }
+
+    for (let dropdown of submenuDropdowns) {
+      dropdown.addEventListener('mouseleave', () => {
+        dropdown.getElementsByClassName('submenu')[0].style.opacity = 0;
+      });
+    }
+  }
+
   render() {
     return (
       <header className='top-header w-100'>
@@ -25,11 +40,11 @@ class Header extends React.Component {
             <li>
               <Link to='/'>HOME</Link>
             </li>
-            <li className='sub-menu-dropdown'>
-              <Link to='/cursos'>
+            <li className='submenu-dropdown'>
+              <Link className='submenu-trigger' to='/cursos'>
                 CURSOS 
               </Link>
-              <ul className='sub-menu d-flex flex-column position-absolute 
+              <ul className='submenu d-flex flex-column position-absolute 
                 left-0 p-0 text-white'
               >
                 <li>
@@ -81,7 +96,7 @@ class Header extends React.Component {
             }
             { this.props.user.data &&
               <li>
-                <button type='button' onClick={ this.handleClick }>SAIR</button>
+                <button type='button' onClick={this.handleClick}>SAIR</button>
               </li>
             }
           </ul>
