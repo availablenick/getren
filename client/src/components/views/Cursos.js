@@ -4,6 +4,7 @@ import { withRouter, Link } from 'react-router-dom';
 
 import api from '../../config/axios/api.js';
 import Pagination from '../common/Pagination.js';
+import logo from '../../images/getren-logo-large.png';
 
 class Cursos extends React.Component {
   constructor(props) {
@@ -26,9 +27,17 @@ class Cursos extends React.Component {
         if (response.status === 200) {
           let courses = response.data;
           for (let course of courses) {
-            course.thumbnail = 'data:image/jpeg;base64, ' + course.thumbnail;
+            console.log('course.thumbnail', course.thumbnail);
+            if (course.thumbnail) {
+              course.thumbnail = 'data:image/jpeg;base64, ' + course.thumbnail;
+            } else {
+              course.thumbnail = logo;
+            }
           }
-          this.setState({ courses: courses, isFetchingCourses: false });
+          this.setState({
+            courses: courses,
+            isFetchingCourses: false
+          });
         }
       }).catch(error => {
         if (error.response) {
@@ -39,11 +48,16 @@ class Cursos extends React.Component {
   render() {
     if (this.state.isFetchingCourses) {
       return (
-        <Spinner animation='border' size='lg' role='status'
-          style={ { height: '5em', width: '5em' } }
+        <div className='d-flex flex-column align-items-center
+          justify-content-center h-100'
         >
-          <span className='sr-only'>Carregando...</span>
-        </Spinner>
+          <Spinner animation='border' size='lg' role='status'
+            style={ { height: '5em', width: '5em' } }
+          >
+            <span className='sr-only'>Carregando lista de cursos...</span>
+          </Spinner>
+          <p className='mt-3'>Carregando lista de cursos...</p>
+        </div>
       );
     } else {
       let coursesPerPage = 9;
@@ -94,7 +108,7 @@ class Cursos extends React.Component {
         </>
       )
     }
-}
+  }
 
   handleClick = (event) => {
     event.preventDefault();
