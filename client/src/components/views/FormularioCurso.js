@@ -32,7 +32,7 @@ class FormularioCurso extends React.Component {
   componentDidMount() {
     if (this.state.method === 'EDITAR') {
       if (!this.props.location.course) {
-        api.get('/course/' + this.props.match.params.id)
+        api.get('/courses/' + this.props.match.params.id)
           .then(response => {
             if (response.status === 200) {
               this.setState({ course: response.data});
@@ -142,7 +142,7 @@ class FormularioCurso extends React.Component {
       preMessage = 'Atualizando curso...';
       postMessage = 'Curso atualizado!';
       let id = this.props.match.params.id;
-      request = api.put(`/course/${id}`, courseData, {
+      request = api.put(`/courses/${id}`, courseData, {
         headers: {'Content-Type': 'multipart/form-data' }
       });
     }
