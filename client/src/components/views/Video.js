@@ -19,14 +19,14 @@ class Video extends React.Component {
   }
 
   componentDidMount() {
-    let { courseId, id } =  this.props.match.params;
+    let id =  this.props.match.params.id;
     api.get('/videos/' + id)
       .then(response => {
         if (response.status === 200) {
           this.setState({ video: response.data });
         }
 
-        return api.get('/courses/' + courseId + '/videos');
+        return api.get('/courses/' + response.data.id + '/videos');
       })
       .then(response => {
         if (response.status === 200) {
@@ -108,7 +108,7 @@ class Video extends React.Component {
       }
 
       let courseId =  this.props.match.params.courseId;
-      let videoPageURL = '/cursos/' + courseId + '/videos/' + video.id;
+      let videoPageURL = '/videos/' + video.id;
       return (
         <li key={index}>
           <Link className='d-flex custom-video-not-selected no-decoration p-2'

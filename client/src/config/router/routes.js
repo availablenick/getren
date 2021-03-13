@@ -78,12 +78,6 @@ const routes = [
     exact: true
   },
   {
-    path: '/cursos/:courseId/videos/:id',
-    component: Video,
-    needsUserSignedIn: true,
-    redirectTo: '/',
-  },
-  {
     path: '/login',
     needsUserSignedOut: true,
     redirectTo: '/',
@@ -94,6 +88,12 @@ const routes = [
     needsUserSignedIn: true,
     redirectTo: '/login',
     component: Perfil,
+  },
+  {
+    path: '/videos/:id',
+    component: Video,
+    needsUserSignedIn: true,
+    redirectTo: '/',
   }
 ];
 

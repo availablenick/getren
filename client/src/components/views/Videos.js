@@ -63,6 +63,18 @@ class Videos extends React.Component {
         </div>
       );
     } else {
+      if (this.state.videos.length === 0) {
+        return (
+          <>
+            <h1 className='display-4 text-center mb-5'>
+              Vídeos do curso {this.state.course.name}
+            </h1>
+
+            <h2 className='text-center mt-5'>Este curso não possui vídeos</h2>
+          </>
+        )
+      }
+
       let videosList =
         <ul className='mx-auto w-75'>
           {
@@ -71,7 +83,7 @@ class Videos extends React.Component {
               return (
                 <li key={index} className='custom-list-style-type-none my-3'>
                   <Link className='custom-video-item d-flex text-white p-2'
-                    to={'/cursos/' + courseId + '/videos/' + video.id}
+                    to={'/videos/' + video.id}
                   >
                     <div className='bg-white'>
                       <img src={video.thumbnail} alt={video.title}
