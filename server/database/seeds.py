@@ -96,7 +96,7 @@ def feed_database():
     for i in range(20):
         attends = Attends(
             user_id=6,
-            course_id=i,
+            course_id=i+1,
             progress=80+i,
             is_paid=True
         )

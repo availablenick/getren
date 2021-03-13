@@ -1,0 +1,8 @@
+.custom-video-item {
+  background: rgb(175, 210, 245);
+  
+  &:hover {
+    background: rgb(105, 175, 240);
+    text-decoration: none;
+  }
+}

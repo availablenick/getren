@@ -29,16 +29,10 @@ def validate_password(password, password_confirm):
     return errors
 
 def generate_token(user):
-    user_payload = { 'email': user.email, 'id': user.id }
-    if user.is_admin:
-        user_payload['is_admin'] = True
-    return jwt.encode(user_payload, SECRET_KEY, algorithm='HS256')
+    return jwt.encode(user.as_dict(), SECRET_KEY, algorithm='HS256')
 
 def jsonify_user(user):
-    user_payload = { 'email': user.email, 'id': user.id }
-    if user.is_admin:
-        user_payload['is_admin'] = True
-    return jsonify({ 'user': user_payload })
+    return jsonify({ 'user': user.as_dict() })
 
 def error_response(error, code):
     response = jsonify({'error': error})

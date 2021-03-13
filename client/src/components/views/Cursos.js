@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, Spinner } from 'react-bootstrap';
+import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
+import { Card, Spinner } from 'react-bootstrap';
 
 import api from '../../config/axios/api.js';
 import Pagination from '../common/Pagination.js';
@@ -21,6 +22,7 @@ class Cursos extends React.Component {
   }
 
   componentDidMount() {
+    console.log(this.props.user.data.courses_taken);
     api.get('/courses')
       .then(response => {
         if (response.status === 200) {
@@ -65,7 +67,29 @@ class Cursos extends React.Component {
         <ul className='row p-0'>
           {
             coursesToShow.map((course, index) => {
-              let pathname = '/cursos/' + course.id + '/comprar'
+              let isEnrolled = false;
+              let courses = this.props.user.data.courses_taken;
+              let leftIndex = 0;
+              let rightIndex = courses.length - 1;
+              let middleIndex;
+              while (rightIndex - leftIndex + 1 > 0) {
+                middleIndex = Math.floor((leftIndex + rightIndex) / 2);
+                if (Number(course.id) === Number(courses[middleIndex].id)) {
+                  isEnrolled = true;
+                  break;
+                } else if (Number(course.id) > Number(courses[middleIndex].id)) {
+                  leftIndex = middleIndex + 1;
+                } else {
+                  rightIndex = middleIndex - 1;
+                }
+              }
+
+              let pathname;
+              if (isEnrolled) {
+                pathname = '/cursos/' + course.id + '/videos';
+              } else {
+                pathname = '/cursos/' + course.id + '/comprar';
+              }
 
               return (
                 <li key={index} className='d-flex justify-content-center col-12 col-lg-4'
@@ -76,6 +100,11 @@ class Cursos extends React.Component {
                       <Card.Img variant='top' src={course.thumbnail} />
                       <Card.Body className='text-center text-dark bg-getren-color'>
                         <Card.Title>{course.name}</Card.Title>
+                        { isEnrolled && 
+                          <Card.Text>
+                            Você está inscrito neste curso
+                          </Card.Text>
+                        }
                       </Card.Body>
                     </Card>
                   </Link>
@@ -114,4 +143,8 @@ class Cursos extends React.Component {
   }
 }
 
-export default withRouter(Cursos);
+const mapStateToProps = (state) => {
+  return { user: state.user }
+}
+
+export default withRouter(connect(mapStateToProps)(Cursos));
