@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link, Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { login } from '../../storage/user/userSlice';
@@ -10,17 +10,19 @@ class Cadastro extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: null,
-      email: null,
       errors: {},
-      requestSent: false,
-      isUserRegistered: false,
-      isPasswordVisible: false,
       isPasswordConfirmationVisible: false,
+      isPasswordVisible: false,
+      isUserRegistered: false,
+      requestSent: false,
     }
   }
 
   render() {
+    if (this.props.user.data && !this.state.requestSent) {
+      return <Redirect to='/' />;
+    }
+
     let errorSection = {};
     for (let error of Object.keys(this.state.errors)) {
       if (this.state.errors[error].length <= 0) {
@@ -36,7 +38,6 @@ class Cadastro extends React.Component {
     }
 
     const errorInputStyle = { boxShadow: '0 0 0 2px red' };
-
     let content = '';
     if (!this.state.isUserRegistered) {
       content = 
@@ -125,21 +126,35 @@ class Cadastro extends React.Component {
           </form>
           {
             this.state.requestSent &&
-              <span>
-                Cadastrando...
-              </span>
+            <span>
+              Cadastrando...
+            </span>
           }
         </div>
     } else {
+      console.log('this props user data:');
+      console.log(this.props.user.data);
       content = 
-        <div>
-          <span>
-            Usuário cadastrado.
-            Um email foi enviado para tu {/* this.props.user.data.email */} para confirmar
-            seu cadastro.
-            Clique no botão para reenviar o email.
-          </span>
-          <button onClick={this.handleClick}>Reenviar email</button>
+        <div className='d-flex flex-column align-items-center
+          justify-content-center h-100'
+        >
+          <p className='h5 text-center'>
+            Usuário cadastrado. Um e-mail foi enviado para o endereço
+            <b> {this.props.user.data.email} </b> para confirmar seu cadastro.
+            Clique no botão abaixo para reenviar o email.
+          </p>
+
+          <div className='mt-3'>
+            <button type='button' className='btn btn-primary'
+              onClick={this.handleClick}
+            >
+              Reenviar e-mail
+            </button>
+          </div>
+
+          <p className='h5 text-center mt-5'>
+            Clique <Link to="/perfil">aqui</Link> para completar seu cadastro.
+          </p>
         </div>
     }
 
@@ -148,46 +163,33 @@ class Cadastro extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-
     if (this.state.isUserRegistered) {
       return;
     }
-    
-    this.setState({ requestSent: true });
 
+    this.setState({ requestSent: true });
     api.post('register', {
       email: event.target.email.value,
       password: event.target.password.value,
       password_confirm: event.target.password_confirm.value,
     }).then(response => {
-      this.responseRegister = response;
       if (response.status === 200) {
-        this.setState({
-          isUserRegistered: true
-        });
-        
-        return Promise.all([api.post('confirmation', {
-          email: response.data.user.email,
+        this.props.dispatch(
+          login({
+            email: response.data.email,
+            id: response.data.id,
+          })
+        );
+
+        this.setState({ isUserRegistered: true });
+        return api.post('/confirmation', {
+          email: response.data.email,
           confirmed: false
-        }), response]);
-      }
-    }).then(([response, prevResponse]) => {
-      if (response.status === 200) {
-        setTimeout(() => {
-          this.props.dispatch(
-            login({
-              email: prevResponse.data.email,
-              id: prevResponse.data.id,
-            })
-          );
-          this.props.history.push('/');
-        }, 5000);
+        });
       }
     }).catch(error => {
       if (!error.response) {
-        setTimeout(() => {
-          this.props.history.push('/');
-        }, 5000);
+        this.props.history.push('/');
       } else if (error.response.status === 400) {
         this.setState({
           errors: error.response.data.errors,
@@ -198,7 +200,7 @@ class Cadastro extends React.Component {
   }
 
   handleClick = () => {
-    api.post('confirmation', {
+    api.post('/confirmation', {
       email: this.props.user.data.email,
       confirmed: false
     });

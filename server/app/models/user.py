@@ -29,6 +29,7 @@ class User(db.Model):
             'city',
             'email',
             'federal_state',
+            'id',
             'is_admin',
             'is_confirmed',
             'job',

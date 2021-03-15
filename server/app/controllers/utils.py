@@ -32,7 +32,7 @@ def generate_token(user):
     return jwt.encode(user.as_dict(), SECRET_KEY, algorithm='HS256')
 
 def jsonify_user(user):
-    return jsonify({ 'user': user.as_dict() })
+    return jsonify(user.as_dict())
 
 def error_response(error, code):
     response = jsonify({'error': error})

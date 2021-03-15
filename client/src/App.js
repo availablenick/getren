@@ -28,23 +28,21 @@ class App extends React.Component {
         }
       }).finally(() => {
         this.setState({ isFetchingUser: false });
-      }).catch(error => {});
+      }).catch(() => {});
   }
 
   render() {
     const routeComponents = routes.map((route, i) => {
       return (
-        <Route key={i} 
-          exact={ route.exact }
-          path={ route.path }
-          render={ () => {
-            if ((route.needsUserSignedIn && !this.props.user.data) ||
-                (route.needsUserSignedOut && this.props.user.data) ||
-                (route.needsUserToBeAdmin && !this.props.user.data.is_admin)) {
-              return <Redirect to={route.redirectTo} />;
+        <Route key={i}
+          exact={route.exact}
+          path={route.path}
+          render={() => {
+            if (route.isAvailableTo(this.props.user)) {
+              return <route.component />;
             }
 
-            return <route.component />;
+            return <Redirect to={route.redirectTo} />;
           }}
         />
       );
@@ -53,15 +51,15 @@ class App extends React.Component {
     return (
       <>
         <div className='d-flex flex-column h-100'
-          style={ { opacity: (this.state.isFetchingUser ? '0.5' : '') } }
+          style={{ opacity: (this.state.isFetchingUser ? '0.5' : '') }}
         >
           <Header />
             <div className='flex-grow-1 pb-5 px-5 bg-getren-color container-fluid
-              position-relative' style={ { paddingTop: 'calc(4em + 3rem)' } }
+              position-relative' style={{ paddingTop: 'calc(4em + 3rem)' }}
             >
               { !this.state.isFetchingUser &&
                 <Switch>
-                  { routeComponents }
+                  {routeComponents}
                 </Switch>
               }
             </div>

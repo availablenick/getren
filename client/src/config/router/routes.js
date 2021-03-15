@@ -13,87 +13,89 @@ import Videos from '../../components/views/Videos.js';
 
 const routes = [
   {
-    path: '/',
     component: Home,
-    exact: true
-  },
-  {
-    path: '/admin',
-    component: Admin,
-    needsUserSignedIn: true,
-    needsUserToBeAdmin: true,
-    redirectTo: '/',
     exact: true,
+    isAvailableTo: () => true,
+    path: '/'
   },
   {
-    path: '/admin/cadastrar-curso',
+    component: Admin,
+    exact: true,
+    isAvailableTo: (user) => user.data && user.data.is_admin,
+    path: '/admin',
+    redirectTo: '/'
+  },
+  {
     component: FormularioCurso,
-    needsUserToBeAdmin: true,
+    isAvailableTo: (user) => user.data && user.data.is_admin,
+    path: '/admin/cadastrar-curso'
   },
   {
-    path: '/admin/cadastrar-video/:id',
     component: FormularioVideo,
-    needsUserToBeAdmin: true,
+    isAvailableTo: (user) => user.data && user.data.is_admin,
+    path: '/admin/cadastrar-video/:id'
   },
   {
-    path: '/admin/editar-curso/:id',
     component: FormularioCurso,
-    needsUserToBeAdmin: true,
+    isAvailableTo: (user) => user.data && user.data.is_admin,
+    path: '/admin/editar-curso/:id'
   },
   {
-    path: '/admin/editar-video/:id',
     component: FormularioVideo,
-    needsUserToBeAdmin: true,
+    isAvailableTo: (user) => user.data && user.data.is_admin,
+    path: '/admin/editar-video/:id'
   },
   {
-    path: '/cadastro',
-    needsUserSignedOut: true,
-    redirectTo: '/',
     component: Cadastro,
+    isAvailableTo: () => true,
+    path: '/cadastro',
   },
   {
-    path: '/confirmacao',
     component: Confirmacao,
+    isAvailableTo: () => true,
+    path: '/confirmacao'
   },
   {
-    path: '/cursos',
     component: Cursos,
-    exact: true
+    exact: true,
+    isAvailableTo: () => true,
+    path: '/cursos'
   },
   {
-    path: '/cursos/page/:number',
     component: Cursos,
+    isAvailableTo: () => true,
+    path: '/cursos/page/:number'
   },
   {
-    path: '/cursos/:id/comprar',
     component: ComprarCurso,
-    needsUserSignedIn: true,
-    redirectTo: '/',
+    isAvailableTo: (user) => user.data,
+    path: '/cursos/:id/comprar',
+    redirectTo: '/'
   },
   {
-    path: '/cursos/:id/videos',
     component: Videos,
-    needsUserSignedIn: true,
-    redirectTo: '/',
-    exact: true
+    exact: true,
+    isAvailableTo: (user) => user.data,
+    path: '/cursos/:id/videos',
+    redirectTo: '/'
   },
   {
-    path: '/login',
-    needsUserSignedOut: true,
-    redirectTo: '/',
     component: Login,
+    isAvailableTo: (user) => !user.data,
+    path: '/login',
+    redirectTo: '/'
   },
   {
-    path: '/perfil',
-    needsUserSignedIn: true,
-    redirectTo: '/login',
     component: Perfil,
+    isAvailableTo: (user) => user.data,
+    path: '/perfil',
+    redirectTo: '/login'
   },
   {
-    path: '/videos/:id',
     component: Video,
-    needsUserSignedIn: true,
-    redirectTo: '/',
+    isAvailableTo: (user) => user.data,
+    path: '/videos/:id',
+    redirectTo: '/'
   }
 ];
 
