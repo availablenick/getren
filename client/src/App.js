@@ -19,7 +19,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    api.get('user_by_token')
+    api.get('/user_by_token')
       .then(response => {
         if (response.status === 200) {
           this.props.dispatch(

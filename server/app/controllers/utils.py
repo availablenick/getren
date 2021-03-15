@@ -4,8 +4,6 @@ from flask import current_app, jsonify
 
 from ..models.user import User
 
-SECRET_KEY = current_app.config['SECRET_KEY']
-
 def to_seconds(duration):
     return int(duration[0])*60 + int(duration[1])
 
@@ -29,7 +27,8 @@ def validate_password(password, password_confirm):
     return errors
 
 def generate_token(user):
-    return jwt.encode(user.as_dict(), SECRET_KEY, algorithm='HS256')
+    return jwt.encode(user.as_dict(), current_app.config['SECRET_KEY'],
+        algorithm='HS256')
 
 def jsonify_user(user):
     return jsonify(user.as_dict())
@@ -42,7 +41,8 @@ def error_response(error, code):
 def decode_user(request):
     cookie = request.cookies.get('user_token')
     if cookie:
-        user_payload = jwt.decode(cookie, SECRET_KEY, algorithms=['HS256'])
+        user_payload = jwt.decode(cookie, current_app.config['SECRET_KEY'],
+            algorithms=['HS256'])
         return user_payload
     return None
 

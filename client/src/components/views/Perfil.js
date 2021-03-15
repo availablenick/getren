@@ -22,7 +22,7 @@ class Perfil extends React.Component {
   }
 
   componentDidMount = () => {
-    let url = 'user/' + this.props.user.data.id;
+    let url = '/users/' + this.props.user.data.id;
     api.get(url)
       .then(response => {
         if (response.status === 200) {

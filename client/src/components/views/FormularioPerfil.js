@@ -40,11 +40,12 @@ class FormularioPerfil extends React.Component {
       })
       .then(response => {
         this.setState({ citiesOptionsList: response });
-      });
+      })
+      .catch(() => {});
     }
 
   render() {
-    return (      
+    return (
       <>
         <h2 className='border-bottom w-100 text-center pb-3'>PERFIL</h2>
         <form className='form-login w-75 p-5' onSubmit={ this.handleSubmit } method='post'>
@@ -122,7 +123,7 @@ class FormularioPerfil extends React.Component {
       requestData[key] = value;
     }
 
-    api.put('user/' + this.props.user.id, requestData)
+    api.put('/users/' + this.props.user.id, requestData)
       .then(response => {
         if (response.status === 200) {
           this.setState({
@@ -161,6 +162,10 @@ class FormularioPerfil extends React.Component {
   }
 
   requestCitiesList = (federalState) => {
+    if (!this.state.federalStatesOptionsList[0]) {
+      return new Promise((_, reject) => { reject('Estados não carregados'); });
+    }
+
     let citiesOptionsList = [];
     let federalStateParam = this.state.federalStatesOptionsList[0].props.value;
     if (federalState) {

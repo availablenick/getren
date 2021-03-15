@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "cadce6d4-6fa3-40cc-8f62-1b3a2f27892e",
+		"_postman_id": "092317ed-a4f7-4a80-bca5-87cde0d5724c",
 		"name": "Testes_Getren",
 		"description": "# Testes do backend GETREN",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -12,7 +12,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "8a1ffb6b-1c61-4fe9-889c-472548bda90b",
 						"exec": [
 							"pm.test('Register -> Correct', function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -57,7 +56,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "abe1e0c0-4955-4dda-bdc2-1f4c87948c43",
 						"exec": [
 							"pm.test('Register -> Email Already Registered', function() {\r",
 							"    pm.response.to.have.status(400)\r",
@@ -98,7 +96,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "fe686fd1-a0df-43e8-a08e-35d5767b6205",
 						"exec": [
 							""
 						],
@@ -140,7 +137,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "74192cb7-2ae9-407d-a759-9f825d4b215a",
 						"exec": [
 							"pm.test('Register -> Short Password / Invalid Email', function() {\r",
 							"    pm.response.to.have.status(400)\r",
@@ -181,7 +177,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "d23c8871-de5d-4929-8b17-773e1e3afd73",
 						"exec": [
 							"pm.test('Register -> No Password / No Email', function() {\r",
 							"    pm.response.to.have.status(400)\r",
@@ -222,7 +217,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "e6320844-dee7-4612-98bd-9479cc731200",
 						"exec": [
 							"pm.test('Login -> Correct', function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -267,7 +261,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "339d87b4-7248-4771-9563-aeea7a4f290c",
 						"exec": [
 							"pm.test('Login -> Incorrect Email', function() {\r",
 							"    pm.response.to.have.status(400)\r",
@@ -308,7 +301,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "982f263f-b836-4176-9a40-a814f4f857f6",
 						"exec": [
 							"pm.test('Login -> Incorrect Password', function() {\r",
 							"    pm.response.to.have.status(400)\r",
@@ -349,7 +341,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "21cbb182-cde7-48a0-a3b6-47ae25473d66",
 						"exec": [
 							"pm.test('Confirmation True -> Incorrect Token', function() {\r",
 							"    pm.response.to.have.status(400)\r",
@@ -390,7 +381,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "23109e85-04e4-47ca-a9d2-39633bec6430",
 						"exec": [
 							"pm.test('Confirmation False -> Unregistered User', function() {\r",
 							"    pm.response.to.have.status(500)\r",
@@ -431,7 +421,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "cf6b0688-5c14-49b8-bba5-0ec5c670d85c",
 						"exec": [
 							"pm.test('Confirmation False -> Valid Email', function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -472,7 +461,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "d344b97c-b5cf-4df6-aaf2-86357537c068",
 						"exec": [
 							"pm.test('Confirmation True -> Correct Token', function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -513,7 +501,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "cd64444f-12c6-4b63-8024-8c4bb5982569",
 						"exec": [
 							"pm.test('Forgot Password -> Unregistered User', function() {\r",
 							"    pm.response.to.have.status(500)\r",
@@ -554,7 +541,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "11dc3518-f018-461c-9040-75e02398ed66",
 						"exec": [
 							"pm.test('Redefine Password -> Correct Token', function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -595,7 +581,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "eadec9ab-b9c6-4c47-a49c-0cfb810b1a57",
 						"exec": [
 							"pm.test('Redefine Password -> Incorrect Token', function() {\r",
 							"    pm.response.to.have.status(400)\r",
@@ -636,7 +621,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "1183e135-557c-43ce-b6df-825939c5fa2d",
 						"exec": [
 							"pm.test('Redefine Password -> Unregistered User', function() {\r",
 							"    pm.response.to.have.status(500)\r",
@@ -677,7 +661,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "9fdae00f-3c39-447a-b50a-b1f7cef20c90",
 						"exec": [
 							"pm.test('Update Data -> Correct', function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -700,13 +683,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/user/1",
+					"raw": "localhost:5000/users/1",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"user",
+						"users",
 						"1"
 					]
 				}
@@ -719,7 +702,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "6e75e14a-8e87-43b4-b0b3-c85e59488ef4",
 						"exec": [
 							"pm.test('Update Data -> Unregistered User', function() {\r",
 							"    pm.response.to.have.status(401)\r",
@@ -742,13 +724,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/user/2",
+					"raw": "localhost:5000/users/2",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"user",
+						"users",
 						"2"
 					]
 				}
@@ -761,7 +743,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "c7af4193-cde0-4736-9982-277bd54197b1",
 						"exec": [
 							"pm.test(\"Decode -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -793,7 +774,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "a0a0f09b-f233-4501-82ac-77da92addff0",
 						"exec": [
 							"pm.test(\"Add Course -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -842,7 +822,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "9f81840d-1eac-4f60-8274-570d98413568",
 						"exec": [
 							"pm.test(\"Add Course -> Incorrect\", function() {\r",
 							"    pm.response.to.have.status(500)\r",
@@ -891,9 +870,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "f38d5336-1cd7-481c-9736-b17ce09e0003",
 						"exec": [
-							"\r",
 							""
 						],
 						"type": "text/javascript"
@@ -919,19 +896,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/courses?",
+					"raw": "localhost:5000/courses",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
 						"courses"
-					],
-					"query": [
-						{
-							"key": "",
-							"value": null
-						}
 					]
 				}
 			},
@@ -943,7 +914,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "48476f12-8549-4134-99eb-69704b1eaa23",
 						"exec": [
 							"pm.test(\"Get all Courses -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -951,6 +921,7 @@
 							"\r",
 							"pm.test(\"Check Courses\", function() {\r",
 							"    console.log(pm.response.json());\r",
+							"    pm.expect(pm.response.json().length).to.equal(2);\r",
 							"    pm.expect(pm.response.json()[0].name).to.equal(\"Curso 1\");\r",
 							"})\r",
 							""
@@ -993,7 +964,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "77a28d93-f85f-463b-b74e-b5f897f11279",
 						"exec": [
 							"pm.test(\"Get all Active Courses -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -1044,7 +1014,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "3c066a74-1dc7-4b78-a9a4-aca62706a0ec",
 						"exec": [
 							"pm.test(\"Get all Expired Courses -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -1095,15 +1064,13 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "d689dbc5-fd96-47bb-90fb-bdf4c1193b17",
 						"exec": [
 							"pm.test(\"Get Courses By Search -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200)\r",
 							"})\r",
 							"\r",
 							"pm.test(\"Check Courses\", function() {\r",
-							"    pm.expect(pm.response.json().length).to.equal(1);\r",
-							"    pm.expect(pm.response.json()[0].name).to.equal(\"Curso 2\");\r",
+							"    pm.expect(pm.response.json().name).to.equal(\"Curso 2\");\r",
 							"})\r",
 							""
 						],
@@ -1146,7 +1113,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "8cbe275b-54f4-4783-a9cb-de20ad0ca27c",
 						"exec": [
 							"pm.test(\"Get First Course -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -1178,13 +1144,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/course/1",
+					"raw": "localhost:5000/courses/1",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"course",
+						"courses",
 						"1"
 					]
 				}
@@ -1197,7 +1163,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "c1663bbc-41de-42ab-8dc3-142341346029",
 						"exec": [
 							"pm.test(\"Get Course -> Inorrect\", function() {\r",
 							"    pm.response.to.have.status(404)\r",
@@ -1223,13 +1188,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/course/3",
+					"raw": "localhost:5000/courses/3",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"course",
+						"courses",
 						"3"
 					]
 				}
@@ -1242,7 +1207,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "318dd5c6-78ed-491e-bc2b-53ac9edfb3f5",
 						"exec": [
 							"pm.test(\"Change First Course -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -1276,13 +1240,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/course/1",
+					"raw": "localhost:5000/courses/1",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"course",
+						"courses",
 						"1"
 					]
 				}
@@ -1295,7 +1259,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "081b92bc-f46c-44a3-b87a-f6adace184ab",
 						"exec": [
 							"pm.test(\"Get Course -> Incorrect\", function() {\r",
 							"    pm.response.to.have.status(500)\r",
@@ -1318,13 +1281,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/course/1",
+					"raw": "localhost:5000/courses/1",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"course",
+						"courses",
 						"1"
 					]
 				}
@@ -1337,7 +1300,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "6b416ea6-bfd1-4748-ab55-2bce0a557ef5",
 						"exec": [
 							"pm.test(\"Delete Second Course -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200)\r",
@@ -1361,13 +1323,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/course/2",
+					"raw": "localhost:5000/courses/2",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"course",
+						"courses",
 						"2"
 					]
 				}
@@ -1380,7 +1342,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "230e328b-48a7-4cc9-a64b-fe6986c0689a",
 						"exec": [
 							""
 						],
@@ -1419,7 +1380,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "50aca7c5-ce5d-4c36-9631-c89ba32dcb74",
 						"exec": [
 							""
 						],
@@ -1458,7 +1418,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "7baa1ec4-7dc4-4211-b76f-7d429a6eb1f5",
 						"exec": [
 							"pm.test(\"Get Another User Courses -> Correct\", function() {\r",
 							"    pm.response.to.have.status(401);\r",
@@ -1485,13 +1444,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/user/2/courses",
+					"raw": "localhost:5000/users/2/courses",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"user",
+						"users",
 						"2",
 						"courses"
 					]
@@ -1505,7 +1464,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "7f4731db-77aa-41fb-955f-53c714157b7f",
 						"exec": [
 							"pm.test(\"Post User Course -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200);\r",
@@ -1529,13 +1487,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/user/1/courses",
+					"raw": "localhost:5000/users/1/courses",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"user",
+						"users",
 						"1",
 						"courses"
 					]
@@ -1549,7 +1507,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "36482f88-b499-4911-be70-8bf2123dd7c9",
 						"exec": [
 							"pm.test(\"Post User Course -> Incorrect\", function() {\r",
 							"    pm.response.to.have.status(500);\r",
@@ -1573,13 +1530,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/user/1/courses",
+					"raw": "localhost:5000/users/1/courses",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"user",
+						"users",
 						"1",
 						"courses"
 					]
@@ -1593,7 +1550,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "60845506-d866-447a-8592-7fcc763cac97",
 						"exec": [
 							"pm.test(\"Get User Courses -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200);\r",
@@ -1623,13 +1579,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/user/1/courses",
+					"raw": "localhost:5000/users/1/courses",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"user",
+						"users",
 						"1",
 						"courses"
 					]
@@ -1643,7 +1599,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "785a046c-7fa9-459b-9429-be5fe54eaaac",
 						"exec": [
 							"pm.test(\"Get User Courses -> Correct\", function() {\r",
 							"    pm.response.to.have.status(404);\r",
@@ -1669,13 +1624,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/course/5/videos",
+					"raw": "localhost:5000/courses/5/videos",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"course",
+						"courses",
 						"5",
 						"videos"
 					]
@@ -1689,7 +1644,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "8cd9b926-55f2-4747-a2e0-ba0b685b755a",
 						"exec": [
 							"pm.test(\"Post Video -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200);\r",
@@ -1714,13 +1668,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/course/1/videos",
+					"raw": "localhost:5000/courses/1/videos",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"course",
+						"courses",
 						"1",
 						"videos"
 					]
@@ -1734,7 +1688,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "51573b2a-3e3a-4a2c-ab93-5272ce4c0678",
 						"exec": [
 							"pm.test(\"Post Videos -> Incorrect\", function() {\r",
 							"    pm.response.to.have.status(500);\r",
@@ -1757,13 +1710,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/course/1/videos",
+					"raw": "localhost:5000/courses/1/videos",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"course",
+						"courses",
 						"1",
 						"videos"
 					]
@@ -1777,7 +1730,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "47f32e43-63ab-4105-82ba-7949e5b216cf",
 						"exec": [
 							""
 						],
@@ -1798,13 +1750,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/course/1/videos",
+					"raw": "localhost:5000/courses/1/videos",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"course",
+						"courses",
 						"1",
 						"videos"
 					]
@@ -1818,7 +1770,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "bbd5d97f-a873-456e-823b-6923e5424d49",
 						"exec": [
 							"pm.test(\"Get Video from Course -> Correct\", function() {\r",
 							"    pm.response.to.have.status(200);\r",
@@ -1849,13 +1800,13 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5000/course/1/videos",
+					"raw": "localhost:5000/courses/1/videos",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"course",
+						"courses",
 						"1",
 						"videos"
 					]
@@ -1869,7 +1820,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "dc6be17b-8692-4f3a-bcc8-9a278ca41797",
 						"exec": [
 							"pm.test(\"Logout\", function() {\r",
 							"    pm.expect(pm.cookies.user_token).to.equal(undefined)\r",
@@ -1901,7 +1851,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "b3b98275-528d-4256-8f8b-e0f839da655e",
 						"exec": [
 							"pm.test(\"Decode -> Incorrect\", function() {\r",
 							"    pm.response.to.have.status(400)\r",
@@ -1945,6 +1894,5 @@
 			},
 			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

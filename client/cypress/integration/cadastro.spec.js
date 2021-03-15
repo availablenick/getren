@@ -3,12 +3,12 @@ describe('Signup page', () => {
     cy.request('GET', 'http://localhost:5000/erase_db');
     cy.request('GET', 'http://localhost:5000/logout');
     cy.intercept('POST', 'http://localhost:5000/register').as('signup');
-    cy.intercept('POST', 'http://localhost:5000/confirmation').as('confirmation');
   });
 
   it('renders error message when e-mail and password are empty', () => {
     cy.visit('http://localhost:3000/cadastro');
     cy.get('button[type=submit]').click();
+    cy.wait('@signup');
     cy.get('form').should('contain', 'Sem email');
     cy.get('form').should('contain', 'Sem senha');
   });
@@ -39,8 +39,7 @@ describe('Signup page', () => {
     cy.get('input[name=password]').type('password');
     cy.get('input[name=password_confirm]').type('password');
     cy.get('button[type=submit]').click();
-    cy.wait('@confirmation');
-    cy.wait(5000);
+    cy.wait('@signup');
 
     // Log out and try to register another user
     cy.request('GET', 'http://localhost:5000/logout')
@@ -72,8 +71,6 @@ describe('Signup page', () => {
     cy.get('button[type=submit]').click();
     cy.wait('@signup');
     cy.get('body').should('contain', 'Usuário cadastrado');
-    cy.wait('@confirmation')
-    cy.wait(5000);
     cy.get('body').should('contain', 'SAIR');
   });
 });

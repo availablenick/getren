@@ -5,12 +5,12 @@ from flask import Blueprint, current_app, request, make_response, jsonify
 from flask_mail import Message
 from flask_cors import cross_origin
 
-from .utils import validate_password, generate_token, jsonify_user, error_response, decode_user, SECRET_KEY
+from .utils import (validate_password, generate_token, jsonify_user,
+    error_response, decode_user)
 from .. import mail
 from ..models.user import User
 
 fixed_token = '604d7208992bfddf9d08108f4a17c0ae78de70a8b5be973fd3e613c34460a2e55b32e6b6383d7630920267ce0d008e58'
-SECRET_KEY = current_app.config['SECRET_KEY']
 domain = 'localhost:3000'
 
 bp = Blueprint('authentication', __name__)

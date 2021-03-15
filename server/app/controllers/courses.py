@@ -3,7 +3,7 @@ import json
 from flask import Blueprint, request, make_response, jsonify
 from flask_cors import cross_origin
 
-from .utils import error_response, is_valid_admin, SECRET_KEY
+from .utils import error_response, is_valid_admin
 from ..models.user import User
 from ..models.course import Course
 

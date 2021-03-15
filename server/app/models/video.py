@@ -17,13 +17,14 @@ class Video(db.Model):
     def as_dict(self):
         video_dict = {}
         keys = [
-            'id',
-            'youtube_code',
-            'title',
+            'course_id',
+            'course_order',
             'description',
             'duration',
+            'id',
+            'title',
             'thumbnail',
-            'course_order'
+            'youtube_code',
         ]
         for key in keys:
             video_dict[key] = getattr(self, key)

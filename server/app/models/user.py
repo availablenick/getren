@@ -44,10 +44,6 @@ class User(db.Model):
         else:
             user_dict['birthdate'] = date.today().strftime('%Y-%m-%d')
 
-        user_dict['courses_taken'] = []
-        for enrollment in getattr(self, 'courses_taken'):
-            user_dict['courses_taken'].append(enrollment.course.as_dict())
-
         user_dict['videos_watched'] = []
         for watching in getattr(self, 'videos_watched'):
             user_dict['videos_watched'].append(watching.video.as_dict())

@@ -2,4 +2,3 @@ __pycache__/
 .gitignore
 Dockerfile
 .dockerignore
-__pycache__/

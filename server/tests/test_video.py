@@ -9,15 +9,7 @@ def test_02_add_fail(app, database):
     video = Video.add(2, {'youtube_code': 'test_code', 'course_order': 1})
     assert video is None
 
-def test_03_get_videos_as_dict(app, database):
-    course = Course.add({'name': "Curso de Teste"})
-    course = Course.get_by_id(1)
-    Video.add(1, {'youtube_code': 'test_code', 'course_order': 1})
-    videos = course.get_videos_as_dict()
-    assert list(videos[0].keys()) == ['id', 'youtube_code', 'title', \
-        'description', 'duration', 'thumbnail', 'course_order'] and videos[0]['youtube_code'] == 'test_code'
-
-def test_04_get_by_id(app, database):
+def test_03_get_by_id(app, database):
     Course.add({'name': "Curso de Teste"})
     video = Video.add(1, {'youtube_code': 'test_code', 'course_order': 1})
     new_video = Video.get_by_id(1)

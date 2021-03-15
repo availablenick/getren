@@ -33,7 +33,7 @@ class FormularioVideo extends React.Component {
   componentDidMount() {
     if (this.state.method === 'EDITAR') {
       if (!this.props.location.video) {
-        api.get('/video/' + this.props.match.params.id)
+        api.get('/videos/' + this.props.match.params.id)
           .then(response => {
             if (response.status === 200) {
               this.processVideoData(response.data);
@@ -182,14 +182,14 @@ class FormularioVideo extends React.Component {
     if (this.state.method === "CADASTRAR"){
       preMessage = 'Cadastrando vídeo...';
       postMessage = 'Vídeo cadastrado!';
-      request = api.post(`course/${this.state.courseId}/videos`, videoData, {
+      request = api.post(`/courses/${this.state.courseId}/videos`, videoData, {
         headers: headers
       });
     } else {
       preMessage = 'Atualizando vídeo...';
       postMessage = 'Vídeo atualizado!';
       let id = this.props.match.params.id;
-      request = api.put(`/video/${id}`, videoData, {
+      request = api.put(`/videos/${id}`, videoData, {
         headers: headers
       });
     }

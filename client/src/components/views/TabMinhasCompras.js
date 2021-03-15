@@ -19,7 +19,7 @@ class TabMinhasCompras extends React.Component {
 
   componentDidMount() {
     let user = this.props.user;
-    api.get('/user/' + user.id + '/courses')
+    api.get('/users/' + user.id + '/courses')
       .then(response => {
         if (response.status === 200) {
           let processedCourses = response.data.map(course => {

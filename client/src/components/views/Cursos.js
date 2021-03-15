@@ -16,13 +16,13 @@ class Cursos extends React.Component {
 
     this.state = {
       courses: [],
+      coursesFromUser: [],
       currentPage: currentPage,
-      isFetchingCourses: true,
+      isFetchingResources: true,
     };
   }
 
   componentDidMount() {
-    console.log(this.props.user.data.courses_taken);
     api.get('/courses')
       .then(response => {
         if (response.status === 200) {
@@ -34,19 +34,29 @@ class Cursos extends React.Component {
               course.thumbnail = logo;
             }
           }
-          this.setState({
-            courses: courses,
-            isFetchingCourses: false
-          });
+
+          if (this.props.user.data) {
+            this.setState({ courses: courses });
+            return api.get('/users/' + this.props.user.data.id + '/courses');
+          } else {
+            this.setState({
+              courses: courses,
+              isFetchingResources: false,
+            });
+          }
         }
-      }).catch(error => {
-        if (error.response) {
+      }).then(response => {
+        if (response && response.status === 200) {
+          this.setState({
+            coursesFromUser: response.data,
+            isFetchingResources: false,
+          });
         }
       });
   }
 
   render() {
-    if (this.state.isFetchingCourses) {
+    if (this.state.isFetchingResources) {
       return (
         <div className='d-flex flex-column align-items-center
           justify-content-center h-100'
@@ -68,16 +78,16 @@ class Cursos extends React.Component {
           {
             coursesToShow.map((course, index) => {
               let isEnrolled = false;
-              let courses = this.props.user.data.courses_taken;
+              let courses = this.state.coursesFromUser;
               let leftIndex = 0;
               let rightIndex = courses.length - 1;
               let middleIndex;
               while (rightIndex - leftIndex + 1 > 0) {
                 middleIndex = Math.floor((leftIndex + rightIndex) / 2);
-                if (Number(course.id) === Number(courses[middleIndex].id)) {
+                if (course.id === courses[middleIndex].id) {
                   isEnrolled = true;
                   break;
-                } else if (Number(course.id) > Number(courses[middleIndex].id)) {
+                } else if (course.id > courses[middleIndex].id) {
                   leftIndex = middleIndex + 1;
                 } else {
                   rightIndex = middleIndex - 1;
@@ -119,17 +129,25 @@ class Cursos extends React.Component {
         currentPage: this.state.currentPage,
       };
 
+      console.log(coursesList.length);
+
       return (
         <>
           <h1 className='display-4 text-center mb-5'>Cursos</h1>
-          {coursesList}
-
+          {
+            this.state.courses.length === 0 &&
+            <h3 className='text-center'>Não há cursos disponíveis</h3>
+          }
+          {
+            this.state.courses.length > 0 && 
+            coursesList
+          }
           <Pagination info={info} onClick={(page) => {
               this.props.history.push('/cursos/page/' + page);
               this.setState({ currentPage: page });
           }}/>
         </>
-      )
+      );
     }
   }
 

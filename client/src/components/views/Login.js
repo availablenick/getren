@@ -12,9 +12,9 @@ class Login extends React.Component {
     super(props);
     this.state = {
       error: null,
-      isPasswordVisible: false,
+      isModalVisible: false,
       isPasswordConfirmationVisible: false,
-      isModalVisible: false
+      isPasswordVisible: false
     }
   }
 
@@ -31,7 +31,9 @@ class Login extends React.Component {
         flex-column h-100'
       >
         <h2>LOGIN</h2>
-        <form className='form-login' style={{width: '30em'}} onSubmit={this.handleSubmit} method='post'>
+        <form className='form-login' style={{width: '30em'}}
+          onSubmit={this.handleSubmit} method='post'
+        >
           <div>
             <label>E-mail</label>
             <input type='text' name='email'
@@ -49,7 +51,8 @@ class Login extends React.Component {
           <div>
             <label>Senha</label>
             <div className='position-relative d-flex align-items-center'>
-              <input className='w-100 password' type={this.state.isPasswordVisible ? 'text' : 'password'}
+              <input className='w-100 password'
+                type={this.state.isPasswordVisible ? 'text' : 'password'}
                 name='password' 
                 onChange={() => { this.setState({ error: null }) }}
               />
@@ -105,7 +108,9 @@ class Login extends React.Component {
             </form>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => { this.setState({ isModalVisible: false }) }}>
+            <Button variant="secondary"
+              onClick={() => { this.setState({ isModalVisible: false }) }}
+            >
               Cancelar  
             </Button>
             <Button variant="primary">Enviar senha</Button>
@@ -117,17 +122,17 @@ class Login extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-
     api.post('login', {
       email: event.target.email.value,
       password: event.target.password.value,
     }).then(response => {
       if (response.status === 200) {
         this.props.dispatch(
-          login(response.data.user)
+          login({
+            email: response.data.email,
+            id: response.data.id,
+          })
         );
-
-        this.props.history.push('/');
       }
     }).catch(error => {
       if (error.response.status === 400) {

@@ -2,7 +2,7 @@ from flask import Blueprint, request, make_response, jsonify
 from flask_cors import cross_origin
 from json import loads
 
-from .utils import is_valid_admin, error_response, decode_duration, SECRET_KEY
+from .utils import is_valid_admin, error_response, decode_duration
 from ..models.user import User
 from ..models.course import Course
 from ..models.video import Video
@@ -51,8 +51,7 @@ def video(id):
         return {}, 404
 
     if request.method == 'GET':
-        video_dict = video.as_dict()
-        response = jsonify(video_dict)
+        response = jsonify(video.as_dict())
         response.status_code = 200
         return response
 

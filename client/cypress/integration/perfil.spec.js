@@ -37,7 +37,7 @@ describe('Profile page', () => {
   it('loads user\'s information correctly after update', () => {
     cy.intercept('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
       .as('getStates');
-    cy.intercept('PUT', 'http://localhost:5000/user/*').as('updateProfile');
+    cy.intercept('PUT', 'http://localhost:5000/users/*').as('updateProfile');
 
     // Type values and update
     cy.visit('http://localhost:3000/perfil');
@@ -73,7 +73,7 @@ describe('Profile page', () => {
       course.append('json_args', jsonArgs);
       cy.form_request('http://localhost:5000/courses', course)
         .then(info => {
-          cy.request('POST', 'http://localhost:5000/user/1/courses', {
+          cy.request('POST', 'http://localhost:5000/users/1/courses', {
             course_id: info.response.body.id
           });
         });

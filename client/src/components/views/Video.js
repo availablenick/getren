@@ -12,9 +12,10 @@ class Video extends React.Component {
     super(props);
 
     this.state = {
+      error: null,
       isFetchingResources: true,
       otherVideos: [],
-      video: null,
+      video: null
     }
   }
 
@@ -26,7 +27,7 @@ class Video extends React.Component {
           this.setState({ video: response.data });
         }
 
-        return api.get('/courses/' + response.data.id + '/videos');
+        return api.get('/courses/' + response.data.course_id + '/videos');
       })
       .then(response => {
         if (response.status === 200) {
@@ -47,15 +48,19 @@ class Video extends React.Component {
             isFetchingResources: false
           });
         }
+      })
+      .catch(error => {
+        this.setState({
+          error: error,
+          isFetchingResources: false
+        });
       });
   }
 
   componentDidUpdate(prevProps) {
-    let currentCourseId = this.props.match.params.courseId;
     let currentId = this.props.match.params.id;
-    let previousCourseId = prevProps.match.params.courseId;
     let previousId = prevProps.match.params.id;
-    if (currentCourseId !== previousCourseId || currentId !== previousId) {
+    if (currentId !== previousId) {
       api.get('/videos/' + currentId)
         .then(response => {
           if (response.status === 200) {
@@ -77,7 +82,21 @@ class Video extends React.Component {
           <p className='mt-3'>Carregando informações...</p>
         </div>
       );
+    } else if (this.state.error !== null) {
+      console.log('this.state.error');
+      console.log(this.state.error.response);
+      if (this.state.error.response.status === 404) {
+        return (
+          <div className='h5 d-flex align-items-center justify-content-center
+            h-100'
+          >
+            Este vídeo não existe.
+          </div>
+        );
+      }
     }
+
+    console.log(this.state.video);
 
     let otherVideosList = this.state.otherVideos.map((video, index) => {
       let itemContent =

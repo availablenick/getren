@@ -14,20 +14,6 @@ services:
     build: ./server
     command: bash -c "flask db upgrade --directory database/migrations && flask run"
     restart: always
-    environment:
-      - FLASK_RUN_HOST=0.0.0.0
-      - FLASK_ENV=development
-      - FLASK_APP=app
-      - FLASK_DEBUG=1
-      - FLASK_DB_PORT=5432
-      - FLASK_DB_HOST=database
-      - FLASK_DB_NAME=getren_api
-      - FLASK_DB_USER=user
-      - FLASK_DB_PASSWORD=password
-      - FLASK_MAIL_USERNAME=getren.xp@gmail.com
-      - FLASK_MAIL_PASSWORD=alfredogoldxp
-      - FLASK_MAIL_SENDER=getren.xp@gmail.com
-      - GETREN_MAIL=getren.xp@gmail.com
     depends_on:
       - database
     ports:

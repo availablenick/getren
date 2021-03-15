@@ -29,7 +29,7 @@ class Curso extends React.Component {
 
   componentDidMount() {
     if (!this.state.course) {
-      api.get('/course/' + this.state.courseId)
+      api.get('/courses/' + this.state.courseId)
         .then(response => {
           if (response.status === 200) {
             this.setState({ course: response.data, isFetchingCourse: false });
@@ -38,7 +38,7 @@ class Curso extends React.Component {
           this.props.history.push('/cursos');
         });
     }
-    api.get('/course/' + this.state.courseId + '/videos')
+    api.get('/courses/' + this.state.courseId + '/videos')
       .then(response => {
         if (response.status === 200) {
           this.setState({videosData: response.data});

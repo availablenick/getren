@@ -14,7 +14,7 @@ class Cadastro extends React.Component {
       isPasswordConfirmationVisible: false,
       isPasswordVisible: false,
       isUserRegistered: false,
-      requestSent: false,
+      requestSent: false
     }
   }
 
