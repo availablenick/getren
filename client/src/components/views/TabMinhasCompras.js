@@ -63,10 +63,10 @@ class TabMinhasCompras extends React.Component {
                       mb-3 pb-3'
                     style={ { listStyleType: 'none' } }
                   >
-                    <a className='no-decoration w-100' href='#'>
+                    <a className='no-decoration w-100' href='/#'>
                       <div className='d-flex'>
                         <div className='bg-white'>
-                          <img src={ logo } style={{ width: '15em' }}/>
+                          <img src={logo} alt='logo' style={{ width: '15em' }}/>
                         </div>
                         <div className='px-3'>
                           <b>

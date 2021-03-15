@@ -39,7 +39,12 @@ class Admin extends React.Component {
             <Link className="nav-link active" to='/cursos'>Cursos</Link>
           </li>
           <li className="nav-item">
-            <a className="nav-link active" component-to-load="FormularioVideo" onClick={this.handleMenuItemClick}>Vídeos</a>
+            <button type='button' className="nav-link active border-0"
+              componentToLoad="FormularioVideo"
+              onClick={this.handleMenuItemClick}
+            >
+              Vídeos
+            </button>
           </li>
         </ul>
         {content}
@@ -50,7 +55,7 @@ class Admin extends React.Component {
   handleMenuItemClick = (event) => {
     event.preventDefault();
 
-    let componentToLoad = event.target.getAttribute('component-to-load');
+    let componentToLoad = event.target.getAttribute('componentToLoad');
     this.setState({ componentToLoad: componentToLoad });
   }
 }

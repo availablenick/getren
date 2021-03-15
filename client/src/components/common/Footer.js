@@ -10,9 +10,15 @@ function Footer() {
     >
       COPYRIGHT GETREN
       <nav className='position-absolute right-0 pr-5 social-media'>
-        <a href='#' className='text-grey-to-white'><FontAwesomeIcon icon={['fab', 'facebook-square']} /></a>
-        <a href='#' className='text-grey-to-white'><FontAwesomeIcon icon={['fab', 'instagram']} fixedWidth /></a>
-        <a href='#' className='text-grey-to-white'><FontAwesomeIcon icon={['fab', 'youtube']} fixedWidth /></a>
+        <a href='/#' className='text-grey-to-white'>
+          <FontAwesomeIcon icon={['fab', 'facebook-square']} />
+        </a>
+        <a href='/#' className='text-grey-to-white'>
+          <FontAwesomeIcon icon={['fab', 'instagram']} fixedWidth />
+        </a>
+        <a href='/#' className='text-grey-to-white'>
+          <FontAwesomeIcon icon={['fab', 'youtube']} fixedWidth />
+        </a>
       </nav>
     </footer>
   );

@@ -53,34 +53,34 @@ class Header extends React.Component {
                   </Link>
                 </li>
                 <li>
-                  <a href='#'>
+                  <a href='/#'>
                     ABERTOS
                   </a>
                 </li>
                 <li>
-                  <a href='#'>
+                  <a href='/#'>
                     ENCERRADOS
                   </a>
                 </li>
                 <li>
-                  <a href='#'>
+                  <a href='/#'>
                     MEUS CURSOS
                   </a>
                 </li>
                 <li>
-                  <a href='#'>
+                  <a href='/#'>
                     PERGUNTAS FREQUENTES
                   </a>
                 </li>
               </ul>
             </li>
             <li>
-              <a href='#'>
+              <a href='/#'>
                 SOBRE
               </a>
             </li>
             <li>
-              <a href='#'>
+              <a href='/#'>
                 CONTATO
               </a>
             </li>

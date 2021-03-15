@@ -83,7 +83,7 @@ class Video extends React.Component {
       let itemContent =
         <>
           <div className='bg-white'>
-            <img src={video.thumbnail} style={{ width: '5em' }}/>
+            <img src={video.thumbnail} alt={video.title} style={{ width: '5em' }}/>
           </div>
           <div className='d-flex flex-column justify-content-center
             flex-grow-1 p-2'
@@ -107,7 +107,6 @@ class Video extends React.Component {
         )
       }
 
-      let courseId =  this.props.match.params.courseId;
       let videoPageURL = '/videos/' + video.id;
       return (
         <li key={index}>
@@ -129,7 +128,7 @@ class Video extends React.Component {
         <div className='row'>
           <div className='col-8'>
             <iframe className='w-100' height='420'
-              src={videoURL} frameBorder='0'
+              src={videoURL} frameBorder='0' title={this.state.video.title}
               allow='accelerometer; autoplay; clipboard-write; encrypted-media;
                 gyroscope; picture-in-picture'
               allowFullScreen

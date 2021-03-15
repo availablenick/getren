@@ -79,7 +79,6 @@ class Videos extends React.Component {
         <ul className='mx-auto w-75'>
           {
             this.state.videos.map((video, index) => {
-              let courseId = this.props.match.params.id;
               return (
                 <li key={index} className='custom-list-style-type-none my-3'>
                   <Link className='custom-video-item d-flex text-white p-2'
