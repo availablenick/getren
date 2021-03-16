@@ -11,7 +11,7 @@ from .. import mail
 from ..models.user import User
 
 fixed_token = '604d7208992bfddf9d08108f4a17c0ae78de70a8b5be973fd3e613c34460a2e55b32e6b6383d7630920267ce0d008e58'
-domain = 'localhost:3000'
+domain = 'http://localhost:3000'
 
 bp = Blueprint('authentication', __name__)
 
@@ -107,22 +107,23 @@ def confirmation():
     token = user.confirmation_token
     link = f'{domain}/confirmacao?email={email}&token={token}'
     confirmed = result['confirmed']
-
     if confirmed == False:
         msg = Message("Verificação de Conta", recipients=[email])
-        msg.html = f"Você se registrou em getren.com.br. Para confirmar sua conta, acesse <a href={link}>AQUI</a>. Caso não tenha sido você, apenas ignore esta mensagem. Obrigado, equipe Getren"
-        return {}, 200
+        msg.html = "Você se registrou no GETREN. Para confirmar sua " \
+            + 'conta, acesse <a href="' + link + '">AQUI</a>. Caso não tenha ' \
+            + "sido você, apenas ignore esta mensagem. Obrigado. Equipe Getren."
+
         try:
             mail.send(msg)
-            #return {}, 200
-        except Exception as E:
-            return error_response('Email não enviado',500)            
+            return {}, 200
+        except Exception:
+            return error_response('Email não enviado', 500)            
 
     if confirmed == True:
         if token == result['token'] or result['token'] == fixed_token:
             user = User.confirm_user(email)
             if user is None:
-                return error_response('Usuário não confirmado',500)
+                return error_response('Usuário não confirmado', 500)
             return {}, 200
         else:
             return error_response('Token inválido', 400)
@@ -141,7 +142,7 @@ def forgotten_password():
     try:
         mail.send(msg)
         return {}, 200
-    except Exception as E:
+    except Exception:
         return error_response('Email não enviado', 500)
 
 @bp.route('/redefine_password', methods=['GET', 'POST'])

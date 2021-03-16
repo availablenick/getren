@@ -93,6 +93,7 @@ def feed_database():
         except Exception:
             db.session.rollback()
 
+    # Enrollments
     for i in range(20):
         attends = Attends(
             user_id=6,

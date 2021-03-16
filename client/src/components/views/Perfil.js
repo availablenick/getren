@@ -43,12 +43,12 @@ class Perfil extends React.Component {
       content = 
         <>
           { this.state.isFetchingUser && 
-            <div className='d-flex flex-column justify-content-center align-items-center h-100' >
+            <div className='d-flex flex-column justify-content-center
+              align-items-center h-100'
+            >
               <Spinner animation='border' size='lg' role='status'
                 style={ { height: '3em', width: '3em' } }
-              >
-                <span className='sr-only'>Carregando cursos...</span>
-              </Spinner>
+              ></Spinner>
               <span className='mt-2'>Carregando cursos...</span>
             </div>
           }

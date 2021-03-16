@@ -1,5 +1,5 @@
 describe('Profile page', () => {
-  beforeEach(() => {
+  before(() => {
     cy.request('GET', 'http://localhost:5000/erase_db')
       .then(() => {
         return cy.request('GET', 'http://localhost:5000/logout');
@@ -15,10 +15,14 @@ describe('Profile page', () => {
       })
       .then(() => {
         return cy.request('GET', 'http://localhost:5000/give_admin', { id: 1 });
-      })
-      .then(() => {
-        return cy.request('GET', 'http://localhost:5000/logout');
-      })
+      });
+  });
+
+  beforeEach(() => {
+    cy.intercept('GET', 'http://localhost:5000/user_by_token').as('getToken');
+    cy.intercept('GET', 'http://localhost:5000/users/*').as('getUser');
+    cy.intercept('PUT', 'http://localhost:5000/users/*').as('updateProfile');
+    cy.request('GET', 'http://localhost:5000/logout')
       .then(() => {
         return cy.request('POST', 'http://localhost:5000/login',
           {
@@ -29,29 +33,42 @@ describe('Profile page', () => {
       });
   });
 
+  after(() => {
+    cy.request('GET', 'http://localhost:5000/erase_db');
+  });
+
   it('loads user\'s information correctly', () => {
     cy.visit('http://localhost:3000/perfil');
+    cy.wait('@getToken');
+    cy.wait('@getUser');
     cy.get('input[name=email]').should('have.value', 'test@example.com');
   });
 
   it('loads user\'s information correctly after update', () => {
     cy.intercept('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
       .as('getStates');
+    cy.intercept('https://servicodados.ibge.gov.br/api/v1/localidades/estados/'
+      + '*/municipios').as('getCities');
     cy.intercept('PUT', 'http://localhost:5000/users/*').as('updateProfile');
-
+    
     // Type values and update
     cy.visit('http://localhost:3000/perfil');
+    cy.wait('@getToken');
+    cy.wait('@getUser');
+    cy.wait('@getStates');
     cy.get('input[name=name]').type('test name');
     cy.get('input[name=job]').type('test job');
     cy.get('input[name=birthdate]').type('2000-01-01');
     cy.get('select[name=federal_state]').select('AC');
-    cy.wait('@getStates');
+    cy.wait('@getCities');
     cy.get('select[name=city]').select('Acrelândia');
     cy.get('button[type=submit]').click();
     cy.wait('@updateProfile');
 
     // Check displayed values
     cy.visit('http://localhost:3000/perfil');
+    cy.wait('@getToken');
+    cy.wait('@getUser');
     cy.get('input[name=name]').should('have.value', 'test name');
     cy.get('input[name=job]').should('have.value', 'test job');
     cy.get('input[name=birthdate]').should('have.value', '2000-01-01');
@@ -80,6 +97,8 @@ describe('Profile page', () => {
     }
 
     cy.visit('http://localhost:3000/perfil');
+    cy.wait('@getToken');
+    cy.wait('@getUser');
     cy.get('button[name=minhas-compras]').click();
     cy.get('body').should('contain', 'Curso 0');
     cy.get('body').should('contain', 'Curso 1');
@@ -90,6 +109,8 @@ describe('Profile page', () => {
     cy.intercept('GET', 'http://localhost:5000/logout').as('logout');
 
     cy.visit('http://localhost:3000/perfil');
+    cy.wait('@getToken');
+    cy.wait('@getUser');
     cy.get('button[name=sair]').click();
     cy.wait('@logout');
     cy.get('body').should('contain', 'LOGIN');

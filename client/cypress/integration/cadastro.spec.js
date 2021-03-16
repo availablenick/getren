@@ -5,6 +5,10 @@ describe('Signup page', () => {
     cy.intercept('POST', 'http://localhost:5000/register').as('signup');
   });
 
+  after(() => {
+    cy.request('GET', 'http://localhost:5000/erase_db');
+  });
+
   it('renders error message when e-mail and password are empty', () => {
     cy.visit('http://localhost:3000/cadastro');
     cy.get('button[type=submit]').click();

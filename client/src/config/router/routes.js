@@ -12,7 +12,6 @@ import Perfil from '../../components/views/Perfil.js';
 import Video from '../../components/views/Video.js';
 import Videos from '../../components/views/Videos.js';
 
-
 const routes = [
   {
     component: Home,

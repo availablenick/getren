@@ -13,13 +13,34 @@ class Header extends React.Component {
     let submenuTriggers = document.getElementsByClassName('submenu-trigger');
     for (let trigger of submenuTriggers) {
       trigger.addEventListener('mouseenter', () => {
-        trigger.nextElementSibling.style.opacity = '1';
+        trigger.nextElementSibling.style.display = 'flex';
+        trigger.nextElementSibling.setAttribute(
+          'class',
+          'submenu flex-column position-absolute left-0 p-0 text-white'
+        );
+        trigger.nextElementSibling.setAttribute(
+          'class',
+          'submenu flex-column position-absolute left-0 p-0 text-white fade-in'
+        );
       });
     }
 
     for (let dropdown of submenuDropdowns) {
       dropdown.addEventListener('mouseleave', () => {
-        dropdown.getElementsByClassName('submenu')[0].style.opacity = 0;
+        dropdown.getElementsByClassName('submenu')[0].setAttribute(
+          'class',
+          'submenu flex-column position-absolute left-0 p-0 text-white'
+        );
+        dropdown.getElementsByClassName('submenu')[0].setAttribute(
+          'class',
+          'submenu flex-column position-absolute left-0 p-0 text-white fade-out'
+        );
+
+        dropdown.getElementsByClassName('submenu')[0].addEventListener(
+          'animationend', () => {
+            dropdown.getElementsByClassName('submenu')[0].style.display = 'none';
+          }
+        )
       });
     }
   }
@@ -44,8 +65,8 @@ class Header extends React.Component {
               <Link className='submenu-trigger' to='/cursos'>
                 CURSOS 
               </Link>
-              <ul className='submenu d-flex flex-column position-absolute 
-                left-0 p-0 text-white'
+              <ul className='submenu flex-column position-absolute left-0 p-0
+                text-white'
               >
                 <li>
                   <Link to='/cursos'>

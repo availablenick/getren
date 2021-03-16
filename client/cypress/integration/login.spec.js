@@ -4,6 +4,10 @@ describe('Login page', () => {
     cy.intercept('POST', 'http://localhost:5000/login').as('login');
   });
 
+  after(() => {
+    cy.request('GET', 'http://localhost:5000/erase_db');
+  });
+
   it('renders error message when e-mail and password are empty', () => {
     cy.visit('http://localhost:3000/login');
     cy.get('button[type="submit"]').click();

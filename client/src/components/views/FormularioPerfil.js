@@ -48,7 +48,7 @@ class FormularioPerfil extends React.Component {
     return (
       <>
         <h2 className='border-bottom w-100 text-center pb-3'>PERFIL</h2>
-        <form className='form-login w-75 p-5' onSubmit={ this.handleSubmit } method='post'>
+        <form className='form-login w-75 p-5' onSubmit={this.handleSubmit}>
           <div>
             <label htmlFor='name'>Nome</label>
             <input type='text' id='name' name='name'

@@ -38,16 +38,4 @@ def create_app(is_testing=False):
             app.register_blueprint(videos.bp)
             app.register_blueprint(youtube.bp)
 
-    # from app.models import User, Course, Video, Attends, Watches
-    # @app.shell_context_processor
-    # def make_shell_context():
-    #     return {
-    #         'db': db,
-    #         'User': User,
-    #         'Course': Course,
-    #         'Video': Video,
-    #         'Attends': Attends,
-    #         'Watches': Watches
-    #     }
-
     return app
