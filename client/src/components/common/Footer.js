@@ -13,10 +13,10 @@ function Footer() {
         <a href='/#' className='text-grey-to-white'>
           <FontAwesomeIcon icon={['fab', 'facebook-square']} />
         </a>
-        <a href='/#' className='text-grey-to-white'>
+        <a href='https://www.instagram.com/_getren/' className='text-grey-to-white' target='_blank'>
           <FontAwesomeIcon icon={['fab', 'instagram']} fixedWidth />
         </a>
-        <a href='/#' className='text-grey-to-white'>
+        <a href='https://www.youtube.com/channel/UCXmf23U-Muc7YMOXwYwrEXg' className='text-grey-to-white' target='_blank'>
           <FontAwesomeIcon icon={['fab', 'youtube']} fixedWidth />
         </a>
       </nav>
