@@ -2,6 +2,7 @@ import Admin from '../../components/views/Admin.js';
 import Cadastro from '../../components/views/Cadastro.js';
 import ComprarCurso from '../../components/views/ComprarCurso.js';
 import Confirmacao from '../../components/views/Confirmacao.js';
+import Contato from '../../components/views/Contato.js';
 import Cursos from '../../components/views/Cursos.js';
 import FormularioCurso from '../../components/views/FormularioCurso.js';
 import FormularioVideo from '../../components/views/FormularioVideo.js';
@@ -18,6 +19,11 @@ const routes = [
     exact: true,
     isAvailableTo: () => true,
     path: '/'
+  },
+  {
+    component: Contato,
+    isAvailableTo: () => true,
+    path: '/contato'
   },
   {
     component: Admin,
