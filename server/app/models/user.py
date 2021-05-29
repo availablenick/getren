@@ -16,6 +16,7 @@ class User(db.Model):
     is_confirmed = db.Column(db.Boolean)
     confirmation_token = db.Column(db.String(128))
     password_token = db.Column(db.String(128))
+    last_course_seen_token = db.Column(db.String(128))
     courses_taken = db.relationship("Attends", back_populates="user")
     videos_watched = db.relationship("Watches", back_populates="user")
 
@@ -96,9 +97,7 @@ class User(db.Model):
 
     @classmethod
     def update_data(cls, id, request_data):
-        print('b4 query')
         user_query = db.session.query(User).filter(User.id==id)
-        print('after query')
         user_query.update(request_data)
         try:
             db.session.commit()
