@@ -3,6 +3,8 @@ import jwt
 from flask import current_app, jsonify
 
 from ..models.user import User
+from .. import sdk
+from uuid import uuid4
 
 def to_seconds(duration):
     return int(duration[0])*60 + int(duration[1])
@@ -25,6 +27,27 @@ def validate_password(password, password_confirm):
         errors['password_confirm'].append("Confirmacao errada")
 
     return errors
+
+def generate_course_preference(course_dict): 
+    temp_token = str(uuid4())
+    fake_token = str(uuid4())
+    preference_data = {
+            "items": [
+                {
+                    "title": course_dict["name"],
+                    "quantity": 1,
+                    "unit_price": course_dict["price"]
+                }
+            ],
+            "back_urls": {
+                "success": "https://localhost:3000/cursos/"+str(course_dict["id"])+"/success/"+temp_token,
+                "failure": "https://localhost:3000/cursos/"+str(course_dict["id"])+"/failure/"+fake_token,
+                "pending": "https://localhost:3000/cursos/"+str(course_dict["id"])+"/pending/"+fake_token,
+            }
+        }
+    preference_response = sdk.preference().create(preference_data)
+    preference = preference_response["response"]
+    return preference["id"], temp_token
 
 def generate_token(user):
     return jwt.encode(user.as_dict(), current_app.config['SECRET_KEY'],
