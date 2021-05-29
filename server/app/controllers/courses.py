@@ -3,7 +3,7 @@ import json
 from flask import Blueprint, request, make_response, jsonify
 from flask_cors import cross_origin
 
-from .utils import error_response, is_valid_admin
+from .utils import error_response, is_valid_admin, generate_course_preference, decode_user
 from ..models.user import User
 from ..models.course import Course
 
@@ -46,6 +46,9 @@ def course(id):
         return {}, 404
     if request.method == 'GET':
         course_dict = course.as_dict()
+        course_dict["preference_id"], token = generate_course_preference(course_dict)
+        user = decode_user(request)
+        User.update_data(user['id'], {"last_course_seen_token": token})
         response = jsonify(course_dict)
         response.status_code = 200
         return response
