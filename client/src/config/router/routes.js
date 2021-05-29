@@ -11,6 +11,7 @@ import Home from '../../components/views/Home.js';
 import Login from '../../components/views/Login.js';
 import NotFound from '../../components/views/NotFound.js';
 import Perfil from '../../components/views/Perfil.js';
+import Sobre from '../../components/views/Sobre.js';
 import Video from '../../components/views/Video.js';
 import Videos from '../../components/views/Videos.js';
 
@@ -103,6 +104,11 @@ const routes = [
     isAvailableTo: (user) => user.data,
     path: '/perfil',
     redirectTo: '/login'
+  },
+  {
+    component: Sobre,
+    isAvailableTo: () => true,
+    path: '/sobre'
   },
   {
     component: Video,

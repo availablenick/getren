@@ -96,7 +96,7 @@ class Header extends React.Component {
               </ul>
             </li>
             <li>
-              <a href='/#'>
+              <a href='/sobre'>
                 SOBRE
               </a>
             </li>
