@@ -85,7 +85,7 @@ class FormularioTextos extends React.Component {
         flex-column h-100'
       >
         <h2>TEXTOS</h2>
-        <form className='form-login'className='w-100' onSubmit={this.handleSubmit}>
+        <form className='form-login w-100' onSubmit={this.handleSubmit}>
 
           <div className='col-sm-12'>
               {this.sectionOptions()}

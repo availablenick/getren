@@ -25,6 +25,6 @@ class Attends(db.Model):
     @classmethod
     def check_user_attends_course(cls, user_id, course_id):
         try:
-            return db.session.query(Attends).filter({Attends.user_id==user_id, Attends.course_id==course_id}).first()
+            return db.session.query(Attends).filter(Attends.user_id==user_id, Attends.course_id==course_id).first()
         except Exception:
             return None
