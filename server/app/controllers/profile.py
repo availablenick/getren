@@ -59,6 +59,22 @@ def attends(id):
             return {}, 200
         return {}, 500
 
+@bp.route('/users/<int:user_id>/courses/<int:course_id>', methods=['GET'])
+@cross_origin(supports_credentials=True)
+def check_attends(user_id, course_id):
+    if not is_valid_user(request, user_id):
+        return {}, 401
+
+    if request.method == 'GET':
+        attends = Attends.check_user_attends_course(user_id, course_id)
+        if attends != None:
+            response_bool = {"enrolled": True}
+        else:
+            response_bool = {"enrolled": False}
+        response = jsonify(response_bool)
+        response.status_code = 200
+        return response 
+
 @bp.route(
     '/users/<int:user_id>/videos/<int:video_id>',
     methods=['GET', 'POST', 'PUT']
@@ -89,3 +105,15 @@ def watches(user_id, video_id):
             response.status_code = 200
             return response
         return {}, 500
+
+@bp.route('/users/<int:id>/lastCourseToken', methods=['GET'])
+def getLastToken(id):
+    if not is_valid_user(request, id):
+        return {}, 401
+
+    if request.method == 'GET':
+        user = User.get_by_id(id)
+        lastToken = user.last_course_seen_token
+        response = jsonify({"lastToken": lastToken})
+        response.status_code = 200
+        return response
