@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
+import { Redirect, withRouter, Link } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 
 import api from '../../config/axios/api.js';
@@ -13,6 +13,7 @@ class Videos extends React.Component {
 
     this.state = {
       course: null,
+      shouldRedirect: false,
       isFetchingResources: true,
       videos: []
     }
@@ -20,16 +21,23 @@ class Videos extends React.Component {
 
   componentDidMount() {
     let id = this.props.match.params.id;
+    let user = this.props.user.data;
     api.get('/courses/' + id)
       .then(response => {
         if (response.status === 200) {
           this.setState({ course: response.data });
         }
-
-        return api.get('/courses/' + id + '/videos');
-      })
-      .then(response => {
-        if (response.status === 200) {
+        
+        api.get('/users/'+user.id+'/courses/'+id).then(response => {
+          let enrolled = response.data.enrolled;
+          if (enrolled) {
+            return api.get('/courses/' + id + '/videos');
+          } else {
+            this.setState({shouldRedirect: true})
+          }
+          
+        }).then(response => {
+        if (response && response.status === 200) {
           let videos = response.data.map(video => {
             let thumbnail = video.thumbnail;
             if (!thumbnail) {
@@ -48,9 +56,13 @@ class Videos extends React.Component {
           });
         }
       });
+    });
   }
 
   render() {
+    if (this.state.shouldRedirect) {
+      return <Redirect to = {'/cursos/'+this.state.course.id+'/comprar'}/>
+    }
     if (this.state.isFetchingResources) {
       return (
         <div className='d-flex flex-column align-items-center
@@ -59,7 +71,7 @@ class Videos extends React.Component {
           <Spinner animation='border' size='lg' role='status'
             style={ { height: '5em', width: '5em' } }
           ></Spinner>
-          <p className='mt-3'>Carregando lista de cursos...</p>
+          <p className='mt-3'>Carregando lista de vídeos...</p>
         </div>
       );
     } else {
