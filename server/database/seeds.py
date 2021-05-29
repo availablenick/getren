@@ -2,7 +2,7 @@ from flask.cli import AppGroup, with_appcontext
 from werkzeug.security import generate_password_hash
 
 from ..app import db
-from ..app.models import Attends, Course, User, Video
+from ..app.models import Attends, Course, User, Video, Text
 
 database_cli = AppGroup('database', short_help='Database-related commands')
 
@@ -107,6 +107,24 @@ def feed_database():
             db.session.commit()
         except Exception:
             db.session.rollback()
+
+    sections = {
+        'home': 'Texto padrão da página principal',
+        'quem-somos': 'Texto padrão da página quem somos',
+        'faq': 'Texto padrão das perguntas e respostas'
+    }
+    for section in sections:
+        text = Text(
+            section=section,
+            body=sections[section]
+        )
+        
+        db.session.add(text)
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+
 
     db.session.close()
 

@@ -35,9 +35,15 @@ class Admin extends React.Component {
           <li className="nav-item">
             <Link className="nav-link active" to='/admin/cadastrar-curso'>Cadastrar Curso</Link>
           </li>
+
           <li className="nav-item">
             <Link className="nav-link active" to='/cursos'>Cursos</Link>
           </li>
+
+          <li className="nav-item">
+            <Link className="nav-link active" to='/admin/textos'>Textos</Link>
+          </li>
+
           <li className="nav-item">
             <button type='button' className="nav-link active border-0"
               componentToLoad="FormularioVideo"

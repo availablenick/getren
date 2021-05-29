@@ -5,6 +5,7 @@ import Confirmacao from '../../components/views/Confirmacao.js';
 import Contato from '../../components/views/Contato.js';
 import Cursos from '../../components/views/Cursos.js';
 import FormularioCurso from '../../components/views/FormularioCurso.js';
+import FormularioTextos from '../../components/views/FormularioTextos';
 import FormularioVideo from '../../components/views/FormularioVideo.js';
 import Home from '../../components/views/Home.js';
 import Login from '../../components/views/Login.js';
@@ -51,6 +52,11 @@ const routes = [
     component: FormularioVideo,
     isAvailableTo: (user) => user.data && user.data.is_admin,
     path: '/admin/editar-video/:id'
+  },
+  {
+    component: FormularioTextos,
+    isAvailableTo: (user) => user.data && user.data.is_admin,
+    path: '/admin/textos'
   },
   {
     component: Cadastro,
