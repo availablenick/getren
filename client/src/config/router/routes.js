@@ -8,6 +8,7 @@ import FormularioVideo from '../../components/views/FormularioVideo.js';
 import Home from '../../components/views/Home.js';
 import Login from '../../components/views/Login.js';
 import NotFound from '../../components/views/NotFound.js';
+import Pagamento from '../../components/views/Pagamento.js';
 import Perfil from '../../components/views/Perfil.js';
 import Video from '../../components/views/Video.js';
 import Videos from '../../components/views/Videos.js';
@@ -72,6 +73,11 @@ const routes = [
     isAvailableTo: (user) => user.data,
     path: '/cursos/:id/comprar',
     redirectTo: '/'
+  },
+  {
+    component: Pagamento,
+    isAvailableTo: (user) => user.data,
+    path: '/cursos/:id/:status/:token',
   },
   {
     component: Videos,
