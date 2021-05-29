@@ -2,14 +2,17 @@ import Admin from '../../components/views/Admin.js';
 import Cadastro from '../../components/views/Cadastro.js';
 import ComprarCurso from '../../components/views/ComprarCurso.js';
 import Confirmacao from '../../components/views/Confirmacao.js';
+import Contato from '../../components/views/Contato.js';
 import Cursos from '../../components/views/Cursos.js';
 import FormularioCurso from '../../components/views/FormularioCurso.js';
+import FormularioTextos from '../../components/views/FormularioTextos';
 import FormularioVideo from '../../components/views/FormularioVideo.js';
 import Home from '../../components/views/Home.js';
 import Login from '../../components/views/Login.js';
 import NotFound from '../../components/views/NotFound.js';
 import Pagamento from '../../components/views/Pagamento.js';
 import Perfil from '../../components/views/Perfil.js';
+import Sobre from '../../components/views/Sobre.js';
 import Video from '../../components/views/Video.js';
 import Videos from '../../components/views/Videos.js';
 
@@ -19,6 +22,11 @@ const routes = [
     exact: true,
     isAvailableTo: () => true,
     path: '/'
+  },
+  {
+    component: Contato,
+    isAvailableTo: () => true,
+    path: '/contato'
   },
   {
     component: Admin,
@@ -46,6 +54,11 @@ const routes = [
     component: FormularioVideo,
     isAvailableTo: (user) => user.data && user.data.is_admin,
     path: '/admin/editar-video/:id'
+  },
+  {
+    component: FormularioTextos,
+    isAvailableTo: (user) => user.data && user.data.is_admin,
+    path: '/admin/textos'
   },
   {
     component: Cadastro,
@@ -97,6 +110,11 @@ const routes = [
     isAvailableTo: (user) => user.data,
     path: '/perfil',
     redirectTo: '/login'
+  },
+  {
+    component: Sobre,
+    isAvailableTo: () => true,
+    path: '/sobre'
   },
   {
     component: Video,

@@ -96,14 +96,12 @@ class Header extends React.Component {
               </ul>
             </li>
             <li>
-              <a href='/#'>
+              <a href='/sobre'>
                 SOBRE
               </a>
             </li>
             <li>
-              <a href='/#'>
-                CONTATO
-              </a>
+              <Link to='/contato'>CONTATO</Link>
             </li>
             { !this.props.user.data &&
               <li>
