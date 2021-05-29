@@ -4,6 +4,9 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_mail import Mail
 
+import mercadopago
+sdk = mercadopago.SDK("TEST-2384855633651220-033117-1c1a1c967655793ecb9be006024d41ae-148582266")
+
 from .config import DefaultConfig, TestConfig
 
 db = SQLAlchemy()
